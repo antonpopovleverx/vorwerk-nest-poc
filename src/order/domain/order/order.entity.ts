@@ -5,12 +5,12 @@ import {
   OneToOne,
   JoinColumn,
 } from 'typeorm';
-import { BaseEntity } from '@common/domain/base/base.entity.js';
+import { BaseEntity } from '../../../_common/domain/base/base.entity.js';
 import {
   OrderStatus,
   isValidTransition,
-} from '@order/domain/order/order-status.enum.js';
-import { QuoteEntity } from '@order/domain/quote/quote.entity.js';
+} from './order-status.enum.js';
+import { QuoteEntity } from '../quote/quote.entity.js';
 import { HttpException, HttpStatus } from '@nestjs/common';
 
 /**

@@ -1,5 +1,5 @@
 import { Money } from './money.value-object.js';
-import { Currency } from '@common/domain/enums/currency.enum.js';
+import { Currency } from '../enums/currency.enum.js';
 
 describe('Money', () => {
   describe('constructor', () => {

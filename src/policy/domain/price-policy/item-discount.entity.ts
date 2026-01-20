@@ -1,6 +1,6 @@
 import { Entity, Column, PrimaryColumn } from 'typeorm';
-import { BaseEntity } from '@common/domain/base/base.entity.js';
-import { Region } from '@common/domain/enums/region.enum.js';
+import { BaseEntity } from '../../../_common/domain/base/base.entity.js';
+import { Region } from '../../../_common/domain/enums/region.enum.js';
 import { HttpException, HttpStatus } from '@nestjs/common';
 
 /**

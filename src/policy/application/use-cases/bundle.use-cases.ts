@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { BundleEntity } from '@policy/domain/price-policy/bundle/bundle.entity';
-import { IBundleRepository } from '@policy/domain/price-policy/bundle/bundle.repository';
+import { BundleEntity } from '../../domain/price-policy/bundle/bundle.entity';
+import { IBundleRepository } from '../../domain/price-policy/bundle/bundle.repository';
 
 /**
  * Create bundle DTO

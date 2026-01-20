@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 import {
   IOrderServicePort,
   CreateQuoteResult,
-} from '@basket/application/ports/order-service.port.js';
-import { BasketSnapshot } from '@basket/domain/basket/basket.entity.js';
-import { PolicySnapshot } from '@basket/application/ports/policy-service.port.js';
-import { QuoteUseCases } from '@order/application/use-cases/quote.use-cases.js';
+} from '../../../basket/application/ports/order-service.port.js';
+import { BasketSnapshot } from '../../../basket/domain/basket/basket.entity.js';
+import { PolicySnapshot } from '../../../basket/application/ports/policy-service.port.js';
+import { QuoteUseCases } from '../../application/use-cases/quote.use-cases.js';
 
 /**
  * Adapter implementing IOrderServicePort for basket subdomain

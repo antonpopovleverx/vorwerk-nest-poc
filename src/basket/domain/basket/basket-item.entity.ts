@@ -1,6 +1,6 @@
 import { Entity, Column, ManyToOne, JoinColumn, PrimaryColumn } from 'typeorm';
-import { BaseEntity } from '@common/domain/base/base.entity.js';
-import { BasketEntity } from '@basket/domain/basket/basket.entity.js';
+import { BaseEntity } from '../../../_common/domain/base/base.entity.js';
+import { BasketEntity } from './basket.entity.js';
 import { HttpException, HttpStatus } from '@nestjs/common';
 
 /**

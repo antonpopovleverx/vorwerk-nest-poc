@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
-import { BaseEntity } from '@common/domain/base/base.entity.js';
-import { Currency } from '@common/domain/enums/currency.enum.js';
+import { BaseEntity } from '../../../_common/domain/base/base.entity.js';
+import { Currency } from '../../../_common/domain/enums/currency.enum.js';
 
 /**
  * Basket snapshot stored in quote

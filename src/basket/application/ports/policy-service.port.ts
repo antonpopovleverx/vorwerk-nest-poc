@@ -1,5 +1,6 @@
-import { BasketSnapshot } from '@basket/domain/basket/basket.entity.js';
-import { Currency } from '@common/domain/enums/currency.enum.js';
+import { Currency } from "src/_common/domain/enums/currency.enum.js";
+import { BasketSnapshot } from "src/basket/domain/basket/basket.entity.js";
+
 
 /**
  * Policy check result

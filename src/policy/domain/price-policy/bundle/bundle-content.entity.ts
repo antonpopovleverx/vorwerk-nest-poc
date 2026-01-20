@@ -1,5 +1,5 @@
 import { Entity, Column, ManyToOne, JoinColumn, PrimaryColumn } from 'typeorm';
-import { BaseEntity } from '@common/domain/base/base.entity.js';
+import { BaseEntity } from '../../../../_common/domain/base/base.entity.js';
 import { BundleEntity } from '@policy/domain/price-policy/bundle/bundle.entity.js';
 
 /**

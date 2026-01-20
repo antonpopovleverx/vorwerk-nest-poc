@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { IBasketRepository } from '@basket/domain/basket/basket.repository.js';
-import { BasketEntity } from '@basket/domain/basket/basket.entity.js';
+import { IBasketRepository } from '../domain/basket/basket.repository.js';
+import { BasketEntity } from '../domain/basket/basket.entity.js';
 
 
 /**

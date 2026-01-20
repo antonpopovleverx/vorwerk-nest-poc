@@ -9,7 +9,7 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
-import { BundleUseCases } from '@policy/application/use-cases/bundle.use-cases.js';
+import { BundleUseCases } from '../../application/use-cases/bundle.use-cases.js';
 
 /**
  * Request DTOs for bundle operations

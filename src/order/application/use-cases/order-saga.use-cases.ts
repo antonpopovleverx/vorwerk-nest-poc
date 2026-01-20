@@ -1,10 +1,10 @@
 import { Injectable, Inject, Logger } from '@nestjs/common';
-import { OrderEntity } from '@order/domain/order/order.entity.js';
-import { IOrderRepository } from '@order/domain/order/order.repository.js';
-import { IQuoteRepository } from '@order/domain/quote/quote.repository.js';
-import { IPaymentServicePort } from '@order/application/ports/payment-service.port.js';
-import { IDeliveryServicePort } from '@order/application/ports/delivery-service.port.js';
-import { OrderUseCases } from '@order/application/use-cases/order.use-cases.js';
+import { OrderEntity } from '../../domain/order/order.entity.js';
+import { IOrderRepository } from '../../domain/order/order.repository.js';
+import { IQuoteRepository } from '../../domain/quote/quote.repository.js';
+import { IPaymentServicePort } from '../ports/payment-service.port.js';
+import { IDeliveryServicePort } from '../ports/delivery-service.port.js';
+import { OrderUseCases } from './order.use-cases.js';
 
 /**
  * Order saga result

@@ -5,7 +5,7 @@ import {
   DeliveryRequest,
   DeliveryResult,
   CancelDeliveryRequest,
-} from '@order/application/ports/delivery-service.port.js';
+} from '../../application/ports/delivery-service.port.js';
 
 /**
  * Mock delivery service for POC

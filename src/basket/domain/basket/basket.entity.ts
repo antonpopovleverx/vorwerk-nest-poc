@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { BaseEntity } from '@common/domain/base/base.entity.js';
-import { BasketItemEntity } from '@basket/domain/basket/basket-item.entity.js';
-import { BasketBundleEntity } from '@basket/domain/basket/basket-bundle.entity.js';
+import { BaseEntity } from '../../../_common/domain/base/base.entity.js';
+import { BasketItemEntity } from './basket-item.entity.js';
+import { BasketBundleEntity } from './basket-bundle.entity.js';
 import { HttpException, HttpStatus } from '@nestjs/common';
 
 /**

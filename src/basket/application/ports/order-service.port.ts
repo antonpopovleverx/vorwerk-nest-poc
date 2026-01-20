@@ -1,4 +1,4 @@
-import { BasketSnapshot } from '@basket/domain/basket/basket.entity.js';
+import { BasketSnapshot } from '../../domain/basket/basket.entity.js';
 import { PolicySnapshot } from '@basket/application/ports/policy-service.port.js';
 
 /**

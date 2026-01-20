@@ -2,21 +2,21 @@ import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 // Domain
-import { BasketEntity } from '@basket/domain/basket/basket.entity.js';
-import { BasketItemEntity } from '@basket/domain/basket/basket-item.entity.js';
-import { BasketBundleEntity } from '@basket/domain/basket/basket-bundle.entity.js';
+import { BasketEntity } from './domain/basket/basket.entity.js';
+import { BasketItemEntity } from './domain/basket/basket-item.entity.js';
+import { BasketBundleEntity } from './domain/basket/basket-bundle.entity.js';
 
 // Application
-import { BasketUseCases } from '@basket/application/use-cases/basket.use-cases.js';
-import { CheckoutUseCases } from '@basket/application/use-cases/checkout.use-cases.js';
+import { BasketUseCases } from './application/use-cases/basket.use-cases.js';
+import { CheckoutUseCases } from './application/use-cases/checkout.use-cases.js';
 
 // Adapters
-import { BasketController } from '@basket/adapters/inbound/basket.controller.js';
-import { BasketRepositoryImpl } from '@basket/repository/basket.repository.impl.js';
+import { BasketController } from './adapters/inbound/basket.controller.js';
+import { BasketRepositoryImpl } from './repository/basket.repository.impl.js';
 
 // Policy module import will be handled via forwardRef
-import { PolicyModule } from '@policy/policy.module';
-import { OrderModule } from '@order/order.module';
+import { PolicyModule } from '../policy/policy.module.js';
+import { OrderModule } from '../order/order.module.js';
 
 @Module({
   imports: [
@@ -42,3 +42,4 @@ import { OrderModule } from '@order/order.module';
   exports: [BasketUseCases, CheckoutUseCases, 'IBasketRepository'],
 })
 export class BasketModule {}
+

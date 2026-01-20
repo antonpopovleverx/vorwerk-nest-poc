@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { BundleEntity } from '@policy/domain/price-policy/bundle/bundle.entity.js';
-import { IBundleRepository } from '@policy/domain/price-policy/bundle/bundle.repository.js';
+import { BundleEntity } from '../domain/price-policy/bundle/bundle.entity.js';
+import { IBundleRepository } from '../domain/price-policy/bundle/bundle.repository.js';
 import { Repository, In } from 'typeorm';
 
 /**
