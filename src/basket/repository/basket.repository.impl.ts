@@ -22,10 +22,14 @@ export class BasketRepositoryImpl implements IBasketRepository {
     });
   }
 
+  
+
   async findByUserId(userId: string): Promise<BasketEntity | null> {
+
     return this.repository.findOne({
       where: { userId },
       relations: ['items', 'bundles'],
+      
     });
   }
 

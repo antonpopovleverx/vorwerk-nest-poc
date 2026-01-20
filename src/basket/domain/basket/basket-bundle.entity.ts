@@ -1,6 +1,7 @@
 import { Entity, Column, ManyToOne, JoinColumn, PrimaryColumn } from 'typeorm';
 import { BaseEntity } from '@common/domain/base/base.entity.js';
 import { BasketEntity } from '@basket/domain/basket/basket.entity.js';
+import { HttpException, HttpStatus } from '@nestjs/common';
 
 /**
  * Basket bundle - represents a bundle in a basket
@@ -36,7 +37,7 @@ export class BasketBundleEntity extends BaseEntity {
    */
   increaseAmount(by: number = 1): void {
     if (by <= 0) {
-      throw new Error('Increment must be positive');
+      throw new HttpException('Increment must be positive', HttpStatus.BAD_REQUEST);
     }
     this.amount += by;
   }
@@ -46,10 +47,10 @@ export class BasketBundleEntity extends BaseEntity {
    */
   decreaseAmount(by: number = 1): void {
     if (by <= 0) {
-      throw new Error('Decrement must be positive');
+      throw new HttpException('Decrement must be positive', HttpStatus.BAD_REQUEST);
     }
     if (this.amount - by < 0) {
-      throw new Error('Cannot decrease amount below 0');
+      throw new HttpException('Cannot decrease amount below 0', HttpStatus.BAD_REQUEST);
     }
     this.amount -= by;
   }

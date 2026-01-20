@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { BaseEntity } from '@common/domain/base/base.entity.js';
 import { BundleContentEntity } from '@policy/domain/price-policy/bundle/bundle-content.entity.js';
+import { HttpException, HttpStatus } from '@nestjs/common';
 
 /**
  * Bundle aggregate root
@@ -53,7 +54,7 @@ export class BundleEntity extends BaseEntity {
    */
   addItem(itemId: string, quantity: number = 1): void {
     if (quantity <= 0) {
-      throw new Error('Quantity must be positive');
+      throw new HttpException('Quantity must be positive', HttpStatus.BAD_REQUEST);
     }
 
     const existing = this.contents?.find((c) => c.itemId === itemId);
@@ -96,7 +97,7 @@ export class BundleEntity extends BaseEntity {
     if (content) {
       content.quantity = quantity;
     } else {
-      throw new Error(`Item ${itemId} not found in bundle`);
+      throw new HttpException(`Item ${itemId} not found in bundle`, HttpStatus.NOT_FOUND);
     }
   }
 
@@ -105,7 +106,7 @@ export class BundleEntity extends BaseEntity {
    */
   setDiscountRate(rate: number): void {
     if (rate < 0 || rate >= 1) {
-      throw new Error('Discount rate must be between 0 and 1 (exclusive)');
+      throw new HttpException('Discount rate must be between 0 and 1 (exclusive)', HttpStatus.BAD_REQUEST);
     }
     this.discountRate = rate;
   }

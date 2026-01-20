@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { BaseEntity } from '@common/domain/base/base.entity.js';
 import { BasketItemEntity } from '@basket/domain/basket/basket-item.entity.js';
 import { BasketBundleEntity } from '@basket/domain/basket/basket-bundle.entity.js';
+import { HttpException, HttpStatus } from '@nestjs/common';
 
 /**
  * Basket aggregate root
@@ -34,7 +35,7 @@ export class BasketEntity extends BaseEntity {
    */
   addItem(itemId: string, amount: number = 1): void {
     if (amount <= 0) {
-      throw new Error('Amount must be positive');
+      throw new HttpException('Amount must be positive', HttpStatus.BAD_REQUEST);
     }
 
     const existingItem = this.items?.find((i) => i.itemId === itemId);
@@ -77,7 +78,7 @@ export class BasketEntity extends BaseEntity {
     if (item) {
       item.amount = amount;
     } else {
-      throw new Error(`Item ${itemId} not found in basket`);
+      throw new HttpException(`Item ${itemId} not found in basket`, HttpStatus.NOT_FOUND);
     }
   }
 
@@ -86,7 +87,7 @@ export class BasketEntity extends BaseEntity {
    */
   addBundle(bundleId: string, amount: number = 1): void {
     if (amount <= 0) {
-      throw new Error('Amount must be positive');
+      throw new HttpException('Amount must be positive', HttpStatus.BAD_REQUEST);
     }
 
     const existingBundle = this.bundles?.find((b) => b.bundleId === bundleId);
@@ -129,7 +130,7 @@ export class BasketEntity extends BaseEntity {
     if (bundle) {
       bundle.amount = amount;
     } else {
-      throw new Error(`Bundle ${bundleId} not found in basket`);
+      throw new HttpException(`Bundle ${bundleId} not found in basket`, HttpStatus.NOT_FOUND);
     }
   }
 

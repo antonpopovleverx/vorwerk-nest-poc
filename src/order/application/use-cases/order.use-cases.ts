@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, HttpException, HttpStatus } from '@nestjs/common';
 import { OrderEntity } from '@order/domain/order/order.entity.js';
 import { OrderStatus } from '@order/domain/order/order-status.enum.js';
 import { IOrderRepository } from '@order/domain/order/order.repository.js';
@@ -31,13 +31,14 @@ export class OrderUseCases {
   ): Promise<OrderEntity> {
     const quote = await this.quoteRepository.findById(dto.quoteId);
     if (!quote) {
-      throw new Error(`Quote ${dto.quoteId} not found`);
+      throw new HttpException(`Quote ${dto.quoteId} not found`, HttpStatus.NOT_FOUND);
     }
+
 
     // Check if order already exists for this quote
     const existingOrder = await this.orderRepository.findByQuoteId(dto.quoteId);
     if (existingOrder) {
-      throw new Error(`Order already exists for quote ${dto.quoteId}`);
+      throw new HttpException(`Order already exists for quote ${dto.quoteId}`, HttpStatus.CONFLICT);
     }
 
     const order = OrderEntity.createFromQuote(

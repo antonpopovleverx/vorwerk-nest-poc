@@ -11,6 +11,7 @@ import {
   isValidTransition,
 } from '@order/domain/order/order-status.enum.js';
 import { QuoteEntity } from '@order/domain/quote/quote.entity.js';
+import { HttpException, HttpStatus } from '@nestjs/common';
 
 /**
  * Order entity - represents an order with state machine
@@ -63,8 +64,9 @@ export class OrderEntity extends BaseEntity {
    */
   private transitionTo(newStatus: OrderStatus): void {
     if (!this.canTransitionTo(newStatus)) {
-      throw new Error(
+      throw new HttpException(
         `Invalid status transition from ${this.status} to ${newStatus}`,
+        HttpStatus.BAD_REQUEST,
       );
     }
     this.status = newStatus;

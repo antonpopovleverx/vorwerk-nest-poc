@@ -1,6 +1,7 @@
 import { Entity, Column, PrimaryColumn } from 'typeorm';
 import { BaseEntity } from '@common/domain/base/base.entity.js';
 import { Region } from '@common/domain/enums/region.enum.js';
+import { HttpException, HttpStatus } from '@nestjs/common';
 
 /**
  * Item discount entity
@@ -49,10 +50,10 @@ export class ItemDiscountEntity extends BaseEntity {
     amount: number,
   ): ItemDiscountEntity {
     if (amount <= 0 || amount >= 1) {
-      throw new Error('Discount amount must be between 0 and 1 (exclusive)');
+      throw new HttpException('Discount amount must be between 0 and 1 (exclusive)', HttpStatus.BAD_REQUEST);
     }
     if (validFrom >= validTo) {
-      throw new Error('validFrom must be before validTo');
+      throw new HttpException('validFrom must be before validTo', HttpStatus.BAD_REQUEST);
     }
 
     const entity = new ItemDiscountEntity();
