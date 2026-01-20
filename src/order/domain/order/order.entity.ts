@@ -5,7 +5,7 @@ import {
   OneToOne,
   JoinColumn,
 } from 'typeorm';
-import { BaseEntity } from '../../../_common/domain/base/base.entity.js';
+import { TechnicalEntity } from '../../../_common/domain/base/base.entity.js';
 import {
   OrderStatus,
   isValidTransition,
@@ -17,7 +17,7 @@ import { HttpException, HttpStatus } from '@nestjs/common';
  * Order entity - represents an order with state machine
  */
 @Entity('orders')
-export class OrderEntity extends BaseEntity {
+export class OrderEntity extends TechnicalEntity {
   @PrimaryGeneratedColumn('uuid', { name: 'order_id' })
   orderId: string;
 

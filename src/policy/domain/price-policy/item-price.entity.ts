@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryColumn } from 'typeorm';
-import { BaseEntity } from '../../../_common/domain/base/base.entity.js';
+import { TechnicalEntity } from '../../../_common/domain/base/base.entity.js';
 import { Region } from '../../../_common/domain/enums/region.enum.js';
 import { Currency } from '../../../_common/domain/enums/currency.enum.js';
 
@@ -9,7 +9,7 @@ import { Currency } from '../../../_common/domain/enums/currency.enum.js';
  * Note: Item itself is in a different microservice
  */
 @Entity('item_prices')
-export class ItemPriceEntity extends BaseEntity {
+export class ItemPriceEntity extends TechnicalEntity {
   @PrimaryColumn({ name: 'item_id' })
   itemId: string;
 

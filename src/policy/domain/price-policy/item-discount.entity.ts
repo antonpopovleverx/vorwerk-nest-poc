@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryColumn } from 'typeorm';
-import { BaseEntity } from '../../../_common/domain/base/base.entity.js';
+import { TechnicalEntity } from '../../../_common/domain/base/base.entity.js';
 import { Region } from '../../../_common/domain/enums/region.enum.js';
 import { HttpException, HttpStatus } from '@nestjs/common';
 
@@ -8,7 +8,7 @@ import { HttpException, HttpStatus } from '@nestjs/common';
  * Composite PK: itemId + validFrom + validTo
  */
 @Entity('item_discounts')
-export class ItemDiscountEntity extends BaseEntity {
+export class ItemDiscountEntity extends TechnicalEntity {
   @PrimaryColumn({ name: 'item_id' })
   itemId: string;
 

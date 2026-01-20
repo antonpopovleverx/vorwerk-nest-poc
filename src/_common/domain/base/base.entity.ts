@@ -3,7 +3,7 @@ import { CreateDateColumn, UpdateDateColumn } from 'typeorm';
 /**
  * Base entity with common audit fields
  */
-export abstract class BaseEntity {
+export abstract class TechnicalEntity {
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 

@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { BaseEntity } from '../../../_common/domain/base/base.entity.js';
+import { TechnicalEntity } from '../../../_common/domain/base/base.entity.js';
 import { BasketItemEntity } from './basket-item.entity.js';
 import { BasketBundleEntity } from './basket-bundle.entity.js';
 import { HttpException, HttpStatus } from '@nestjs/common';
@@ -9,7 +9,7 @@ import { HttpException, HttpStatus } from '@nestjs/common';
  * Identified by userId (one user has one basket)
  */
 @Entity('baskets')
-export class BasketEntity extends BaseEntity {
+export class BasketEntity extends TechnicalEntity {
   @PrimaryGeneratedColumn('uuid', { name: 'basket_id' })
   basketId: string;
 

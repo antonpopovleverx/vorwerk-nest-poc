@@ -1,5 +1,5 @@
 import { Entity, Column, ManyToOne, JoinColumn, PrimaryColumn } from 'typeorm';
-import { BaseEntity } from '../../../_common/domain/base/base.entity.js';
+import { TechnicalEntity } from '../../../_common/domain/base/base.entity.js';
 import { BasketEntity } from './basket.entity.js';
 import { HttpException, HttpStatus } from '@nestjs/common';
 
@@ -8,7 +8,7 @@ import { HttpException, HttpStatus } from '@nestjs/common';
  * Composite PK: basketId + itemId
  */
 @Entity('basket_items')
-export class BasketItemEntity extends BaseEntity {
+export class BasketItemEntity extends TechnicalEntity {
   @PrimaryColumn({ name: 'basket_id' })
   basketId: string;
 

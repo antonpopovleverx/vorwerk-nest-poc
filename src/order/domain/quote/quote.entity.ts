@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
-import { BaseEntity } from '../../../_common/domain/base/base.entity.js';
+import { TechnicalEntity } from '../../../_common/domain/base/base.entity.js';
 import { Currency } from '../../../_common/domain/enums/currency.enum.js';
 
 /**
@@ -45,7 +45,7 @@ export interface QuotePolicySnapshot {
  * Quote entity - captures basket and policy snapshots at checkout time
  */
 @Entity('quotes')
-export class QuoteEntity extends BaseEntity {
+export class QuoteEntity extends TechnicalEntity {
   @PrimaryGeneratedColumn('uuid', { name: 'quote_id' })
   quoteId: string;
 

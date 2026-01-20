@@ -1,5 +1,5 @@
 import { Entity, Column, ManyToOne, JoinColumn, PrimaryColumn } from 'typeorm';
-import { BaseEntity } from '../../../../_common/domain/base/base.entity.js';
+import { TechnicalEntity } from '../../../../_common/domain/base/base.entity.js';
 import { BundleEntity } from '@policy/domain/price-policy/bundle/bundle.entity.js';
 
 /**
@@ -7,7 +7,7 @@ import { BundleEntity } from '@policy/domain/price-policy/bundle/bundle.entity.j
  * Composite PK: bundleId + itemId
  */
 @Entity('bundle_contents')
-export class BundleContentEntity extends BaseEntity {
+export class BundleContentEntity extends TechnicalEntity {
   @PrimaryColumn({ name: 'bundle_id' })
   bundleId: string;
 

@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { BaseEntity } from '../../../../_common/domain/base/base.entity.js';
+import { TechnicalEntity } from '../../../../_common/domain/base/base.entity.js';
 import { BundleContentEntity } from './bundle-content.entity.js';
 import { HttpException, HttpStatus } from '@nestjs/common';
 
@@ -8,7 +8,7 @@ import { HttpException, HttpStatus } from '@nestjs/common';
  * Represents a bundle of items with a discount
  */
 @Entity('bundles')
-export class BundleEntity extends BaseEntity {
+export class BundleEntity extends TechnicalEntity {
   @PrimaryGeneratedColumn('uuid', { name: 'bundle_id' })
   bundleId: string;
 
