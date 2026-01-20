@@ -1,0 +1,86 @@
+import { Injectable, Inject } from '@nestjs/common';
+import { OrderEntity } from '@order/domain/order/order.entity.js';
+import { OrderStatus } from '@order/domain/order/order-status.enum.js';
+import { IOrderRepository } from '@order/domain/order/order.repository.js';
+import { IQuoteRepository } from '@order/domain/quote/quote.repository.js';
+
+/**
+ * Create order from quote DTO
+ */
+export interface CreateOrderFromQuoteDto {
+  quoteId: string;
+}
+
+/**
+ * Order use cases - basic order CRUD
+ */
+@Injectable()
+export class OrderUseCases {
+  constructor(
+    @Inject('IOrderRepository')
+    private readonly orderRepository: IOrderRepository,
+    @Inject('IQuoteRepository')
+    private readonly quoteRepository: IQuoteRepository,
+  ) {}
+
+  /**
+   * Create order from quote
+   */
+  async createOrderFromQuote(
+    dto: CreateOrderFromQuoteDto,
+  ): Promise<OrderEntity> {
+    const quote = await this.quoteRepository.findById(dto.quoteId);
+    if (!quote) {
+      throw new Error(`Quote ${dto.quoteId} not found`);
+    }
+
+    // Check if order already exists for this quote
+    const existingOrder = await this.orderRepository.findByQuoteId(dto.quoteId);
+    if (existingOrder) {
+      throw new Error(`Order already exists for quote ${dto.quoteId}`);
+    }
+
+    const order = OrderEntity.createFromQuote(
+      quote.quoteId,
+      quote.userId,
+      quote.businessPartnerId ?? undefined,
+    );
+
+    return this.orderRepository.save(order);
+  }
+
+  /**
+   * Get order by ID
+   */
+  async getOrder(orderId: string): Promise<OrderEntity | null> {
+    return this.orderRepository.findById(orderId);
+  }
+
+  /**
+   * Get order by quote ID
+   */
+  async getOrderByQuoteId(quoteId: string): Promise<OrderEntity | null> {
+    return this.orderRepository.findByQuoteId(quoteId);
+  }
+
+  /**
+   * Get orders for user
+   */
+  async getOrdersForUser(userId: string): Promise<OrderEntity[]> {
+    return this.orderRepository.findByUserId(userId);
+  }
+
+  /**
+   * Get orders by status
+   */
+  async getOrdersByStatus(status: OrderStatus): Promise<OrderEntity[]> {
+    return this.orderRepository.findByStatus(status);
+  }
+
+  /**
+   * Update order (save changes)
+   */
+  async updateOrder(order: OrderEntity): Promise<OrderEntity> {
+    return this.orderRepository.save(order);
+  }
+}

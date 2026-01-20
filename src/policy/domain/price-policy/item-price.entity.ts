@@ -1,0 +1,48 @@
+import { Entity, Column, PrimaryColumn } from 'typeorm';
+import { BaseEntity } from '@common/domain/base/base.entity.js';
+import { Region } from '@common/domain/enums/region.enum.js';
+import { Currency } from '@common/domain/enums/currency.enum.js';
+
+/**
+ * Item price entity
+ * Composite PK: itemId + region
+ * Note: Item itself is in a different microservice
+ */
+@Entity('item_prices')
+export class ItemPriceEntity extends BaseEntity {
+  @PrimaryColumn({ name: 'item_id' })
+  itemId: string;
+
+  @PrimaryColumn({ type: 'varchar', length: 10 })
+  region: Region;
+
+  @Column({ type: 'decimal', precision: 10, scale: 2 })
+  price: number;
+
+  @Column({ type: 'varchar', length: 3 })
+  currency: Currency;
+
+  /**
+   * Get the price as a number
+   */
+  getPrice(): number {
+    return Number(this.price);
+  }
+
+  /**
+   * Factory method
+   */
+  static create(
+    itemId: string,
+    region: Region,
+    price: number,
+    currency: Currency,
+  ): ItemPriceEntity {
+    const entity = new ItemPriceEntity();
+    entity.itemId = itemId;
+    entity.region = region;
+    entity.price = price;
+    entity.currency = currency;
+    return entity;
+  }
+}

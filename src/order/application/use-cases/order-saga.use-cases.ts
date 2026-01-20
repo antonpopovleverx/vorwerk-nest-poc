@@ -1,0 +1,260 @@
+import { Injectable, Inject, Logger } from '@nestjs/common';
+import { OrderEntity } from '@order/domain/order/order.entity.js';
+import { IOrderRepository } from '@order/domain/order/order.repository.js';
+import { IQuoteRepository } from '@order/domain/quote/quote.repository.js';
+import { IPaymentServicePort } from '@order/application/ports/payment-service.port.js';
+import { IDeliveryServicePort } from '@order/application/ports/delivery-service.port.js';
+import { OrderUseCases } from '@order/application/use-cases/order.use-cases.js';
+
+/**
+ * Order saga result
+ */
+export interface OrderSagaResult {
+  success: boolean;
+  order: OrderEntity;
+  error?: string;
+}
+
+/**
+ * Order saga orchestrator - manages the order fulfillment process
+ * States: Initialized -> PaymentInitiated -> DeliveryInitiated -> Delivered
+ * With compensatory actions on failure
+ */
+@Injectable()
+export class OrderSagaUseCases {
+  private readonly logger = new Logger(OrderSagaUseCases.name);
+
+  constructor(
+    @Inject('IOrderRepository')
+    private readonly orderRepository: IOrderRepository,
+    @Inject('IQuoteRepository')
+    private readonly quoteRepository: IQuoteRepository,
+    @Inject('IPaymentServicePort')
+    private readonly paymentService: IPaymentServicePort,
+    @Inject('IDeliveryServicePort')
+    private readonly deliveryService: IDeliveryServicePort,
+    private readonly orderUseCases: OrderUseCases,
+  ) {}
+
+  /**
+   * Execute the full order saga
+   */
+  async executeOrderSaga(orderId: string): Promise<OrderSagaResult> {
+    let order = await this.orderRepository.findById(orderId);
+    if (!order) {
+      return {
+        success: false,
+        order: null as any,
+        error: `Order ${orderId} not found`,
+      };
+    }
+
+    const quote = await this.quoteRepository.findById(order.quoteId);
+    if (!quote) {
+      order.markFailed('Quote not found');
+      order = await this.orderRepository.save(order);
+      return {
+        success: false,
+        order,
+        error: 'Quote not found',
+      };
+    }
+
+    try {
+      // Step 1: Process payment
+      this.logger.log(`Processing payment for order ${orderId}`);
+      const paymentResult = await this.paymentService.processPayment({
+        orderId,
+        userId: order.userId,
+        amount: quote.getTotalPrice(),
+        currency: quote.currency,
+      });
+
+      if (!paymentResult.success || !paymentResult.paymentReference) {
+        order.markFailed(`Payment failed: ${paymentResult.error}`);
+        order = await this.orderRepository.save(order);
+        return {
+          success: false,
+          order,
+          error: `Payment failed: ${paymentResult.error}`,
+        };
+      }
+
+      order.initiatePayment(paymentResult.paymentReference);
+      order = await this.orderRepository.save(order);
+      this.logger.log(`Payment successful: ${paymentResult.paymentReference}`);
+
+      // Step 2: Initiate delivery
+      this.logger.log(`Initiating delivery for order ${orderId}`);
+      const basketSnapshot = quote.basketSnapshot;
+      const deliveryResult = await this.deliveryService.initiateDelivery({
+        orderId,
+        userId: order.userId,
+        items: basketSnapshot.items,
+        bundles: basketSnapshot.bundles,
+      });
+
+      if (!deliveryResult.success || !deliveryResult.deliveryReference) {
+        // Compensate: Refund payment
+        this.logger.warn(`Delivery failed, refunding payment`);
+        await this.compensatePayment(order, 'Delivery initiation failed');
+
+        order.markFailed(`Delivery failed: ${deliveryResult.error}`);
+        order = await this.orderRepository.save(order);
+        return {
+          success: false,
+          order,
+          error: `Delivery failed: ${deliveryResult.error}`,
+        };
+      }
+
+      order.initiateDelivery(deliveryResult.deliveryReference);
+      order = await this.orderRepository.save(order);
+      this.logger.log(
+        `Delivery initiated: ${deliveryResult.deliveryReference}`,
+      );
+
+      // Step 3: Check delivery completion (in real system, this would be async/webhook)
+      // For POC, we'll simulate immediate delivery
+      this.logger.log(`Marking order as delivered`);
+      order.markDelivered();
+      order = await this.orderRepository.save(order);
+
+      return {
+        success: true,
+        order,
+      };
+    } catch (error) {
+      this.logger.error(`Saga failed: ${error}`);
+
+      // Attempt compensation
+      if (order.paymentReference) {
+        await this.compensatePayment(order, 'Saga execution failed');
+      }
+      if (order.deliveryReference) {
+        await this.compensateDelivery(order, 'Saga execution failed');
+      }
+
+      order.markFailed(
+        error instanceof Error ? error.message : 'Saga execution failed',
+      );
+      order = await this.orderRepository.save(order);
+
+      return {
+        success: false,
+        order,
+        error: error instanceof Error ? error.message : 'Saga execution failed',
+      };
+    }
+  }
+
+  /**
+   * Compensate payment (refund)
+   */
+  private async compensatePayment(
+    order: OrderEntity,
+    reason: string,
+  ): Promise<void> {
+    if (!order.paymentReference) return;
+
+    try {
+      const quote = await this.quoteRepository.findById(order.quoteId);
+      if (quote) {
+        await this.paymentService.refundPayment({
+          paymentReference: order.paymentReference,
+          amount: quote.getTotalPrice(),
+          reason,
+        });
+        this.logger.log(`Payment refunded: ${order.paymentReference}`);
+      }
+    } catch (error) {
+      this.logger.error(`Failed to refund payment: ${error}`);
+      // In production, this would need manual intervention or retry logic
+    }
+  }
+
+  /**
+   * Compensate delivery (cancel)
+   */
+  private async compensateDelivery(
+    order: OrderEntity,
+    reason: string,
+  ): Promise<void> {
+    if (!order.deliveryReference) return;
+
+    try {
+      await this.deliveryService.cancelDelivery({
+        deliveryReference: order.deliveryReference,
+        reason,
+      });
+      this.logger.log(`Delivery cancelled: ${order.deliveryReference}`);
+    } catch (error) {
+      this.logger.error(`Failed to cancel delivery: ${error}`);
+      // In production, this would need manual intervention or retry logic
+    }
+  }
+
+  /**
+   * Execute saga step by step (for manual control/debugging)
+   */
+  async executePaymentStep(orderId: string): Promise<OrderSagaResult> {
+    let order = await this.orderRepository.findById(orderId);
+    if (!order) {
+      return { success: false, order: null as any, error: 'Order not found' };
+    }
+
+    const quote = await this.quoteRepository.findById(order.quoteId);
+    if (!quote) {
+      return { success: false, order, error: 'Quote not found' };
+    }
+
+    const result = await this.paymentService.processPayment({
+      orderId,
+      userId: order.userId,
+      amount: quote.getTotalPrice(),
+      currency: quote.currency,
+    });
+
+    if (result.success && result.paymentReference) {
+      order.initiatePayment(result.paymentReference);
+      order = await this.orderRepository.save(order);
+      return { success: true, order };
+    }
+
+    order.markFailed(`Payment failed: ${result.error}`);
+    order = await this.orderRepository.save(order);
+    return { success: false, order, error: result.error };
+  }
+
+  async executeDeliveryStep(orderId: string): Promise<OrderSagaResult> {
+    let order = await this.orderRepository.findById(orderId);
+    if (!order) {
+      return { success: false, order: null as any, error: 'Order not found' };
+    }
+
+    const quote = await this.quoteRepository.findById(order.quoteId);
+    if (!quote) {
+      return { success: false, order, error: 'Quote not found' };
+    }
+
+    const basketSnapshot = quote.basketSnapshot;
+    const result = await this.deliveryService.initiateDelivery({
+      orderId,
+      userId: order.userId,
+      items: basketSnapshot.items,
+      bundles: basketSnapshot.bundles,
+    });
+
+    if (result.success && result.deliveryReference) {
+      order.initiateDelivery(result.deliveryReference);
+      order = await this.orderRepository.save(order);
+      return { success: true, order };
+    }
+
+    // Compensate payment
+    await this.compensatePayment(order, 'Delivery failed');
+    order.markFailed(`Delivery failed: ${result.error}`);
+    order = await this.orderRepository.save(order);
+    return { success: false, order, error: result.error };
+  }
+}

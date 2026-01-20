@@ -20,6 +20,12 @@
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": false,
     "strictBindCallApply": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "@common/*": ["src/_common/*"],
+      "@basket/*": ["src/basket/*"],
+      "@policy/*": ["src/policy/*"],
+      "@order/*": ["src/order/*"]
+    }
   }
 }
