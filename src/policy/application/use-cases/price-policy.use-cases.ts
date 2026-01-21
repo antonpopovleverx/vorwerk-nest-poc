@@ -2,7 +2,7 @@ import { Injectable, Inject } from '@nestjs/common';
 import { Currency, DEFAULT_CURRENCY } from 'src/_common/domain/enums/currency.enum';
 import { Region, DEFAULT_REGION } from 'src/_common/domain/enums/region.enum';
 import { BasketSnapshotForPolicy } from 'src/policy/application/ports/basket-data.port';
-import { IBundleRepository } from 'src/policy/domain/price-policy/bundle/bundle.repository';
+import { IBundleRepository } from 'src/policy/domain/price-policy/bundle.repository';
 import { IPricePolicyRepository } from 'src/policy/domain/price-policy/price-policy.repository';
 
 

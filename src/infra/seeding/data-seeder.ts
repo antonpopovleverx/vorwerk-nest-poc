@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Currency } from 'src/_common/domain/enums/currency.enum';
 import { Region } from 'src/_common/domain/enums/region.enum';
-import { BundleEntity } from 'src/policy/domain/price-policy/bundle/bundle.entity';
+import { BundleEntity } from 'src/policy/domain/price-policy/bundle.entity';
 import { ItemDiscountEntity } from 'src/policy/domain/price-policy/item-discount.entity';
 import { ItemPriceEntity } from 'src/policy/domain/price-policy/item-price.entity';
 import { Repository } from 'typeorm';

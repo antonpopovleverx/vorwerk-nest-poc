@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 // Domain entities
-import { BundleEntity } from './domain/price-policy/bundle/bundle.entity';
-import { BundleContentEntity } from './domain/price-policy/bundle/bundle-content.entity';
+import { BundleEntity } from './domain/price-policy/bundle.entity';
+import { BundleContentEntity } from './domain/price-policy/bundle-content.entity';
 import { ItemPriceEntity } from './domain/price-policy/item-price.entity';
 import { ItemDiscountEntity } from './domain/price-policy/item-discount.entity';
 
