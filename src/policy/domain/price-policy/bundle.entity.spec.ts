@@ -1,4 +1,7 @@
 import { BundleEntity } from './bundle.entity';
+import { Money } from '../../../_common/domain/value-objects/money.value-object';
+import { Currency } from '../../../_common/domain/enums/currency.enum';
+import { ProductAmount } from '../../../_common/domain/value-objects/product-amount.value-object';
 
 describe('BundleEntity', () => {
   let bundle: BundleEntity;
@@ -7,7 +10,7 @@ describe('BundleEntity', () => {
     bundle = BundleEntity.create(
       'Test Bundle',
       'A test bundle',
-      100,
+      new Money(100, Currency.EUR),
       0.2, // 20% discount
     );
     bundle.bundleId = 'bundle-123';
@@ -17,68 +20,71 @@ describe('BundleEntity', () => {
     it('should create a bundle with correct properties', () => {
       expect(bundle.name).toBe('Test Bundle');
       expect(bundle.description).toBe('A test bundle');
-      expect(bundle.basePrice).toBe(100);
+      expect(bundle.basePrice.amount).toBe(100);
+      expect(bundle.basePrice.currency).toBe(Currency.EUR);
       expect(bundle.discountRate).toBe(0.2);
       expect(bundle.isActive).toBe(true);
       expect(bundle.contents).toEqual([]);
     });
 
     it('should throw error for invalid discount rate', () => {
-      expect(() => BundleEntity.create('Test', '', 100, -0.1)).toThrow();
-      expect(() => BundleEntity.create('Test', '', 100, 1)).toThrow();
-      expect(() => BundleEntity.create('Test', '', 100, 1.5)).toThrow();
+      const money = new Money(100, Currency.EUR);
+      expect(() => BundleEntity.create('Test', '', money, -0.1)).toThrow();
+      expect(() => BundleEntity.create('Test', '', money, 1)).toThrow();
+      expect(() => BundleEntity.create('Test', '', money, 1.5)).toThrow();
     });
   });
 
   describe('getDiscountedPrice', () => {
     it('should calculate discounted price correctly', () => {
-      expect(bundle.getDiscountedPrice()).toBe(80); // 100 * (1 - 0.2)
+      expect(bundle.getDiscountedPrice().amount).toBe(80); // 100 * (1 - 0.2)
+      expect(bundle.getDiscountedPrice().currency).toBe(Currency.EUR);
     });
 
     it('should round to 2 decimal places', () => {
-      bundle.basePrice = 99.99;
+      bundle.basePrice = new Money(99.99, Currency.EUR);
       bundle.discountRate = 0.15;
-      expect(bundle.getDiscountedPrice()).toBe(84.99); // 99.99 * 0.85 = 84.9915 -> 84.99
+      expect(bundle.getDiscountedPrice().amount).toBe(84.99); // 99.99 * 0.85 = 84.9915 -> 84.99
+      expect(bundle.getDiscountedPrice().currency).toBe(Currency.EUR);
     });
   });
 
   describe('getDiscountAmount', () => {
     it('should calculate discount amount correctly', () => {
-      expect(bundle.getDiscountAmount()).toBe(20); // 100 * 0.2
+      expect(bundle.getDiscountAmount().amount).toBe(20); // 100 * 0.2
+      expect(bundle.getDiscountAmount().currency).toBe(Currency.EUR);
     });
   });
 
   describe('addItem', () => {
     it('should add a new item to contents', () => {
-      bundle.addItem('ITEM-001', 2);
+      bundle.addItem('ITEM-001', new ProductAmount(2));
 
       expect(bundle.contents.length).toBe(1);
       expect(bundle.contents[0].itemId).toBe('ITEM-001');
-      expect(bundle.contents[0].quantity).toBe(2);
+      expect(bundle.contents[0].quantity.value).toBe(2);
     });
 
     it('should increase quantity if item already exists', () => {
-      bundle.addItem('ITEM-001', 2);
-      bundle.addItem('ITEM-001', 3);
+      bundle.addItem('ITEM-001', new ProductAmount(2));
+      bundle.addItem('ITEM-001', new ProductAmount(3));
 
       expect(bundle.contents.length).toBe(1);
-      expect(bundle.contents[0].quantity).toBe(5);
+      expect(bundle.contents[0].quantity.value).toBe(5);
     });
 
     it('should throw error for non-positive quantity', () => {
-      expect(() => bundle.addItem('ITEM-001', 0)).toThrow(
+      expect(() => bundle.addItem('ITEM-001', ProductAmount.zero())).toThrow(
         'Quantity must be positive',
       );
-      expect(() => bundle.addItem('ITEM-001', -1)).toThrow(
-        'Quantity must be positive',
-      );
+      // ProductAmount constructor validates positive values, so we test with zero
     });
   });
 
   describe('removeItem', () => {
     it('should remove an existing item', () => {
-      bundle.addItem('ITEM-001', 2);
-      bundle.addItem('ITEM-002', 1);
+      bundle.addItem('ITEM-001', new ProductAmount(2));
+      bundle.addItem('ITEM-002', new ProductAmount(1));
 
       bundle.removeItem('ITEM-001');
 
@@ -89,23 +95,23 @@ describe('BundleEntity', () => {
 
   describe('updateItemQuantity', () => {
     it('should update item quantity', () => {
-      bundle.addItem('ITEM-001', 2);
-      bundle.updateItemQuantity('ITEM-001', 5);
+      bundle.addItem('ITEM-001', new ProductAmount(2));
+      bundle.updateItemQuantity('ITEM-001', new ProductAmount(5));
 
-      expect(bundle.contents[0].quantity).toBe(5);
+      expect(bundle.contents[0].quantity.value).toBe(5);
     });
 
     it('should remove item if quantity is 0', () => {
-      bundle.addItem('ITEM-001', 2);
-      bundle.updateItemQuantity('ITEM-001', 0);
+      bundle.addItem('ITEM-001', new ProductAmount(2));
+      bundle.updateItemQuantity('ITEM-001', ProductAmount.zero());
 
       expect(bundle.contents.length).toBe(0);
     });
 
     it('should throw error if item not found', () => {
-      expect(() => bundle.updateItemQuantity('ITEM-999', 5)).toThrow(
-        'not found in bundle',
-      );
+      expect(() =>
+        bundle.updateItemQuantity('ITEM-999', new ProductAmount(5)),
+      ).toThrow('not found in bundle');
     });
   });
 
@@ -136,9 +142,9 @@ describe('BundleEntity', () => {
 
   describe('getItemIds', () => {
     it('should return all item IDs', () => {
-      bundle.addItem('ITEM-001', 2);
-      bundle.addItem('ITEM-002', 1);
-      bundle.addItem('ITEM-003', 3);
+      bundle.addItem('ITEM-001', new ProductAmount(2));
+      bundle.addItem('ITEM-002', new ProductAmount(1));
+      bundle.addItem('ITEM-003', new ProductAmount(3));
 
       const itemIds = bundle.getItemIds();
 

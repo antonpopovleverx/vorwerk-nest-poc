@@ -1,4 +1,4 @@
-import { Entity, Column, ManyToOne, JoinColumn, PrimaryColumn } from 'typeorm';
+import { Entity, Column, ManyToOne, JoinColumn, PrimaryColumn, AfterLoad, BeforeInsert, BeforeUpdate } from 'typeorm';
 import { TechnicalEntity } from '../../../_common/domain/base/base.entity';
 import { BasketEntity } from './basket.entity';
 import { HttpException, HttpStatus } from '@nestjs/common';
@@ -17,7 +17,7 @@ export class BasketItemEntity extends TechnicalEntity {
   itemId: string;
 
   @Column({ type: 'integer', default: 1, name: 'amount' })
-  private _amount: number;
+  _amount: number;
 
   @ManyToOne(() => BasketEntity, (basket) => basket.items, {
     onDelete: 'CASCADE',
@@ -25,13 +25,18 @@ export class BasketItemEntity extends TechnicalEntity {
   @JoinColumn({ name: 'basket_id' })
   basket: BasketEntity;
 
-  // Value Object getter/setter
-  get amount(): ProductAmount {
-    return ProductAmount.fromJSON(this._amount);
+  // Value Object field
+  amount: ProductAmount;
+
+  @AfterLoad()
+  private afterLoad() {
+    this.amount = ProductAmount.fromJSON(this._amount);
   }
 
-  set amount(value: ProductAmount) {
-    this._amount = value.toJSON();
+  @BeforeInsert()
+  @BeforeUpdate()
+  private beforeSave() {
+    this._amount = this.amount.toJSON();
   }
 
   /**
@@ -46,7 +51,10 @@ export class BasketItemEntity extends TechnicalEntity {
    */
   increaseAmount(by: ProductAmount = ProductAmount.one()): void {
     if (by.isLessThanOrEqual(ProductAmount.zero())) {
-      throw new HttpException('Increment must be positive', HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        'Increment must be positive',
+        HttpStatus.BAD_REQUEST,
+      );
     }
     this.amount = this.amount.add(by);
   }
@@ -56,7 +64,10 @@ export class BasketItemEntity extends TechnicalEntity {
    */
   decreaseAmount(by: ProductAmount = ProductAmount.one()): void {
     if (by.isLessThanOrEqual(ProductAmount.zero())) {
-      throw new HttpException('Decrement must be positive', HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        'Decrement must be positive',
+        HttpStatus.BAD_REQUEST,
+      );
     }
     this.amount = this.amount.subtract(by);
   }

@@ -10,7 +10,10 @@ export class Money {
     public readonly currency: Currency,
   ) {
     if (amount < 0) {
-      throw new HttpException('Money amount cannot be negative', HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        'Money amount cannot be negative',
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 
@@ -23,14 +26,20 @@ export class Money {
     this.assertSameCurrency(other);
     const result = this.amount - other.amount;
     if (result < 0) {
-      throw new HttpException('Money subtraction would result in negative amount', HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        'Money subtraction would result in negative amount',
+        HttpStatus.BAD_REQUEST,
+      );
     }
     return new Money(result, this.currency);
   }
 
   multiply(factor: number): Money {
     if (factor < 0) {
-      throw new HttpException('Cannot multiply money by negative factor', HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        'Cannot multiply money by negative factor',
+        HttpStatus.BAD_REQUEST,
+      );
     }
     return new Money(
       Math.round(this.amount * factor * 100) / 100,
@@ -40,7 +49,10 @@ export class Money {
 
   applyDiscount(discountRate: number): Money {
     if (discountRate < 0 || discountRate > 1) {
-      throw new HttpException('Discount rate must be between 0 and 1', HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        'Discount rate must be between 0 and 1',
+        HttpStatus.BAD_REQUEST,
+      );
     }
     return this.multiply(1 - discountRate);
   }

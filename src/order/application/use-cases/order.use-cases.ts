@@ -5,10 +5,10 @@ import { IOrderRepository } from '../../domain/order/order.repository';
 import { IQuoteRepository } from '../../domain/quote/quote.repository';
 
 /**
- * Create order from quote DTO
+ * Create order from quote command
  */
-export interface CreateOrderFromQuoteDto {
-  quoteId: string;
+export class CreateOrderFromQuoteCommand {
+  quoteId!: string;
 }
 
 /**
@@ -21,24 +21,23 @@ export class OrderUseCases {
     private readonly orderRepository: IOrderRepository,
     @Inject('IQuoteRepository')
     private readonly quoteRepository: IQuoteRepository,
-  ) {}
+  ) { }
 
   /**
    * Create order from quote
    */
   async createOrderFromQuote(
-    dto: CreateOrderFromQuoteDto,
+    command: CreateOrderFromQuoteCommand,
   ): Promise<OrderEntity> {
-    const quote = await this.quoteRepository.findById(dto.quoteId);
+    const quote = await this.quoteRepository.findById(command.quoteId);
     if (!quote) {
-      throw new HttpException(`Quote ${dto.quoteId} not found`, HttpStatus.NOT_FOUND);
+      throw new HttpException(`Quote ${command.quoteId} not found`, HttpStatus.NOT_FOUND);
     }
 
-
     // Check if order already exists for this quote
-    const existingOrder = await this.orderRepository.findByQuoteId(dto.quoteId);
+    const existingOrder = await this.orderRepository.findByQuoteId(command.quoteId);
     if (existingOrder) {
-      throw new HttpException(`Order already exists for quote ${dto.quoteId}`, HttpStatus.CONFLICT);
+      throw new HttpException(`Order already exists for quote ${command.quoteId}`, HttpStatus.CONFLICT);
     }
 
     const order = OrderEntity.createFromQuote(

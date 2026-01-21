@@ -50,10 +50,16 @@ export class ItemDiscountEntity extends TechnicalEntity {
     amount: number,
   ): ItemDiscountEntity {
     if (amount <= 0 || amount >= 1) {
-      throw new HttpException('Discount amount must be between 0 and 1 (exclusive)', HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        'Discount amount must be between 0 and 1 (exclusive)',
+        HttpStatus.BAD_REQUEST,
+      );
     }
     if (validFrom >= validTo) {
-      throw new HttpException('validFrom must be before validTo', HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        'validFrom must be before validTo',
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     const entity = new ItemDiscountEntity();

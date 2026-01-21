@@ -11,31 +11,19 @@ import {
 } from '@nestjs/common';
 import { BasketUseCases } from '../../application/use-cases/basket.use-cases';
 import { CheckoutUseCases } from '../../application/use-cases/checkout.use-cases';
-
-/**
- * Request DTOs
- */
-class AddItemRequest {
-  itemId: string;
-  amount?: number;
-}
-
-class UpdateItemRequest {
-  amount: number;
-}
-
-class AddBundleRequest {
-  bundleId: string;
-  amount?: number;
-}
-
-class UpdateBundleRequest {
-  amount: number;
-}
-
-class CheckoutRequest {
-  businessPartnerId?: string;
-}
+import {
+  BasketPostRequestDto,
+  BasketPutRequestDto,
+  BasketBundlePostRequestDto,
+  BasketBundlePutRequestDto,
+  BasketCheckoutPostRequestDto,
+  BasketGetResponseDto,
+  BasketPricingGetResponseDto,
+  BasketValidationGetResponseDto,
+  BasketCheckoutPreviewGetResponseDto,
+  BasketCheckoutPostResponseDto,
+  BasketSuccessResponseDto,
+} from './basket.dto';
 
 /**
  * Basket controller - handles HTTP requests for basket operations
@@ -51,7 +39,7 @@ export class BasketController {
    * Get basket for user
    */
   @Get(':userId')
-  async getBasket(@Param('userId') userId: string) {
+  async getBasket(@Param('userId') userId: string): Promise<BasketGetResponseDto> {
     const basket = await this.basketUseCases.getBasketForUser(userId);
     return {
       basketId: basket.basketId,
@@ -73,7 +61,10 @@ export class BasketController {
    * Add item to basket
    */
   @Post(':userId/items')
-  async addItem(@Param('userId') userId: string, @Body() body: AddItemRequest) {
+  async addItem(
+    @Param('userId') userId: string,
+    @Body() body: BasketPostRequestDto,
+  ): Promise<BasketSuccessResponseDto> {
     const basket = await this.basketUseCases.addItem({
       userId,
       itemId: body.itemId,
@@ -89,8 +80,8 @@ export class BasketController {
   async updateItem(
     @Param('userId') userId: string,
     @Param('itemId') itemId: string,
-    @Body() body: UpdateItemRequest,
-  ) {
+    @Body() body: BasketPutRequestDto,
+  ): Promise<BasketSuccessResponseDto> {
     try {
       const basket = await this.basketUseCases.updateItem({
         userId,
@@ -113,7 +104,7 @@ export class BasketController {
   async removeItem(
     @Param('userId') userId: string,
     @Param('itemId') itemId: string,
-  ) {
+  ): Promise<BasketSuccessResponseDto> {
     await this.basketUseCases.removeItem({ userId, itemId });
     return { success: true };
   }
@@ -124,8 +115,8 @@ export class BasketController {
   @Post(':userId/bundles')
   async addBundle(
     @Param('userId') userId: string,
-    @Body() body: AddBundleRequest,
-  ) {
+    @Body() body: BasketBundlePostRequestDto,
+  ): Promise<BasketSuccessResponseDto> {
     const basket = await this.basketUseCases.addBundle({
       userId,
       bundleId: body.bundleId,
@@ -141,8 +132,8 @@ export class BasketController {
   async updateBundle(
     @Param('userId') userId: string,
     @Param('bundleId') bundleId: string,
-    @Body() body: UpdateBundleRequest,
-  ) {
+    @Body() body: BasketBundlePutRequestDto,
+  ): Promise<BasketSuccessResponseDto> {
     try {
       const basket = await this.basketUseCases.updateBundle({
         userId,
@@ -165,7 +156,7 @@ export class BasketController {
   async removeBundle(
     @Param('userId') userId: string,
     @Param('bundleId') bundleId: string,
-  ) {
+  ): Promise<BasketSuccessResponseDto> {
     await this.basketUseCases.removeBundle({ userId, bundleId });
     return { success: true };
   }
@@ -174,7 +165,7 @@ export class BasketController {
    * Clear basket
    */
   @Delete(':userId')
-  async clearBasket(@Param('userId') userId: string) {
+  async clearBasket(@Param('userId') userId: string): Promise<BasketSuccessResponseDto> {
     await this.basketUseCases.clearBasket(userId);
     return { success: true };
   }
@@ -183,7 +174,7 @@ export class BasketController {
    * Get basket pricing
    */
   @Get(':userId/pricing')
-  async getPricing(@Param('userId') userId: string) {
+  async getPricing(@Param('userId') userId: string): Promise<BasketPricingGetResponseDto> {
     return this.basketUseCases.getBasketPricing(userId);
   }
 
@@ -191,7 +182,7 @@ export class BasketController {
    * Validate basket
    */
   @Get(':userId/validate')
-  async validateBasket(@Param('userId') userId: string) {
+  async validateBasket(@Param('userId') userId: string): Promise<BasketValidationGetResponseDto> {
     return this.basketUseCases.validateBasket(userId);
   }
 
@@ -199,7 +190,7 @@ export class BasketController {
    * Preview checkout
    */
   @Get(':userId/checkout/preview')
-  async previewCheckout(@Param('userId') userId: string) {
+  async previewCheckout(@Param('userId') userId: string): Promise<BasketCheckoutPreviewGetResponseDto> {
     return this.checkoutUseCases.previewCheckout(userId);
   }
 
@@ -209,8 +200,8 @@ export class BasketController {
   @Post(':userId/checkout')
   async checkout(
     @Param('userId') userId: string,
-    @Body() body: CheckoutRequest,
-  ) {
+    @Body() body: BasketCheckoutPostRequestDto,
+  ): Promise<BasketCheckoutPostResponseDto> {
     const result = await this.checkoutUseCases.checkout({
       userId,
       businessPartnerId: body.businessPartnerId,

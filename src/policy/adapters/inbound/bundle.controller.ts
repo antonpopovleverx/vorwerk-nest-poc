@@ -10,25 +10,15 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { BundleUseCases } from '../../application/use-cases/bundle.use-cases';
-
-/**
- * Request DTOs for bundle operations
- */
-class CreateBundleRequest {
-  name: string;
-  description: string;
-  basePrice: number;
-  discountRate: number;
-  items?: Array<{ itemId: string; quantity: number }>;
-}
-
-class UpdateBundleRequest {
-  name?: string;
-  description?: string;
-  basePrice?: number;
-  discountRate?: number;
-  isActive?: boolean;
-}
+import {
+  BundlePostRequestDto,
+  BundlePutRequestDto,
+  BundleItemPostRequestDto,
+  BundleItemPutRequestDto,
+  BundleGetResponseDto,
+  BundleGetQueryResponseDto,
+  BundleSuccessResponseDto,
+} from './bundle.dto';
 
 /**
  * Bundle controller - handles HTTP requests for bundle management
@@ -41,7 +31,9 @@ export class BundleController {
    * Create a new bundle
    */
   @Post()
-  async createBundle(@Body() dto: CreateBundleRequest) {
+  async createBundle(
+    @Body() dto: BundlePostRequestDto,
+  ): Promise<BundleGetResponseDto> {
     const bundle = await this.bundleUseCases.createBundle(dto);
     return this.mapBundleToResponse(bundle);
   }
@@ -50,25 +42,27 @@ export class BundleController {
    * Get all bundles
    */
   @Get()
-  async getAllBundles() {
+  async getAllBundles(): Promise<BundleGetQueryResponseDto> {
     const bundles = await this.bundleUseCases.getAllBundles();
-    return bundles.map((b) => this.mapBundleToResponse(b));
+    return { bundles: bundles.map((b) => this.mapBundleToResponse(b)) };
   }
 
   /**
    * Get active bundles only
    */
   @Get('active')
-  async getActiveBundles() {
+  async getActiveBundles(): Promise<BundleGetQueryResponseDto> {
     const bundles = await this.bundleUseCases.getActiveBundles();
-    return bundles.map((b) => this.mapBundleToResponse(b));
+    return { bundles: bundles.map((b) => this.mapBundleToResponse(b)) };
   }
 
   /**
    * Get bundle by ID
    */
   @Get(':bundleId')
-  async getBundle(@Param('bundleId') bundleId: string) {
+  async getBundle(
+    @Param('bundleId') bundleId: string,
+  ): Promise<BundleGetResponseDto> {
     const bundle = await this.bundleUseCases.getBundle(bundleId);
     if (!bundle) {
       throw new HttpException('Bundle not found', HttpStatus.NOT_FOUND);
@@ -82,8 +76,8 @@ export class BundleController {
   @Put(':bundleId')
   async updateBundle(
     @Param('bundleId') bundleId: string,
-    @Body() dto: UpdateBundleRequest,
-  ) {
+    @Body() dto: BundlePutRequestDto,
+  ): Promise<BundleGetResponseDto> {
     const bundle = await this.bundleUseCases.updateBundle(bundleId, dto);
     if (!bundle) {
       throw new HttpException('Bundle not found', HttpStatus.NOT_FOUND);
@@ -95,7 +89,9 @@ export class BundleController {
    * Delete bundle
    */
   @Delete(':bundleId')
-  async deleteBundle(@Param('bundleId') bundleId: string) {
+  async deleteBundle(
+    @Param('bundleId') bundleId: string,
+  ): Promise<BundleSuccessResponseDto> {
     await this.bundleUseCases.deleteBundle(bundleId);
     return { success: true };
   }
@@ -106,8 +102,8 @@ export class BundleController {
   @Post(':bundleId/items')
   async addItemToBundle(
     @Param('bundleId') bundleId: string,
-    @Body() body: { itemId: string; quantity: number },
-  ) {
+    @Body() body: BundleItemPostRequestDto,
+  ): Promise<BundleGetResponseDto> {
     const bundle = await this.bundleUseCases.addItemToBundle(bundleId, body);
     if (!bundle) {
       throw new HttpException('Bundle not found', HttpStatus.NOT_FOUND);
@@ -122,8 +118,8 @@ export class BundleController {
   async updateBundleItem(
     @Param('bundleId') bundleId: string,
     @Param('itemId') itemId: string,
-    @Body() body: { quantity: number },
-  ) {
+    @Body() body: BundleItemPutRequestDto,
+  ): Promise<BundleGetResponseDto> {
     try {
       const bundle = await this.bundleUseCases.updateBundleItemQuantity(
         bundleId,
@@ -149,7 +145,7 @@ export class BundleController {
   async removeItemFromBundle(
     @Param('bundleId') bundleId: string,
     @Param('itemId') itemId: string,
-  ) {
+  ): Promise<BundleGetResponseDto> {
     const bundle = await this.bundleUseCases.removeItemFromBundle(
       bundleId,
       itemId,
@@ -160,14 +156,14 @@ export class BundleController {
     return this.mapBundleToResponse(bundle);
   }
 
-  private mapBundleToResponse(bundle: any) {
+  private mapBundleToResponse(bundle: any): BundleGetResponseDto {
     return {
       bundleId: bundle.bundleId,
       name: bundle.name,
       description: bundle.description,
-      basePrice: bundle.basePrice,
+      basePrice: bundle.basePrice.amount,
       discountRate: bundle.discountRate,
-      discountedPrice: bundle.getDiscountedPrice(),
+      discountedPrice: bundle.getDiscountedPrice().amount,
       isActive: bundle.isActive,
       contents:
         bundle.contents?.map((c: any) => ({

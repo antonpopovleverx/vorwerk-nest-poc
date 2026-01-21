@@ -1,4 +1,5 @@
 import { BasketEntity } from './basket.entity';
+import { ProductAmount } from '../../../_common/domain/value-objects/product-amount.value-object';
 
 describe('BasketEntity', () => {
   let basket: BasketEntity;
@@ -155,8 +156,8 @@ describe('BasketEntity', () => {
 
   describe('createSnapshot', () => {
     it('should create a snapshot of basket contents', () => {
-      basket.addItem('ITEM-001', 2);
-      basket.addBundle('BUNDLE-001', 1);
+      basket.addItem('ITEM-001', new ProductAmount(2));
+      basket.addBundle('BUNDLE-001', new ProductAmount(1));
 
       const snapshot = basket.createSnapshot();
 

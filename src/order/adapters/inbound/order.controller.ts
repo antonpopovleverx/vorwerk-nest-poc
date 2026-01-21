@@ -9,6 +9,14 @@ import {
 import { OrderUseCases } from '../../application/use-cases/order.use-cases';
 import { OrderSagaUseCases } from '../../application/use-cases/order-saga.use-cases';
 import { QuoteUseCases } from '../../application/use-cases/quote.use-cases';
+import {
+  OrderGetResponseDto,
+  OrderGetQueryResponseDto,
+  QuoteGetResponseDto,
+  OrderSagaExecutionResponseDto,
+  OrderPaymentResponseDto,
+  OrderDeliveryResponseDto,
+} from './order.dto';
 
 /**
  * Order controller - handles HTTP requests for order operations
@@ -25,7 +33,7 @@ export class OrderController {
    * Get order by ID
    */
   @Get(':orderId')
-  async getOrder(@Param('orderId') orderId: string) {
+  async getOrder(@Param('orderId') orderId: string): Promise<OrderGetResponseDto> {
     const order = await this.orderUseCases.getOrder(orderId);
     if (!order) {
       throw new HttpException('Order not found', HttpStatus.NOT_FOUND);
@@ -37,16 +45,16 @@ export class OrderController {
    * Get orders for user
    */
   @Get('user/:userId')
-  async getOrdersForUser(@Param('userId') userId: string) {
+  async getOrdersForUser(@Param('userId') userId: string): Promise<OrderGetQueryResponseDto> {
     const orders = await this.orderUseCases.getOrdersForUser(userId);
-    return orders.map((o) => this.mapOrderToResponse(o));
+    return { orders: orders.map((o) => this.mapOrderToResponse(o)) };
   }
 
   /**
    * Create order from quote and execute saga
    */
   @Post('from-quote/:quoteId')
-  async createOrderFromQuote(@Param('quoteId') quoteId: string) {
+  async createOrderFromQuote(@Param('quoteId') quoteId: string): Promise<OrderSagaExecutionResponseDto> {
     try {
       // Create order
       const order = await this.orderUseCases.createOrderFromQuote({ quoteId });
@@ -58,7 +66,7 @@ export class OrderController {
 
       return {
         success: sagaResult.success,
-        order: this.mapOrderToResponse(sagaResult.order),
+        order: sagaResult.order ? this.mapOrderToResponse(sagaResult.order) : undefined,
         error: sagaResult.error,
       };
     } catch (error) {
@@ -73,7 +81,7 @@ export class OrderController {
    * Execute saga for existing order
    */
   @Post(':orderId/execute-saga')
-  async executeSaga(@Param('orderId') orderId: string) {
+  async executeSaga(@Param('orderId') orderId: string): Promise<OrderSagaExecutionResponseDto> {
     const result = await this.orderSagaUseCases.executeOrderSaga(orderId);
 
     if (!result.order) {
@@ -91,7 +99,7 @@ export class OrderController {
    * Execute payment step only
    */
   @Post(':orderId/payment')
-  async executePayment(@Param('orderId') orderId: string) {
+  async executePayment(@Param('orderId') orderId: string): Promise<OrderPaymentResponseDto> {
     const result = await this.orderSagaUseCases.executePaymentStep(orderId);
 
     if (!result.order) {
@@ -109,7 +117,7 @@ export class OrderController {
    * Execute delivery step only
    */
   @Post(':orderId/delivery')
-  async executeDelivery(@Param('orderId') orderId: string) {
+  async executeDelivery(@Param('orderId') orderId: string): Promise<OrderDeliveryResponseDto> {
     const result = await this.orderSagaUseCases.executeDeliveryStep(orderId);
 
     if (!result.order) {
@@ -127,7 +135,7 @@ export class OrderController {
    * Get quote by ID
    */
   @Get('quotes/:quoteId')
-  async getQuote(@Param('quoteId') quoteId: string) {
+  async getQuote(@Param('quoteId') quoteId: string): Promise<QuoteGetResponseDto> {
     const quote = await this.quoteUseCases.getQuote(quoteId);
     if (!quote) {
       throw new HttpException('Quote not found', HttpStatus.NOT_FOUND);
@@ -135,7 +143,7 @@ export class OrderController {
     return {
       quoteId: quote.quoteId,
       userId: quote.userId,
-      businessPartnerId: quote.businessPartnerId,
+      businessPartnerId: quote.businessPartnerId || undefined,
       price: quote.price,
       currency: quote.currency,
       basketSnapshot: quote.basketSnapshot,
@@ -144,12 +152,12 @@ export class OrderController {
     };
   }
 
-  private mapOrderToResponse(order: any) {
+  private mapOrderToResponse(order: any): OrderGetResponseDto {
     return {
       orderId: order.orderId,
       userId: order.userId,
       quoteId: order.quoteId,
-      businessPartnerId: order.businessPartnerId,
+      businessPartnerId: order.businessPartnerId || undefined,
       status: order.status,
       paymentReference: order.paymentReference,
       deliveryReference: order.deliveryReference,

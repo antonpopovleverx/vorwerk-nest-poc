@@ -1,23 +1,25 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { BundleEntity } from '../../domain/price-policy/bundle/bundle.entity';
-import { IBundleRepository } from '../../domain/price-policy/bundle/bundle.repository';
+import { BundleEntity } from '../../domain/price-policy/bundle.entity';
+import { IBundleRepository } from '../../domain/price-policy/bundle.repository';
 import { ProductAmount } from '../../../_common/domain/value-objects/product-amount.value-object';
+import { Money } from '../../../_common/domain/value-objects/money.value-object';
+import { Currency } from '../../../_common/domain/enums/currency.enum';
 
 /**
  * Create bundle command
  */
-export interface CreateBundleCommand {
-  name: string;
-  description: string;
-  basePrice: number;
-  discountRate: number;
+export class CreateBundleCommand {
+  name!: string;
+  description!: string;
+  basePrice!: number;
+  discountRate!: number;
   items?: Array<{ itemId: string; quantity: number }>;
 }
 
 /**
  * Update bundle command
  */
-export interface UpdateBundleCommand {
+export class UpdateBundleCommand {
   name?: string;
   description?: string;
   basePrice?: number;
@@ -28,9 +30,15 @@ export interface UpdateBundleCommand {
 /**
  * Bundle item command
  */
-export interface BundleItemCommand {
-  itemId: string;
-  quantity: number;
+export class BundleItemCommand {
+  itemId!: string;
+  quantity!: number;
+}
+
+// Internal command with ProductAmount
+class BundleItemWithAmountCommand {
+  itemId!: string;
+  quantity!: ProductAmount;
 }
 
 /**
@@ -47,10 +55,11 @@ export class BundleUseCases {
    * Create a new bundle
    */
   async createBundle(command: CreateBundleCommand): Promise<BundleEntity> {
+    const basePrice = new Money(command.basePrice, Currency.EUR);
     const bundle = BundleEntity.create(
       command.name,
       command.description,
-      command.basePrice,
+      basePrice,
       command.discountRate,
     );
 
@@ -95,15 +104,16 @@ export class BundleUseCases {
     const bundle = await this.bundleRepository.findById(bundleId);
     if (!bundle) return null;
 
-    if (command.name !== undefined) bundle.name = command.name;
-    if (command.description !== undefined) bundle.description = command.description;
-    if (command.basePrice !== undefined) bundle.basePrice = command.basePrice;
-    if (command.discountRate !== undefined)
-      bundle.setDiscountRate(command.discountRate);
-    if (command.isActive !== undefined) {
-      command.isActive ? bundle.activate() : bundle.deactivate();
-    }
+    // Convert basePrice to Money if provided
+    const updateDto = {
+      ...command,
+      basePrice:
+        command.basePrice !== undefined
+          ? new Money(command.basePrice, bundle.basePrice.currency)
+          : undefined,
+    };
 
+    bundle.updateFromDto(updateDto);
     return this.bundleRepository.save(bundle);
   }
 

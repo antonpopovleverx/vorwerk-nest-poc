@@ -8,18 +8,19 @@ import {
 import { BasketUseCases } from './basket.use-cases';
 
 /**
- * Checkout request DTO
+ * Checkout command
  */
-export interface CheckoutRequestDto {
-  userId: string;
+
+export class CheckoutCommand {
+  userId!: string;
   businessPartnerId?: string;
 }
 
 /**
  * Checkout result
  */
-export interface CheckoutResult {
-  success: boolean;
+export class CheckoutResult {
+  success!: boolean;
   quote?: CreateQuoteResult;
   error?: string;
   validationErrors?: Array<{ checkName: string; message: string }>;
@@ -43,10 +44,10 @@ export class CheckoutUseCases {
   /**
    * Checkout basket - validates, creates quote, and optionally clears basket
    */
-  async checkout(dto: CheckoutRequestDto): Promise<CheckoutResult> {
+  async checkout(command: CheckoutCommand): Promise<CheckoutResult> {
     try {
       // 1. Validate basket
-      const validation = await this.basketUseCases.validateBasket(dto.userId);
+      const validation = await this.basketUseCases.validateBasket(command.userId);
       if (!validation.valid) {
         return {
           success: false,
@@ -57,7 +58,7 @@ export class CheckoutUseCases {
 
       // 2. Get basket snapshot
       const basketSnapshot = await this.basketUseCases.getBasketSnapshot(
-        dto.userId,
+        command.userId,
       );
 
       if (
@@ -78,11 +79,11 @@ export class CheckoutUseCases {
       const quote = await this.orderService.createQuote(
         basketSnapshot,
         policySnapshot,
-        dto.businessPartnerId,
+        command.businessPartnerId,
       );
 
       // 5. Clear basket after successful checkout
-      await this.basketUseCases.clearBasket(dto.userId);
+      await this.basketUseCases.clearBasket(command.userId);
 
       return {
         success: true,

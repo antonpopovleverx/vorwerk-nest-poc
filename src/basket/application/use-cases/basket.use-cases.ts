@@ -18,43 +18,43 @@ import { ProductAmount } from '../../../_common/domain/value-objects/product-amo
 /**
  * Commands for basket operations
  */
-export interface AddItemCommand {
-  userId: string;
-  itemId: string;
+export class AddItemCommand {
+  userId!: string;
+  itemId!: string;
   amount?: number;
 }
 
-export interface UpdateItemCommand {
-  userId: string;
-  itemId: string;
-  amount: number;
+export class UpdateItemCommand {
+  userId!: string;
+  itemId!: string;
+  amount!: number;
 }
 
-export interface RemoveItemCommand {
-  userId: string;
-  itemId: string;
+export class RemoveItemCommand {
+  userId!: string;
+  itemId!: string;
 }
 
-export interface AddBundleCommand {
-  userId: string;
-  bundleId: string;
+export class AddBundleCommand {
+  userId!: string;
+  bundleId!: string;
   amount?: number;
 }
 
-export interface UpdateBundleCommand {
-  userId: string;
-  bundleId: string;
-  amount: number;
+export class UpdateBundleCommand {
+  userId!: string;
+  bundleId!: string;
+  amount!: number;
 }
 
-export interface RemoveBundleCommand {
-  userId: string;
-  bundleId: string;
+export class RemoveBundleCommand {
+  userId!: string;
+  bundleId!: string;
 }
 
-export interface BasketValidationResult {
-  valid: boolean;
-  failedChecks: Array<{
+export class BasketValidationResult {
+  valid!: boolean;
+  failedChecks!: Array<{
     checkName: BasketPolicyCheckName;
     message: string;
   }>;

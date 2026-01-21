@@ -4,12 +4,12 @@ import { BasketSnapshot } from '../../domain/basket/basket.entity';
 /**
  * Quote creation result
  */
-export interface CreateQuoteResult {
-  quoteId: string;
-  userId: string;
-  totalPrice: number;
-  currency: string;
-  createdAt: Date;
+export class CreateQuoteResult {
+  quoteId!: string;
+  userId!: string;
+  totalPrice!: number;
+  currency!: string;
+  createdAt!: Date;
 }
 
 /**
