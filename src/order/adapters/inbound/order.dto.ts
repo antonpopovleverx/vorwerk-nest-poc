@@ -158,8 +158,6 @@ export class OrderSagaExecutionResponseDto {
 
   @ApiPropertyOptional({
     description: 'The resulting order if execution was successful',
-    type: 'object',
-    $ref: '#/components/schemas/OrderGetResponseDto',
   })
   order?: OrderGetResponseDto;
 
@@ -182,8 +180,6 @@ export class OrderPaymentResponseDto {
 
   @ApiPropertyOptional({
     description: 'The updated order after payment processing',
-    type: 'object',
-    $ref: '#/components/schemas/OrderGetResponseDto',
   })
   order?: OrderGetResponseDto;
 
@@ -206,8 +202,6 @@ export class OrderDeliveryResponseDto {
 
   @ApiPropertyOptional({
     description: 'The updated order after delivery processing',
-    type: 'object',
-    $ref: '#/components/schemas/OrderGetResponseDto',
   })
   order?: OrderGetResponseDto;
 
