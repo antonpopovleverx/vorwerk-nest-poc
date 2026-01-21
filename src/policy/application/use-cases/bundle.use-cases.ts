@@ -113,6 +113,7 @@ export class BundleUseCases {
     }
 
     const savedBundle = await this.bundleRepository.save(bundle);
+
     return this.mapEntityToData(savedBundle);
   }
 
@@ -127,6 +128,7 @@ export class BundleUseCases {
         HttpStatus.NOT_FOUND,
       );
     }
+
     return this.mapEntityToData(bundle);
   }
 
@@ -135,6 +137,7 @@ export class BundleUseCases {
    */
   async getAllBundles(): Promise<BundleData[]> {
     const bundles = await this.bundleRepository.findAll();
+
     return bundles.map((bundle) => this.mapEntityToData(bundle));
   }
 
@@ -143,6 +146,7 @@ export class BundleUseCases {
    */
   async getActiveBundles(): Promise<BundleData[]> {
     const bundles = await this.bundleRepository.findActive();
+
     return bundles.map((bundle) => this.mapEntityToData(bundle));
   }
 
@@ -171,7 +175,9 @@ export class BundleUseCases {
     };
 
     bundle.setNew(bundlePatch);
+
     const savedBundle = await this.bundleRepository.save(bundle);
+
     return this.mapEntityToData(savedBundle);
   }
 
@@ -199,7 +205,9 @@ export class BundleUseCases {
 
     const quantity = new ProductAmount(item.quantity);
     bundle.addItem(item.itemId, quantity);
+
     const savedBundle = await this.bundleRepository.save(bundle);
+
     return this.mapEntityToData(savedBundle);
   }
 
@@ -219,7 +227,9 @@ export class BundleUseCases {
     }
 
     bundle.removeItem(itemId);
+
     const savedBundle = await this.bundleRepository.save(bundle);
+
     return this.mapEntityToData(savedBundle);
   }
 
@@ -241,7 +251,9 @@ export class BundleUseCases {
 
     const productAmount = new ProductAmount(quantity);
     bundle.updateItemQuantity(itemId, productAmount);
+
     const savedBundle = await this.bundleRepository.save(bundle);
+
     return this.mapEntityToData(savedBundle);
   }
 }

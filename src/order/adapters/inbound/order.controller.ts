@@ -14,7 +14,10 @@ import {
   ApiNotFoundResponse,
   ApiParam,
 } from '@nestjs/swagger';
-import { OrderUseCases, OrderData } from '../../application/use-cases/order.use-cases';
+import {
+  OrderUseCases,
+  OrderData,
+} from '../../application/use-cases/order.use-cases';
 import { OrderSagaUseCases } from '../../application/use-cases/order-saga.use-cases';
 import { QuoteUseCases } from '../../application/use-cases/quote.use-cases';
 import {
@@ -44,7 +47,8 @@ export class OrderController {
   @Get(':orderId')
   @ApiOperation({
     summary: 'Get order by ID',
-    description: 'Retrieves detailed information about a specific order by its unique identifier.',
+    description:
+      'Retrieves detailed information about a specific order by its unique identifier.',
   })
   @ApiParam({
     name: 'orderId',
@@ -116,7 +120,8 @@ export class OrderController {
   @Post('from-quote/:quoteId')
   @ApiOperation({
     summary: 'Create order from quote',
-    description: 'Creates a new order from an existing quote and automatically executes the order fulfillment saga (payment and delivery).',
+    description:
+      'Creates a new order from an existing quote and automatically executes the order fulfillment saga (payment and delivery).',
   })
   @ApiParam({
     name: 'quoteId',
@@ -129,12 +134,16 @@ export class OrderController {
     type: OrderSagaExecutionResponseDto,
   })
   @ApiBadRequestResponse({
-    description: 'Quote not found, invalid quote state, or saga execution failed',
+    description:
+      'Quote not found, invalid quote state, or saga execution failed',
     schema: {
       type: 'object',
       properties: {
         statusCode: { type: 'number', example: 400 },
-        message: { type: 'string', example: 'Quote not found or quote already used to create order' },
+        message: {
+          type: 'string',
+          example: 'Quote not found or quote already used to create order',
+        },
         error: { type: 'string', example: 'Bad Request' },
       },
     },
@@ -176,7 +185,8 @@ export class OrderController {
   @Post(':orderId/execute-saga')
   @ApiOperation({
     summary: 'Execute order fulfillment saga',
-    description: 'Executes the complete order fulfillment saga (payment and delivery) for an existing order.',
+    description:
+      'Executes the complete order fulfillment saga (payment and delivery) for an existing order.',
   })
   @ApiParam({
     name: 'orderId',
@@ -232,7 +242,8 @@ export class OrderController {
   @Post(':orderId/payment')
   @ApiOperation({
     summary: 'Execute payment step',
-    description: 'Executes only the payment processing step of the order fulfillment saga.',
+    description:
+      'Executes only the payment processing step of the order fulfillment saga.',
   })
   @ApiParam({
     name: 'orderId',
@@ -261,7 +272,10 @@ export class OrderController {
       type: 'object',
       properties: {
         statusCode: { type: 'number', example: 400 },
-        message: { type: 'string', example: 'Payment already processed for this order' },
+        message: {
+          type: 'string',
+          example: 'Payment already processed for this order',
+        },
         error: { type: 'string', example: 'Bad Request' },
       },
     },
@@ -288,7 +302,8 @@ export class OrderController {
   @Post(':orderId/delivery')
   @ApiOperation({
     summary: 'Execute delivery step',
-    description: 'Executes only the delivery processing step of the order fulfillment saga.',
+    description:
+      'Executes only the delivery processing step of the order fulfillment saga.',
   })
   @ApiParam({
     name: 'orderId',
@@ -312,12 +327,16 @@ export class OrderController {
     },
   })
   @ApiBadRequestResponse({
-    description: 'Delivery already processed, payment not completed, or order in wrong state',
+    description:
+      'Delivery already processed, payment not completed, or order in wrong state',
     schema: {
       type: 'object',
       properties: {
         statusCode: { type: 'number', example: 400 },
-        message: { type: 'string', example: 'Payment must be completed before delivery' },
+        message: {
+          type: 'string',
+          example: 'Payment must be completed before delivery',
+        },
         error: { type: 'string', example: 'Bad Request' },
       },
     },
@@ -344,7 +363,8 @@ export class OrderController {
   @Get('quotes/:quoteId')
   @ApiOperation({
     summary: 'Get quote by ID',
-    description: 'Retrieves detailed information about a specific quote by its unique identifier.',
+    description:
+      'Retrieves detailed information about a specific quote by its unique identifier.',
   })
   @ApiParam({
     name: 'quoteId',

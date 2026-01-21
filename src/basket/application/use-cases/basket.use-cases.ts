@@ -113,6 +113,7 @@ export class BasketUseCases {
    */
   async getBasketForUser(userId: string): Promise<BasketData> {
     const basket = await this.basketRepository.getOrCreateForUser(userId);
+
     return this.mapEntityToData(basket);
   }
 
@@ -123,9 +124,12 @@ export class BasketUseCases {
     const basket = await this.basketRepository.getOrCreateForUser(
       command.userId,
     );
+
     const amount = new ProductAmount(command.amount ?? 1);
     basket.addItem(command.itemId, amount);
+
     const savedBasket = await this.basketRepository.save(basket);
+
     return this.mapEntityToData(savedBasket);
   }
 
@@ -136,9 +140,12 @@ export class BasketUseCases {
     const basket = await this.basketRepository.getOrCreateForUser(
       command.userId,
     );
+
     const amount = new ProductAmount(command.amount);
     basket.updateItemAmount(command.itemId, amount);
+
     const savedBasket = await this.basketRepository.save(basket);
+
     return this.mapEntityToData(savedBasket);
   }
 
@@ -149,8 +156,11 @@ export class BasketUseCases {
     const basket = await this.basketRepository.getOrCreateForUser(
       command.userId,
     );
+
     basket.removeItem(command.itemId);
+
     const savedBasket = await this.basketRepository.save(basket);
+
     return this.mapEntityToData(savedBasket);
   }
 
@@ -161,9 +171,12 @@ export class BasketUseCases {
     const basket = await this.basketRepository.getOrCreateForUser(
       command.userId,
     );
+
     const amount = new ProductAmount(command.amount ?? 1);
     basket.addBundle(command.bundleId, amount);
+
     const savedBasket = await this.basketRepository.save(basket);
+
     return this.mapEntityToData(savedBasket);
   }
 
@@ -174,9 +187,12 @@ export class BasketUseCases {
     const basket = await this.basketRepository.getOrCreateForUser(
       command.userId,
     );
+
     const amount = new ProductAmount(command.amount);
     basket.updateBundleAmount(command.bundleId, amount);
+
     const savedBasket = await this.basketRepository.save(basket);
+
     return this.mapEntityToData(savedBasket);
   }
 
@@ -187,8 +203,11 @@ export class BasketUseCases {
     const basket = await this.basketRepository.getOrCreateForUser(
       command.userId,
     );
+
     basket.removeBundle(command.bundleId);
+
     const savedBasket = await this.basketRepository.save(basket);
+
     return this.mapEntityToData(savedBasket);
   }
 
@@ -197,8 +216,11 @@ export class BasketUseCases {
    */
   async clearBasket(userId: string): Promise<BasketData> {
     const basket = await this.basketRepository.getOrCreateForUser(userId);
+
     basket.clear();
+
     const savedBasket = await this.basketRepository.save(basket);
+
     return this.mapEntityToData(savedBasket);
   }
 
@@ -207,7 +229,9 @@ export class BasketUseCases {
    */
   async getBasketPricing(userId: string): Promise<BasketPricingResult> {
     const basket = await this.basketRepository.getOrCreateForUser(userId);
+
     const snapshot = basket.createSnapshot();
+
     return this.policyService.calculateBasketPricing(snapshot);
   }
 
@@ -249,7 +273,7 @@ export class BasketUseCases {
           });
         }
       }
-    }
+    };
 
     return {
       valid: failedChecks.length === 0,
@@ -262,6 +286,7 @@ export class BasketUseCases {
    */
   async getBasketSnapshot(userId: string): Promise<BasketSnapshot> {
     const basket = await this.basketRepository.getOrCreateForUser(userId);
+
     return basket.createSnapshot();
   }
 

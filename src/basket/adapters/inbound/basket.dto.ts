@@ -120,21 +120,21 @@ export class BasketGetResponseDto {
 export class BasketPricingGetResponseDto {
   @ApiProperty({
     description: 'The subtotal before discounts',
-    example: 150.00,
+    example: 150.0,
     type: 'number',
   })
   subtotal: number;
 
   @ApiProperty({
     description: 'The total discount applied',
-    example: 15.00,
+    example: 15.0,
     type: 'number',
   })
   totalDiscount: number;
 
   @ApiProperty({
     description: 'The final total after discounts',
-    example: 135.00,
+    example: 135.0,
     type: 'number',
   })
   total: number;
@@ -184,9 +184,9 @@ export class BasketCheckoutPreviewGetResponseDto {
     description: 'Pricing information for the checkout',
     type: 'object',
     properties: {
-      subtotal: { type: 'number', example: 150.00 },
-      totalDiscount: { type: 'number', example: 15.00 },
-      total: { type: 'number', example: 135.00 },
+      subtotal: { type: 'number', example: 150.0 },
+      totalDiscount: { type: 'number', example: 15.0 },
+      total: { type: 'number', example: 135.0 },
       currency: { type: 'string', example: 'EUR' },
     },
   })
@@ -221,7 +221,7 @@ export class BasketCheckoutPostResponseDto {
 
   @ApiPropertyOptional({
     description: 'The generated quote information',
-    example: { quoteId: 'quote-123', price: 135.00 },
+    example: { quoteId: 'quote-123', price: 135.0 },
   })
   quote?: any; // TODO: Define proper quote response type
 

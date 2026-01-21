@@ -37,6 +37,7 @@ export class QuoteUseCases {
       dto.policySnapshot,
       dto.businessPartnerId,
     );
+
     return this.quoteRepository.save(quote);
   }
 
@@ -51,6 +52,7 @@ export class QuoteUseCases {
         HttpStatus.NOT_FOUND,
       );
     }
+
     return quote;
   }
 

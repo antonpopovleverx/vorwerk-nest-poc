@@ -162,6 +162,7 @@ export class PricePolicyUseCases {
       itemId,
       this.region,
     );
+
     return price?.getPrice() ?? null;
   }
 
@@ -176,6 +177,7 @@ export class PricePolicyUseCases {
     if (discount?.isCurrentlyValid()) {
       return discount.getDiscountRate();
     }
+
     return null;
   }
 

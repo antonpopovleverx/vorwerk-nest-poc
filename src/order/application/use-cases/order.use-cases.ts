@@ -90,6 +90,7 @@ export class OrderUseCases {
     );
 
     const savedOrder = await this.orderRepository.save(order);
+
     return this.mapEntityToData(savedOrder);
   }
 
@@ -104,6 +105,7 @@ export class OrderUseCases {
         HttpStatus.NOT_FOUND,
       );
     }
+
     return this.mapEntityToData(order);
   }
 
@@ -112,6 +114,7 @@ export class OrderUseCases {
    */
   async getOrderByQuoteId(quoteId: string): Promise<OrderData | null> {
     const order = await this.orderRepository.findByQuoteId(quoteId);
+
     return order ? this.mapEntityToData(order) : null;
   }
 
@@ -120,6 +123,7 @@ export class OrderUseCases {
    */
   async getOrdersForUser(userId: string): Promise<OrderData[]> {
     const orders = await this.orderRepository.findByUserId(userId);
+
     return orders.map((order) => this.mapEntityToData(order));
   }
 
@@ -128,6 +132,7 @@ export class OrderUseCases {
    */
   async getOrdersByStatus(status: OrderStatus): Promise<OrderData[]> {
     const orders = await this.orderRepository.findByStatus(status);
+
     return orders.map((order) => this.mapEntityToData(order));
   }
 
@@ -136,6 +141,7 @@ export class OrderUseCases {
    */
   async updateOrder(order: OrderEntity): Promise<OrderData> {
     const savedOrder = await this.orderRepository.save(order);
+
     return this.mapEntityToData(savedOrder);
   }
 }

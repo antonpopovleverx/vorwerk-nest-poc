@@ -18,7 +18,10 @@ import {
   ApiParam,
   ApiBody,
 } from '@nestjs/swagger';
-import { BasketUseCases, BasketData } from '../../application/use-cases/basket.use-cases';
+import {
+  BasketUseCases,
+  BasketData,
+} from '../../application/use-cases/basket.use-cases';
 import { CheckoutUseCases } from '../../application/use-cases/checkout.use-cases';
 import {
   BasketPostRequestDto,
@@ -51,7 +54,8 @@ export class BasketController {
   @Get(':userId')
   @ApiOperation({
     summary: 'Get user basket',
-    description: 'Retrieves the current basket contents for a specific user, including all items and bundles.',
+    description:
+      'Retrieves the current basket contents for a specific user, including all items and bundles.',
   })
   @ApiParam({
     name: 'userId',
@@ -92,7 +96,8 @@ export class BasketController {
   @Post(':userId/items')
   @ApiOperation({
     summary: 'Add item to basket',
-    description: 'Adds a new item to the user\'s basket or increases the quantity if the item already exists.',
+    description:
+      "Adds a new item to the user's basket or increases the quantity if the item already exists.",
   })
   @ApiParam({
     name: 'userId',
@@ -114,7 +119,10 @@ export class BasketController {
       type: 'object',
       properties: {
         statusCode: { type: 'number', example: 400 },
-        message: { type: 'string', example: 'Item not found or invalid quantity' },
+        message: {
+          type: 'string',
+          example: 'Item not found or invalid quantity',
+        },
         error: { type: 'string', example: 'Bad Request' },
       },
     },
@@ -148,7 +156,8 @@ export class BasketController {
   @Put(':userId/items/:itemId')
   @ApiOperation({
     summary: 'Update item quantity in basket',
-    description: 'Updates the quantity of a specific item in the user\'s basket.',
+    description:
+      "Updates the quantity of a specific item in the user's basket.",
   })
   @ApiParam({
     name: 'userId',
@@ -170,12 +179,16 @@ export class BasketController {
     type: BasketSuccessResponseDto,
   })
   @ApiBadRequestResponse({
-    description: 'Invalid quantity, item not in basket, or business logic error',
+    description:
+      'Invalid quantity, item not in basket, or business logic error',
     schema: {
       type: 'object',
       properties: {
         statusCode: { type: 'number', example: 400 },
-        message: { type: 'string', example: 'Invalid quantity or item not found in basket' },
+        message: {
+          type: 'string',
+          example: 'Invalid quantity or item not found in basket',
+        },
         error: { type: 'string', example: 'Bad Request' },
       },
     },
@@ -186,7 +199,10 @@ export class BasketController {
       type: 'object',
       properties: {
         statusCode: { type: 'number', example: 404 },
-        message: { type: 'string', example: 'User not found or item not in basket' },
+        message: {
+          type: 'string',
+          example: 'User not found or item not in basket',
+        },
         error: { type: 'string', example: 'Not Found' },
       },
     },
@@ -210,7 +226,7 @@ export class BasketController {
   @Delete(':userId/items/:itemId')
   @ApiOperation({
     summary: 'Remove item from basket',
-    description: 'Completely removes a specific item from the user\'s basket.',
+    description: "Completely removes a specific item from the user's basket.",
   })
   @ApiParam({
     name: 'userId',
@@ -233,7 +249,10 @@ export class BasketController {
       type: 'object',
       properties: {
         statusCode: { type: 'number', example: 404 },
-        message: { type: 'string', example: 'User not found or item not in basket' },
+        message: {
+          type: 'string',
+          example: 'User not found or item not in basket',
+        },
         error: { type: 'string', example: 'Not Found' },
       },
     },
@@ -252,7 +271,8 @@ export class BasketController {
   @Post(':userId/bundles')
   @ApiOperation({
     summary: 'Add bundle to basket',
-    description: 'Adds a bundle to the user\'s basket or increases the quantity if the bundle already exists.',
+    description:
+      "Adds a bundle to the user's basket or increases the quantity if the bundle already exists.",
   })
   @ApiParam({
     name: 'userId',
@@ -274,7 +294,10 @@ export class BasketController {
       type: 'object',
       properties: {
         statusCode: { type: 'number', example: 400 },
-        message: { type: 'string', example: 'Bundle not found or invalid quantity' },
+        message: {
+          type: 'string',
+          example: 'Bundle not found or invalid quantity',
+        },
         error: { type: 'string', example: 'Bad Request' },
       },
     },
@@ -285,7 +308,10 @@ export class BasketController {
       type: 'object',
       properties: {
         statusCode: { type: 'number', example: 404 },
-        message: { type: 'string', example: 'User not found or bundle not found' },
+        message: {
+          type: 'string',
+          example: 'User not found or bundle not found',
+        },
         error: { type: 'string', example: 'Not Found' },
       },
     },
@@ -308,7 +334,8 @@ export class BasketController {
   @Put(':userId/bundles/:bundleId')
   @ApiOperation({
     summary: 'Update bundle quantity in basket',
-    description: 'Updates the quantity of a specific bundle in the user\'s basket.',
+    description:
+      "Updates the quantity of a specific bundle in the user's basket.",
   })
   @ApiParam({
     name: 'userId',
@@ -330,12 +357,16 @@ export class BasketController {
     type: BasketSuccessResponseDto,
   })
   @ApiBadRequestResponse({
-    description: 'Invalid quantity, bundle not in basket, or business logic error',
+    description:
+      'Invalid quantity, bundle not in basket, or business logic error',
     schema: {
       type: 'object',
       properties: {
         statusCode: { type: 'number', example: 400 },
-        message: { type: 'string', example: 'Invalid quantity or bundle not found in basket' },
+        message: {
+          type: 'string',
+          example: 'Invalid quantity or bundle not found in basket',
+        },
         error: { type: 'string', example: 'Bad Request' },
       },
     },
@@ -346,7 +377,10 @@ export class BasketController {
       type: 'object',
       properties: {
         statusCode: { type: 'number', example: 404 },
-        message: { type: 'string', example: 'User not found or bundle not in basket' },
+        message: {
+          type: 'string',
+          example: 'User not found or bundle not in basket',
+        },
         error: { type: 'string', example: 'Not Found' },
       },
     },
@@ -370,7 +404,7 @@ export class BasketController {
   @Delete(':userId/bundles/:bundleId')
   @ApiOperation({
     summary: 'Remove bundle from basket',
-    description: 'Completely removes a specific bundle from the user\'s basket.',
+    description: "Completely removes a specific bundle from the user's basket.",
   })
   @ApiParam({
     name: 'userId',
@@ -393,7 +427,10 @@ export class BasketController {
       type: 'object',
       properties: {
         statusCode: { type: 'number', example: 404 },
-        message: { type: 'string', example: 'User not found or bundle not in basket' },
+        message: {
+          type: 'string',
+          example: 'User not found or bundle not in basket',
+        },
         error: { type: 'string', example: 'Not Found' },
       },
     },
@@ -412,7 +449,7 @@ export class BasketController {
   @Delete(':userId')
   @ApiOperation({
     summary: 'Clear entire basket',
-    description: 'Removes all items and bundles from the user\'s basket.',
+    description: "Removes all items and bundles from the user's basket.",
   })
   @ApiParam({
     name: 'userId',
@@ -448,7 +485,8 @@ export class BasketController {
   @Get(':userId/pricing')
   @ApiOperation({
     summary: 'Get basket pricing information',
-    description: 'Calculates and returns the pricing breakdown for the user\'s basket, including subtotal, discounts, and total.',
+    description:
+      "Calculates and returns the pricing breakdown for the user's basket, including subtotal, discounts, and total.",
   })
   @ApiParam({
     name: 'userId',
@@ -466,7 +504,10 @@ export class BasketController {
       type: 'object',
       properties: {
         statusCode: { type: 'number', example: 404 },
-        message: { type: 'string', example: 'User not found or basket is empty' },
+        message: {
+          type: 'string',
+          example: 'User not found or basket is empty',
+        },
         error: { type: 'string', example: 'Not Found' },
       },
     },
@@ -483,7 +524,8 @@ export class BasketController {
   @Get(':userId/validate')
   @ApiOperation({
     summary: 'Validate basket contents',
-    description: 'Validates the basket contents against business rules and returns any validation errors.',
+    description:
+      'Validates the basket contents against business rules and returns any validation errors.',
   })
   @ApiParam({
     name: 'userId',
@@ -518,7 +560,8 @@ export class BasketController {
   @Get(':userId/checkout/preview')
   @ApiOperation({
     summary: 'Preview checkout process',
-    description: 'Provides a preview of the checkout process, including final pricing and validation status.',
+    description:
+      'Provides a preview of the checkout process, including final pricing and validation status.',
   })
   @ApiParam({
     name: 'userId',
@@ -536,7 +579,10 @@ export class BasketController {
       type: 'object',
       properties: {
         statusCode: { type: 'number', example: 404 },
-        message: { type: 'string', example: 'User not found or basket is empty' },
+        message: {
+          type: 'string',
+          example: 'User not found or basket is empty',
+        },
         error: { type: 'string', example: 'Not Found' },
       },
     },
@@ -553,7 +599,8 @@ export class BasketController {
   @Post(':userId/checkout')
   @ApiOperation({
     summary: 'Checkout basket',
-    description: 'Processes the checkout for the user\'s basket, creating an order and initiating the order fulfillment process.',
+    description:
+      "Processes the checkout for the user's basket, creating an order and initiating the order fulfillment process.",
   })
   @ApiParam({
     name: 'userId',
@@ -585,7 +632,10 @@ export class BasketController {
                 type: 'object',
                 properties: {
                   checkName: { type: 'string', example: 'minimum_order_value' },
-                  message: { type: 'string', example: 'Order must be at least €10.00' },
+                  message: {
+                    type: 'string',
+                    example: 'Order must be at least €10.00',
+                  },
                 },
               },
             },
@@ -601,7 +651,10 @@ export class BasketController {
       type: 'object',
       properties: {
         statusCode: { type: 'number', example: 404 },
-        message: { type: 'string', example: 'User not found or basket is empty' },
+        message: {
+          type: 'string',
+          example: 'User not found or basket is empty',
+        },
         error: { type: 'string', example: 'Not Found' },
       },
     },

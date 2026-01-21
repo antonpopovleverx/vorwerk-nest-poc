@@ -18,7 +18,10 @@ import {
   ApiParam,
   ApiBody,
 } from '@nestjs/swagger';
-import { BundleUseCases, BundleData } from '../../application/use-cases/bundle.use-cases';
+import {
+  BundleUseCases,
+  BundleData,
+} from '../../application/use-cases/bundle.use-cases';
 import {
   BundlePostRequestDto,
   BundlePutRequestDto,
@@ -43,11 +46,13 @@ export class BundleController {
   @Post()
   @ApiOperation({
     summary: 'Create a new bundle',
-    description: 'Creates a new product bundle with specified items, pricing, and discount information.',
+    description:
+      'Creates a new product bundle with specified items, pricing, and discount information.',
   })
   @ApiBody({
     type: BundlePostRequestDto,
-    description: 'Bundle creation data including name, description, pricing, and items',
+    description:
+      'Bundle creation data including name, description, pricing, and items',
   })
   @ApiResponse({
     status: 201,
@@ -60,7 +65,10 @@ export class BundleController {
       type: 'object',
       properties: {
         statusCode: { type: 'number', example: 400 },
-        message: { type: 'string', example: 'Invalid discount rate or missing required fields' },
+        message: {
+          type: 'string',
+          example: 'Invalid discount rate or missing required fields',
+        },
         error: { type: 'string', example: 'Bad Request' },
       },
     },
@@ -78,7 +86,8 @@ export class BundleController {
   @Get()
   @ApiOperation({
     summary: 'Get all bundles',
-    description: 'Retrieves a list of all bundles in the system, both active and inactive.',
+    description:
+      'Retrieves a list of all bundles in the system, both active and inactive.',
   })
   @ApiResponse({
     status: 200,
@@ -96,7 +105,8 @@ export class BundleController {
   @Get('active')
   @ApiOperation({
     summary: 'Get active bundles',
-    description: 'Retrieves a list of all currently active bundles available for purchase.',
+    description:
+      'Retrieves a list of all currently active bundles available for purchase.',
   })
   @ApiResponse({
     status: 200,
@@ -114,7 +124,8 @@ export class BundleController {
   @Get(':bundleId')
   @ApiOperation({
     summary: 'Get bundle by ID',
-    description: 'Retrieves detailed information about a specific bundle by its unique identifier.',
+    description:
+      'Retrieves detailed information about a specific bundle by its unique identifier.',
   })
   @ApiParam({
     name: 'bundleId',
@@ -150,7 +161,8 @@ export class BundleController {
   @Put(':bundleId')
   @ApiOperation({
     summary: 'Update bundle',
-    description: 'Updates an existing bundle with new information such as name, description, pricing, or active status.',
+    description:
+      'Updates an existing bundle with new information such as name, description, pricing, or active status.',
   })
   @ApiParam({
     name: 'bundleId',
@@ -183,7 +195,10 @@ export class BundleController {
       type: 'object',
       properties: {
         statusCode: { type: 'number', example: 400 },
-        message: { type: 'string', example: 'Invalid discount rate or other validation error' },
+        message: {
+          type: 'string',
+          example: 'Invalid discount rate or other validation error',
+        },
         error: { type: 'string', example: 'Bad Request' },
       },
     },
@@ -202,7 +217,8 @@ export class BundleController {
   @Delete(':bundleId')
   @ApiOperation({
     summary: 'Delete bundle',
-    description: 'Permanently deletes a bundle from the system. This operation cannot be undone.',
+    description:
+      'Permanently deletes a bundle from the system. This operation cannot be undone.',
   })
   @ApiParam({
     name: 'bundleId',
@@ -238,7 +254,8 @@ export class BundleController {
   @Post(':bundleId/items')
   @ApiOperation({
     summary: 'Add item to bundle',
-    description: 'Adds a new item to an existing bundle with the specified quantity.',
+    description:
+      'Adds a new item to an existing bundle with the specified quantity.',
   })
   @ApiParam({
     name: 'bundleId',
@@ -260,7 +277,10 @@ export class BundleController {
       type: 'object',
       properties: {
         statusCode: { type: 'number', example: 404 },
-        message: { type: 'string', example: 'Bundle not found or item does not exist' },
+        message: {
+          type: 'string',
+          example: 'Bundle not found or item does not exist',
+        },
         error: { type: 'string', example: 'Not Found' },
       },
     },
@@ -317,7 +337,10 @@ export class BundleController {
       type: 'object',
       properties: {
         statusCode: { type: 'number', example: 404 },
-        message: { type: 'string', example: 'Bundle not found or item not in bundle' },
+        message: {
+          type: 'string',
+          example: 'Bundle not found or item not in bundle',
+        },
         error: { type: 'string', example: 'Not Found' },
       },
     },
@@ -328,7 +351,10 @@ export class BundleController {
       type: 'object',
       properties: {
         statusCode: { type: 'number', example: 400 },
-        message: { type: 'string', example: 'Invalid quantity - must be greater than 0' },
+        message: {
+          type: 'string',
+          example: 'Invalid quantity - must be greater than 0',
+        },
         error: { type: 'string', example: 'Bad Request' },
       },
     },
@@ -352,7 +378,8 @@ export class BundleController {
   @Delete(':bundleId/items/:itemId')
   @ApiOperation({
     summary: 'Remove item from bundle',
-    description: 'Removes a specific item from a bundle. The bundle must contain at least one item.',
+    description:
+      'Removes a specific item from a bundle. The bundle must contain at least one item.',
   })
   @ApiParam({
     name: 'bundleId',
@@ -375,7 +402,10 @@ export class BundleController {
       type: 'object',
       properties: {
         statusCode: { type: 'number', example: 404 },
-        message: { type: 'string', example: 'Bundle not found or item not in bundle' },
+        message: {
+          type: 'string',
+          example: 'Bundle not found or item not in bundle',
+        },
         error: { type: 'string', example: 'Not Found' },
       },
     },
@@ -386,7 +416,10 @@ export class BundleController {
       type: 'object',
       properties: {
         statusCode: { type: 'number', example: 400 },
-        message: { type: 'string', example: 'Bundle must contain at least one item' },
+        message: {
+          type: 'string',
+          example: 'Bundle must contain at least one item',
+        },
         error: { type: 'string', example: 'Bad Request' },
       },
     },

@@ -21,7 +21,8 @@ export class OrderGetResponseDto {
   userId: string;
 
   @ApiProperty({
-    description: 'The unique identifier of the quote this order was created from',
+    description:
+      'The unique identifier of the quote this order was created from',
     example: 'quote-789',
     type: 'string',
   })
@@ -114,7 +115,7 @@ export class QuoteGetResponseDto {
 
   @ApiProperty({
     description: 'The total price of the quote',
-    example: 135.00,
+    example: 135.0,
     type: 'number',
   })
   price: number;
@@ -133,7 +134,8 @@ export class QuoteGetResponseDto {
   basketSnapshot: any; // TODO: Define proper basket snapshot type
 
   @ApiProperty({
-    description: 'Snapshot of the policies applied at the time of quote creation',
+    description:
+      'Snapshot of the policies applied at the time of quote creation',
     example: { discounts: [{ type: 'percentage', value: 10 }] },
   })
   policySnapshot: any; // TODO: Define proper policy snapshot type

@@ -237,11 +237,13 @@ export class OrderSagaUseCases {
     if (result.success && result.paymentReference) {
       order.initiatePayment(result.paymentReference);
       order = await this.orderRepository.save(order);
+
       return { success: true, order: this.mapEntityToData(order) };
     }
 
     order.markFailed(`Payment failed: ${result.error}`);
     order = await this.orderRepository.save(order);
+
     return { success: false, order: this.mapEntityToData(order), error: result.error };
   }
 
@@ -267,6 +269,7 @@ export class OrderSagaUseCases {
     if (result.success && result.deliveryReference) {
       order.initiateDelivery(result.deliveryReference);
       order = await this.orderRepository.save(order);
+
       return { success: true, order: this.mapEntityToData(order) };
     }
 
@@ -274,6 +277,7 @@ export class OrderSagaUseCases {
     await this.compensatePayment(order, 'Delivery failed');
     order.markFailed(`Delivery failed: ${result.error}`);
     order = await this.orderRepository.save(order);
+
     return { success: false, order: this.mapEntityToData(order), error: result.error };
   }
 }
