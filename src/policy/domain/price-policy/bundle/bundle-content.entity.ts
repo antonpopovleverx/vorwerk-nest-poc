@@ -1,6 +1,6 @@
 import { Entity, Column, ManyToOne, JoinColumn, PrimaryColumn } from 'typeorm';
-import { TechnicalEntity } from '../../../../_common/domain/base/base.entity.js';
-import { BundleEntity } from '@policy/domain/price-policy/bundle/bundle.entity.js';
+import { TechnicalEntity } from '../../../../_common/domain/base/base.entity';
+import { BundleEntity } from 'src/policy/domain/price-policy/bundle/bundle.entity';
 
 /**
  * Bundle content - represents an item within a bundle

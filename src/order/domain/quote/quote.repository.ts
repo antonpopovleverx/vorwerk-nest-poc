@@ -1,4 +1,4 @@
-import { QuoteEntity } from './quote.entity.js';
+import { QuoteEntity } from './quote.entity';
 
 /**
  * Quote repository port

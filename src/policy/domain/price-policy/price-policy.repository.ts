@@ -1,6 +1,6 @@
-import { Region } from '../../../_common/domain/enums/region.enum.js';
-import { ItemPriceEntity } from './item-price.entity.js';
-import { ItemDiscountEntity } from './item-discount.entity.js';
+import { Region } from '../../../_common/domain/enums/region.enum';
+import { ItemPriceEntity } from './item-price.entity';
+import { ItemDiscountEntity } from './item-discount.entity';
 
 /**
  * Price policy repository port

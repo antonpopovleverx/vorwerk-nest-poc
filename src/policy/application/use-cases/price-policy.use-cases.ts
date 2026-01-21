@@ -1,12 +1,10 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { Region, DEFAULT_REGION } from '../../../../_common/domain/enums/region.enum.js';
-import {
-  Currency,
-  DEFAULT_CURRENCY,
-} from '../../../../_common/domain/enums/currency.enum.js';
-import { IPricePolicyRepository } from '@policy/domain/price-policy/price-policy.repository.js';
-import { IBundleRepository } from '@policy/domain/price-policy/bundle/bundle.repository.js';
-import { BasketSnapshotForPolicy } from '@policy/application/ports/basket-data.port.js';
+import { Currency, DEFAULT_CURRENCY } from 'src/_common/domain/enums/currency.enum';
+import { Region, DEFAULT_REGION } from 'src/_common/domain/enums/region.enum';
+import { BasketSnapshotForPolicy } from 'src/policy/application/ports/basket-data.port';
+import { IBundleRepository } from 'src/policy/domain/price-policy/bundle/bundle.repository';
+import { IPricePolicyRepository } from 'src/policy/domain/price-policy/price-policy.repository';
+
 
 /**
  * Item pricing result

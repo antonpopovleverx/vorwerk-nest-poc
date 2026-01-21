@@ -6,9 +6,9 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
-import { OrderUseCases } from '../../application/use-cases/order.use-cases.js';
-import { OrderSagaUseCases } from '../../application/use-cases/order-saga.use-cases.js';
-import { QuoteUseCases } from '../../application/use-cases/quote.use-cases.js';
+import { OrderUseCases } from '../../application/use-cases/order.use-cases';
+import { OrderSagaUseCases } from '../../application/use-cases/order-saga.use-cases';
+import { QuoteUseCases } from '../../application/use-cases/quote.use-cases';
 
 /**
  * Order controller - handles HTTP requests for order operations

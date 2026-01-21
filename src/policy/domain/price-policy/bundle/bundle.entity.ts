@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { TechnicalEntity } from '../../../../_common/domain/base/base.entity.js';
-import { BundleContentEntity } from './bundle-content.entity.js';
+import { TechnicalEntity } from '../../../../_common/domain/base/base.entity';
+import { BundleContentEntity } from './bundle-content.entity';
 import { HttpException, HttpStatus } from '@nestjs/common';
 
 /**

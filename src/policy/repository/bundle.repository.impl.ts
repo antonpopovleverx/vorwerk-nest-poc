@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { BundleEntity } from '../domain/price-policy/bundle/bundle.entity.js';
-import { IBundleRepository } from '../domain/price-policy/bundle/bundle.repository.js';
+import { BundleEntity } from '../domain/price-policy/bundle/bundle.entity';
+import { IBundleRepository } from '../domain/price-policy/bundle/bundle.repository';
 import { Repository, In } from 'typeorm';
 
 /**
  * TypeORM implementation of bundle repository
  */
 @Injectable()
-export class BundleRepositoryImpl implements IBundleRepository {
+export class BundleRepositoryImplementation implements IBundleRepository {
   constructor(
     @InjectRepository(BundleEntity)
     private readonly repository: Repository<BundleEntity>,

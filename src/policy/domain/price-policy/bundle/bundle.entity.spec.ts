@@ -1,4 +1,4 @@
-import { BundleEntity } from './bundle.entity.js';
+import { BundleEntity } from './bundle.entity';
 
 describe('BundleEntity', () => {
   let bundle: BundleEntity;

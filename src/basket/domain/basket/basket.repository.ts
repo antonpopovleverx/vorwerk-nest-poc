@@ -1,4 +1,4 @@
-import { BasketEntity } from './basket.entity.js';
+import { BasketEntity } from './basket.entity';
 
 /**
  * Basket repository port (abstract class for DI)

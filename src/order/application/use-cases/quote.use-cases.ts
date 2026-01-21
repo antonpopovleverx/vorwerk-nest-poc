@@ -3,8 +3,8 @@ import {
   QuoteEntity,
   QuoteBasketSnapshot,
   QuotePolicySnapshot,
-} from '../../domain/quote/quote.entity.js';
-import { IQuoteRepository } from '../../domain/quote/quote.repository.js';
+} from '../../domain/quote/quote.entity';
+import { IQuoteRepository } from '../../domain/quote/quote.repository';
 
 /**
  * Create quote DTO

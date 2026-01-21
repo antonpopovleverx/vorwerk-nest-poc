@@ -1,11 +1,11 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { IBasketRepository } from '../../domain/basket/basket.repository.js';
-import { IPolicyServicePort } from '../ports/policy-service.port.js';
+import { IBasketRepository } from '../../domain/basket/basket.repository';
+import { IPolicyServicePort } from '../ports/policy-service.port';
 import {
   IOrderServicePort,
   CreateQuoteResult,
-} from '../ports/order-service.port.js';
-import { BasketUseCases } from './basket.use-cases.js';
+} from '../ports/order-service.port';
+import { BasketUseCases } from './basket.use-cases';
 
 /**
  * Checkout request DTO

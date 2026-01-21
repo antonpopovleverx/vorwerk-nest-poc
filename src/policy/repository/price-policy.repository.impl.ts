@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In, LessThanOrEqual, MoreThanOrEqual } from 'typeorm';
-import { Region } from '../../../_common/domain/enums/region.enum.js';
-import { ItemPriceEntity } from '../domain/price-policy/item-price.entity.js';
-import { ItemDiscountEntity } from '../domain/price-policy/item-discount.entity.js';
-import { IPricePolicyRepository } from '../domain/price-policy/price-policy.repository.js';
+import { ItemPriceEntity } from '../domain/price-policy/item-price.entity';
+import { ItemDiscountEntity } from '../domain/price-policy/item-discount.entity';
+import { IPricePolicyRepository } from '../domain/price-policy/price-policy.repository';
+import { Region } from 'src/_common/domain/enums/region.enum';
 
 /**
  * TypeORM implementation of price policy repository
  */
 @Injectable()
-export class PricePolicyRepositoryImpl implements IPricePolicyRepository {
+export class PricePolicyRepositoryImplementation implements IPricePolicyRepository {
   constructor(
     @InjectRepository(ItemPriceEntity)
     private readonly priceRepository: Repository<ItemPriceEntity>,

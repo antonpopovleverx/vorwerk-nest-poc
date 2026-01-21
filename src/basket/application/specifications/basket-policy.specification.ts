@@ -1,6 +1,6 @@
-import { Specification } from "src/_common/domain/specifications/specification.interface.js";
-import { BasketPolicyCheckName } from "src/basket/application/ports/policy-service.port.js";
-import { BasketEntity } from "src/basket/domain/basket/basket.entity.js";
+import { Specification } from "src/_common/domain/specifications/specification.interface";
+import { BasketPolicyCheckName } from "src/basket/application/ports/policy-service.port";
+import { BasketEntity } from "src/basket/domain/basket/basket.entity";
 
 /**
  * Specification context for basket policy checks

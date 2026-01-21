@@ -5,7 +5,7 @@ import {
   PaymentRequest,
   PaymentResult,
   RefundRequest,
-} from '../../application/ports/payment-service.port.js';
+} from '../../application/ports/payment-service.port';
 
 /**
  * Mock payment service for POC

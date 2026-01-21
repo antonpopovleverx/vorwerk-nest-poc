@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { IBasketRepository } from '../domain/basket/basket.repository.js';
-import { BasketEntity } from '../domain/basket/basket.entity.js';
+import { IBasketRepository } from '../domain/basket/basket.repository';
+import { BasketEntity } from '../domain/basket/basket.entity';
 
 
 /**
  * TypeORM implementation of basket repository
  */
 @Injectable()
-export class BasketRepositoryImpl implements IBasketRepository {
+export class BasketRepositoryImplementation implements IBasketRepository {
   constructor(
     @InjectRepository(BasketEntity)
     private readonly repository: Repository<BasketEntity>,

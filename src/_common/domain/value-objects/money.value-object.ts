@@ -1,4 +1,4 @@
-import { Currency } from '../enums/currency.enum.js';
+import { Currency } from '../enums/currency.enum';
 import { HttpException, HttpStatus } from '@nestjs/common';
 
 /**

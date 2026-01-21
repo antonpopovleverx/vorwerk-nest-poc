@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IOrderRepository } from '../domain/order/order.repository.js';
-import { OrderEntity } from '../domain/order/order.entity.js';
-import { OrderStatus } from '../domain/order/order-status.enum.js';
+import { IOrderRepository } from '../domain/order/order.repository';
+import { OrderEntity } from '../domain/order/order.entity';
+import { OrderStatus } from '../domain/order/order-status.enum';
 import { Repository } from 'typeorm';
 
 /**
  * TypeORM implementation of order repository
  */
 @Injectable()
-export class OrderRepositoryImpl implements IOrderRepository {
+export class OrderRepositoryImplementation implements IOrderRepository {
   constructor(
     @InjectRepository(OrderEntity)
     private readonly repository: Repository<OrderEntity>,

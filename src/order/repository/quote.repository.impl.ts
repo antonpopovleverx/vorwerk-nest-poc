@@ -8,7 +8,7 @@ import { Repository } from 'typeorm';
  * TypeORM implementation of quote repository
  */
 @Injectable()
-export class QuoteRepositoryImpl implements IQuoteRepository {
+export class QuoteRepositoryImplementation implements IQuoteRepository {
   constructor(
     @InjectRepository(QuoteEntity)
     private readonly repository: Repository<QuoteEntity>,

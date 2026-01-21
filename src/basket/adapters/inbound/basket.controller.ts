@@ -9,8 +9,8 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
-import { BasketUseCases } from '../../application/use-cases/basket.use-cases.js';
-import { CheckoutUseCases } from '../../application/use-cases/checkout.use-cases.js';
+import { BasketUseCases } from '../../application/use-cases/basket.use-cases';
+import { CheckoutUseCases } from '../../application/use-cases/checkout.use-cases';
 
 /**
  * Request DTOs

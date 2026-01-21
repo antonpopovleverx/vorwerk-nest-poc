@@ -1,11 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Currency } from 'src/_common/domain/enums/currency.enum';
+import { Region } from 'src/_common/domain/enums/region.enum';
+import { BundleEntity } from 'src/policy/domain/price-policy/bundle/bundle.entity';
+import { ItemDiscountEntity } from 'src/policy/domain/price-policy/item-discount.entity';
+import { ItemPriceEntity } from 'src/policy/domain/price-policy/item-price.entity';
 import { Repository } from 'typeorm';
-import { ItemPriceEntity } from '@policy/domain/price-policy/item-price.entity.js';
-import { ItemDiscountEntity } from '@policy/domain/price-policy/item-discount.entity.js';
-import { BundleEntity } from '@policy/domain/price-policy/bundle/bundle.entity.js';
-import { Region } from '@common/domain/enums/region.enum.js';
-import { Currency } from '@common/domain/enums/currency.enum.js';
+
 
 /**
  * Data seeder for POC - seeds initial test data

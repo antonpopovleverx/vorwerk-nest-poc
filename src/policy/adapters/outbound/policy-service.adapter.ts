@@ -4,10 +4,11 @@ import {
   BasketPolicyCheckName,
   BasketPricingResult,
   PolicySnapshot,
-} from '../../../basket/application/ports/policy-service.port.js';
-import { BasketSnapshot } from '../../../basket/domain/basket/basket.entity.js';
-import { PricePolicyUseCases } from '@policy/application/use-cases/price-policy.use-cases.js';
-import { BasketPolicyUseCases } from '@policy/application/use-cases/basket-policy.use-cases.js';
+} from '../../../basket/application/ports/policy-service.port';
+import { BasketSnapshot } from '../../../basket/domain/basket/basket.entity';
+import { BasketPolicyUseCases } from 'src/policy/application/use-cases/basket-policy.use-cases';
+import { PricePolicyUseCases } from 'src/policy/application/use-cases/price-policy.use-cases';
+
 
 /**
  * Adapter implementing IPolicyServicePort for basket subdomain

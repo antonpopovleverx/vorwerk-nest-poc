@@ -1,8 +1,8 @@
 import { Injectable, Inject, HttpException, HttpStatus } from '@nestjs/common';
-import { OrderEntity } from '../../domain/order/order.entity.js';
-import { OrderStatus } from '../../domain/order/order-status.enum.js';
-import { IOrderRepository } from '../../domain/order/order.repository.js';
-import { IQuoteRepository } from '../../domain/quote/quote.repository.js';
+import { OrderEntity } from '../../domain/order/order.entity';
+import { OrderStatus } from '../../domain/order/order-status.enum';
+import { IOrderRepository } from '../../domain/order/order.repository';
+import { IQuoteRepository } from '../../domain/quote/quote.repository';
 
 /**
  * Create order from quote DTO

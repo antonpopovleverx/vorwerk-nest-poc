@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { BasketPolicyCheckName } from '@policy/domain/basket-policy/basket-policy.types.js';
-import { BasketSnapshotForPolicy } from '@policy/application/ports/basket-data.port.js';
+import { BasketPolicyCheckName } from 'src/basket/application/ports/policy-service.port';
+import { BasketSnapshotForPolicy } from 'src/policy/application/ports/basket-data.port';
+
 
 /**
  * Basket policy use cases - determines which policy checks to perform

@@ -1,4 +1,4 @@
-import { BundleEntity } from './bundle.entity.js';
+import { BundleEntity } from './bundle.entity';
 
 /**
  * Bundle repository port

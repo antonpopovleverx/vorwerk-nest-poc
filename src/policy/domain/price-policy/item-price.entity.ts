@@ -1,7 +1,7 @@
 import { Entity, Column, PrimaryColumn } from 'typeorm';
-import { TechnicalEntity } from '../../../_common/domain/base/base.entity.js';
-import { Region } from '../../../_common/domain/enums/region.enum.js';
-import { Currency } from '../../../_common/domain/enums/currency.enum.js';
+import { TechnicalEntity } from '../../../_common/domain/base/base.entity';
+import { Region } from '../../../_common/domain/enums/region.enum';
+import { Currency } from '../../../_common/domain/enums/currency.enum';
 
 /**
  * Item price entity

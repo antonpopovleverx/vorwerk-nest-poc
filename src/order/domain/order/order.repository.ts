@@ -1,5 +1,5 @@
-import { OrderEntity } from './order.entity.js';
-import { OrderStatus } from './order-status.enum.js';
+import { OrderEntity } from './order.entity';
+import { OrderStatus } from './order-status.enum';
 
 /**
  * Order repository port

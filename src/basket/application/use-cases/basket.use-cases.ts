@@ -1,18 +1,18 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { IBasketRepository } from '../../domain/basket/basket.repository.js';
+import { IBasketRepository } from '../../domain/basket/basket.repository';
 import {
   BasketEntity,
   BasketSnapshot,
-} from '../../domain/basket/basket.entity.js';
+} from '../../domain/basket/basket.entity';
 import {
   IPolicyServicePort,
   BasketPolicyCheckName,
   BasketPricingResult,
-} from '../ports/policy-service.port.js';
+} from '../ports/policy-service.port';
 import {
   BasketSpecificationRegistry,
   BasketSpecificationContext,
-} from '../specifications/basket-policy.specification.js';
+} from '../specifications/basket-policy.specification';
 
 /**
  * DTOs for basket operations
