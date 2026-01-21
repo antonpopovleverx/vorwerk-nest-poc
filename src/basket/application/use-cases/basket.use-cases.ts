@@ -113,7 +113,8 @@ export class BasketUseCases {
    * Get basket for user (creates if not exists)
    */
   async getBasketForUser(userId: string): Promise<BasketData> {
-    const basket: BasketEntity = await this.basketRepository.getOrCreateForUser(userId);
+    const basket: BasketEntity =
+      await this.basketRepository.getOrCreateForUser(userId);
 
     return this.mapEntityToData(basket);
   }
@@ -216,7 +217,8 @@ export class BasketUseCases {
    * Clear basket
    */
   async clearBasket(userId: string): Promise<BasketData> {
-    const basket: BasketEntity = await this.basketRepository.getOrCreateForUser(userId);
+    const basket: BasketEntity =
+      await this.basketRepository.getOrCreateForUser(userId);
 
     basket.clear();
 
@@ -229,7 +231,8 @@ export class BasketUseCases {
    * Get basket pricing
    */
   async getBasketPricing(userId: string): Promise<BasketPricingResult> {
-    const basket: BasketEntity = await this.basketRepository.getOrCreateForUser(userId);
+    const basket: BasketEntity =
+      await this.basketRepository.getOrCreateForUser(userId);
 
     const snapshot: BasketSnapshot = basket.createSnapshot();
 
@@ -240,7 +243,8 @@ export class BasketUseCases {
    * Validate basket against policy checks
    */
   async validateBasket(userId: string): Promise<BasketValidationResult> {
-    const basket: BasketEntity = await this.basketRepository.getOrCreateForUser(userId);
+    const basket: BasketEntity =
+      await this.basketRepository.getOrCreateForUser(userId);
     const snapshot: BasketSnapshot = basket.createSnapshot();
 
     const checkNames: BasketPolicyCheckName[] =
@@ -284,7 +288,8 @@ export class BasketUseCases {
    * Get basket snapshot for checkout
    */
   async getBasketSnapshot(userId: string): Promise<BasketSnapshot> {
-    const basket: BasketEntity = await this.basketRepository.getOrCreateForUser(userId);
+    const basket: BasketEntity =
+      await this.basketRepository.getOrCreateForUser(userId);
 
     return basket.createSnapshot();
   }

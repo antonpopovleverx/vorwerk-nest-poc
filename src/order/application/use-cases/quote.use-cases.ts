@@ -45,7 +45,8 @@ export class QuoteUseCases {
    * Get quote by ID
    */
   async getQuote(quoteId: string): Promise<QuoteEntity> {
-    const quote: QuoteEntity | null = await this.quoteRepository.findById(quoteId);
+    const quote: QuoteEntity | null =
+      await this.quoteRepository.findById(quoteId);
     if (!isFound(quote)) {
       throw new HttpException(
         `Quote ${quoteId} not found`,

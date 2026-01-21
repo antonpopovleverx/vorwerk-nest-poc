@@ -65,7 +65,9 @@ export class OrderUseCases {
   async createOrderFromQuote(
     command: CreateOrderFromQuoteCommand,
   ): Promise<OrderData> {
-    const quote: QuoteEntity | null = await this.quoteRepository.findById(command.quoteId);
+    const quote: QuoteEntity | null = await this.quoteRepository.findById(
+      command.quoteId,
+    );
     if (!isFound(quote)) {
       throw new HttpException(
         `Quote ${command.quoteId} not found`,
@@ -74,9 +76,8 @@ export class OrderUseCases {
     }
 
     // Check if order already exists for this quote
-    const existingOrder: OrderEntity | null = await this.orderRepository.findByQuoteId(
-      command.quoteId,
-    );
+    const existingOrder: OrderEntity | null =
+      await this.orderRepository.findByQuoteId(command.quoteId);
     if (isFound(existingOrder)) {
       throw new HttpException(
         `Order already exists for quote ${command.quoteId}`,
@@ -99,7 +100,8 @@ export class OrderUseCases {
    * Get order by ID
    */
   async getOrder(orderId: string): Promise<OrderData> {
-    const order: OrderEntity | null = await this.orderRepository.findById(orderId);
+    const order: OrderEntity | null =
+      await this.orderRepository.findById(orderId);
     if (!isFound(order)) {
       throw new HttpException(
         `Order ${orderId} not found`,
@@ -114,7 +116,8 @@ export class OrderUseCases {
    * Get order by quote ID
    */
   async getOrderByQuoteId(quoteId: string): Promise<OrderData | null> {
-    const order: OrderEntity | null = await this.orderRepository.findByQuoteId(quoteId);
+    const order: OrderEntity | null =
+      await this.orderRepository.findByQuoteId(quoteId);
 
     return order ? this.mapEntityToData(order) : null;
   }
@@ -123,7 +126,8 @@ export class OrderUseCases {
    * Get orders for user
    */
   async getOrdersForUser(userId: string): Promise<OrderData[]> {
-    const orders: OrderEntity[] = await this.orderRepository.findByUserId(userId);
+    const orders: OrderEntity[] =
+      await this.orderRepository.findByUserId(userId);
 
     return orders.map((order) => this.mapEntityToData(order));
   }
@@ -132,7 +136,8 @@ export class OrderUseCases {
    * Get orders by status
    */
   async getOrdersByStatus(status: OrderStatus): Promise<OrderData[]> {
-    const orders: OrderEntity[] = await this.orderRepository.findByStatus(status);
+    const orders: OrderEntity[] =
+      await this.orderRepository.findByStatus(status);
 
     return orders.map((order) => this.mapEntityToData(order));
   }

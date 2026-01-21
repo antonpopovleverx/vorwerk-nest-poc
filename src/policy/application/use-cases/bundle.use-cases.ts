@@ -121,7 +121,8 @@ export class BundleUseCases {
    * Get bundle by ID
    */
   async getBundle(bundleId: string): Promise<BundleData> {
-    const bundle: BundleEntity | null = await this.bundleRepository.findById(bundleId);
+    const bundle: BundleEntity | null =
+      await this.bundleRepository.findById(bundleId);
     if (!isFound(bundle)) {
       throw new HttpException(
         `Bundle ${bundleId} not found`,
@@ -157,7 +158,8 @@ export class BundleUseCases {
     bundleId: string,
     command: UpdateBundleCommand,
   ): Promise<BundleData> {
-    const bundle: BundleEntity | null = await this.bundleRepository.findById(bundleId);
+    const bundle: BundleEntity | null =
+      await this.bundleRepository.findById(bundleId);
     if (!isFound(bundle)) {
       throw new HttpException(
         `Bundle ${bundleId} not found`,
@@ -195,7 +197,8 @@ export class BundleUseCases {
     bundleId: string,
     item: BundleItemCommand,
   ): Promise<BundleData> {
-    const bundle: BundleEntity | null = await this.bundleRepository.findById(bundleId);
+    const bundle: BundleEntity | null =
+      await this.bundleRepository.findById(bundleId);
     if (!isFound(bundle)) {
       throw new HttpException(
         `Bundle ${bundleId} not found`,
@@ -218,7 +221,8 @@ export class BundleUseCases {
     bundleId: string,
     itemId: string,
   ): Promise<BundleData> {
-    const bundle: BundleEntity | null = await this.bundleRepository.findById(bundleId);
+    const bundle: BundleEntity | null =
+      await this.bundleRepository.findById(bundleId);
     if (!isFound(bundle)) {
       throw new HttpException(
         `Bundle ${bundleId} not found`,
@@ -241,7 +245,8 @@ export class BundleUseCases {
     itemId: string,
     quantity: number,
   ): Promise<BundleData> {
-    const bundle: BundleEntity | null = await this.bundleRepository.findById(bundleId);
+    const bundle: BundleEntity | null =
+      await this.bundleRepository.findById(bundleId);
     if (!isFound(bundle)) {
       throw new HttpException(
         `Bundle ${bundleId} not found`,

@@ -2,9 +2,18 @@ import { Injectable, Inject, Logger } from '@nestjs/common';
 import { OrderEntity } from '../../domain/order/order.entity';
 import { IOrderRepository } from '../../domain/order/order.repository';
 import { IQuoteRepository } from '../../domain/quote/quote.repository';
-import { QuoteEntity, QuoteBasketSnapshot } from '../../domain/quote/quote.entity';
-import { IPaymentServicePort, PaymentResult } from '../ports/payment-service.port';
-import { IDeliveryServicePort, DeliveryResult } from '../ports/delivery-service.port';
+import {
+  QuoteEntity,
+  QuoteBasketSnapshot,
+} from '../../domain/quote/quote.entity';
+import {
+  IPaymentServicePort,
+  PaymentResult,
+} from '../ports/payment-service.port';
+import {
+  IDeliveryServicePort,
+  DeliveryResult,
+} from '../ports/delivery-service.port';
 import { OrderUseCases, OrderData } from './order.use-cases';
 import { isFound } from '../../../_common/domain/specifications/specification.interface';
 
@@ -60,7 +69,8 @@ export class OrderSagaUseCases {
    * Execute the full order saga
    */
   async executeOrderSaga(orderId: string): Promise<OrderSagaResult> {
-    let order: OrderEntity | null = await this.orderRepository.findById(orderId);
+    let order: OrderEntity | null =
+      await this.orderRepository.findById(orderId);
     if (!isFound(order)) {
       return {
         success: false,
@@ -69,7 +79,9 @@ export class OrderSagaUseCases {
       };
     }
 
-    const quote: QuoteEntity | null = await this.quoteRepository.findById(order.quoteId);
+    const quote: QuoteEntity | null = await this.quoteRepository.findById(
+      order.quoteId,
+    );
     if (!isFound(quote)) {
       order.markFailed('Quote not found');
       order = await this.orderRepository.save(order);
@@ -83,12 +95,13 @@ export class OrderSagaUseCases {
     try {
       // Step 1: Process payment
       this.logger.log(`Processing payment for order ${orderId}`);
-      const paymentResult: PaymentResult = await this.paymentService.processPayment({
-        orderId,
-        userId: order.userId,
-        amount: quote.getTotalPrice(),
-        currency: quote.currency,
-      });
+      const paymentResult: PaymentResult =
+        await this.paymentService.processPayment({
+          orderId,
+          userId: order.userId,
+          amount: quote.getTotalPrice(),
+          currency: quote.currency,
+        });
 
       if (!paymentResult.success || !paymentResult.paymentReference) {
         order.markFailed(`Payment failed: ${paymentResult.error}`);
@@ -107,12 +120,13 @@ export class OrderSagaUseCases {
       // Step 2: Initiate delivery
       this.logger.log(`Initiating delivery for order ${orderId}`);
       const basketSnapshot: QuoteBasketSnapshot = quote.basketSnapshot;
-      const deliveryResult: DeliveryResult = await this.deliveryService.initiateDelivery({
-        orderId,
-        userId: order.userId,
-        items: basketSnapshot.items,
-        bundles: basketSnapshot.bundles,
-      });
+      const deliveryResult: DeliveryResult =
+        await this.deliveryService.initiateDelivery({
+          orderId,
+          userId: order.userId,
+          items: basketSnapshot.items,
+          bundles: basketSnapshot.bundles,
+        });
 
       if (!deliveryResult.success || !deliveryResult.deliveryReference) {
         // Compensate: Refund payment
@@ -178,7 +192,9 @@ export class OrderSagaUseCases {
     if (!order.paymentReference) return;
 
     try {
-      const quote: QuoteEntity | null = await this.quoteRepository.findById(order.quoteId);
+      const quote: QuoteEntity | null = await this.quoteRepository.findById(
+        order.quoteId,
+      );
       if (isFound(quote)) {
         await this.paymentService.refundPayment({
           paymentReference: order.paymentReference,
@@ -218,12 +234,15 @@ export class OrderSagaUseCases {
    * Execute saga step by step (for manual control/debugging)
    */
   async executePaymentStep(orderId: string): Promise<OrderSagaResult> {
-    let order: OrderEntity | null = await this.orderRepository.findById(orderId);
+    let order: OrderEntity | null =
+      await this.orderRepository.findById(orderId);
     if (!isFound(order)) {
       return { success: false, order: undefined, error: 'Order not found' };
     }
 
-    const quote: QuoteEntity | null = await this.quoteRepository.findById(order.quoteId);
+    const quote: QuoteEntity | null = await this.quoteRepository.findById(
+      order.quoteId,
+    );
     if (!isFound(quote)) {
       return {
         success: false,
@@ -257,12 +276,15 @@ export class OrderSagaUseCases {
   }
 
   async executeDeliveryStep(orderId: string): Promise<OrderSagaResult> {
-    let order: OrderEntity | null = await this.orderRepository.findById(orderId);
+    let order: OrderEntity | null =
+      await this.orderRepository.findById(orderId);
     if (!isFound(order)) {
       return { success: false, order: undefined, error: 'Order not found' };
     }
 
-    const quote: QuoteEntity | null = await this.quoteRepository.findById(order.quoteId);
+    const quote: QuoteEntity | null = await this.quoteRepository.findById(
+      order.quoteId,
+    );
     if (!isFound(quote)) {
       return {
         success: false,

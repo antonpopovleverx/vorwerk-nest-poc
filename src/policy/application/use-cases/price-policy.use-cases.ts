@@ -74,16 +74,17 @@ export class PricePolicyUseCases {
     // Calculate item pricing
     if (basketSnapshot.items.length > 0) {
       const itemIds = basketSnapshot.items.map((i) => i.itemId);
-      const prices: ItemPriceEntity[] = await this.pricePolicyRepository.getItemPrices(
-        itemIds,
-        this.region,
-      );
-      const discounts: ItemDiscountEntity[] = await this.pricePolicyRepository.getActiveItemDiscounts(
-        itemIds,
-        this.region,
-      );
+      const prices: ItemPriceEntity[] =
+        await this.pricePolicyRepository.getItemPrices(itemIds, this.region);
+      const discounts: ItemDiscountEntity[] =
+        await this.pricePolicyRepository.getActiveItemDiscounts(
+          itemIds,
+          this.region,
+        );
 
-      const priceMap: Map<string, number> = new Map(prices.map((p) => [p.itemId, p.getPrice()]));
+      const priceMap: Map<string, number> = new Map(
+        prices.map((p) => [p.itemId, p.getPrice()]),
+      );
       const discountMap: Map<string, number> = new Map(
         discounts
           .filter((d) => d.isCurrentlyValid())
@@ -95,7 +96,8 @@ export class PricePolicyUseCases {
         const discountRate: number = discountMap.get(item.itemId) ?? 0;
         const discountAmount: number = unitPrice * discountRate;
         const finalUnitPrice: number = unitPrice - discountAmount;
-        const totalPrice: number = Math.round(finalUnitPrice * item.amount * 100) / 100;
+        const totalPrice: number =
+          Math.round(finalUnitPrice * item.amount * 100) / 100;
         const itemDiscount: number =
           Math.round(discountAmount * item.amount * 100) / 100;
 
@@ -115,11 +117,16 @@ export class PricePolicyUseCases {
     // Calculate bundle pricing
     if (basketSnapshot.bundles.length > 0) {
       const bundleIds = basketSnapshot.bundles.map((b) => b.bundleId);
-      const bundles: BundleEntity[] = await this.bundleRepository.findByIds(bundleIds);
-      const bundleMap: Map<string, BundleEntity> = new Map(bundles.map((b) => [b.bundleId, b]));
+      const bundles: BundleEntity[] =
+        await this.bundleRepository.findByIds(bundleIds);
+      const bundleMap: Map<string, BundleEntity> = new Map(
+        bundles.map((b) => [b.bundleId, b]),
+      );
 
       for (const basketBundle of basketSnapshot.bundles) {
-        const bundle: BundleEntity | undefined = bundleMap.get(basketBundle.bundleId);
+        const bundle: BundleEntity | undefined = bundleMap.get(
+          basketBundle.bundleId,
+        );
         if (isFound(bundle)) {
           const unitPrice: number = bundle.basePrice.amount;
           const discountAmount: number = bundle.getDiscountAmount().amount;
@@ -192,7 +199,8 @@ export class PricePolicyUseCases {
     discountedPrice: number;
     discountRate: number;
   } | null> {
-    const bundle: BundleEntity | null = await this.bundleRepository.findById(bundleId);
+    const bundle: BundleEntity | null =
+      await this.bundleRepository.findById(bundleId);
     if (!isFound(bundle)) return null;
 
     return {
