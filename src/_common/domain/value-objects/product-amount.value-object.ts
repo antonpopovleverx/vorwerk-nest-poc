@@ -6,10 +6,16 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 export class ProductAmount {
   constructor(public readonly value: number) {
     if (!Number.isInteger(value)) {
-      throw new HttpException('Product amount must be an integer', HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        'Product amount must be an integer',
+        HttpStatus.BAD_REQUEST,
+      );
     }
     if (value < 0) {
-      throw new HttpException('Product amount cannot be negative', HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        'Product amount cannot be negative',
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 
@@ -20,31 +26,49 @@ export class ProductAmount {
   subtract(other: ProductAmount): ProductAmount {
     const result = this.value - other.value;
     if (result < 0) {
-      throw new HttpException('Product amount subtraction would result in negative amount', HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        'Product amount subtraction would result in negative amount',
+        HttpStatus.BAD_REQUEST,
+      );
     }
     return new ProductAmount(result);
   }
 
   multiply(factor: number): ProductAmount {
     if (!Number.isInteger(factor)) {
-      throw new HttpException('Multiplication factor must be an integer', HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        'Multiplication factor must be an integer',
+        HttpStatus.BAD_REQUEST,
+      );
     }
     if (factor < 0) {
-      throw new HttpException('Cannot multiply product amount by negative factor', HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        'Cannot multiply product amount by negative factor',
+        HttpStatus.BAD_REQUEST,
+      );
     }
     return new ProductAmount(this.value * factor);
   }
 
   divide(divisor: number): ProductAmount {
     if (!Number.isInteger(divisor)) {
-      throw new HttpException('Division divisor must be an integer', HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        'Division divisor must be an integer',
+        HttpStatus.BAD_REQUEST,
+      );
     }
     if (divisor <= 0) {
-      throw new HttpException('Cannot divide product amount by zero or negative number', HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        'Cannot divide product amount by zero or negative number',
+        HttpStatus.BAD_REQUEST,
+      );
     }
     const result = this.value / divisor;
     if (!Number.isInteger(result)) {
-      throw new HttpException('Division result must be an integer', HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        'Division result must be an integer',
+        HttpStatus.BAD_REQUEST,
+      );
     }
     return new ProductAmount(result);
   }

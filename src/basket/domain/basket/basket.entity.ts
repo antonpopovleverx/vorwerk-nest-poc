@@ -36,7 +36,10 @@ export class BasketEntity extends TechnicalEntity {
    */
   addItem(itemId: string, amount: ProductAmount = ProductAmount.one()): void {
     if (amount.isLessThanOrEqual(ProductAmount.zero())) {
-      throw new HttpException('Amount must be positive', HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        'Amount must be positive',
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     const existingItem = this.items?.find((i) => i.itemId === itemId);
@@ -89,9 +92,15 @@ export class BasketEntity extends TechnicalEntity {
   /**
    * Add a bundle to the basket
    */
-  addBundle(bundleId: string, amount: ProductAmount = ProductAmount.one()): void {
+  addBundle(
+    bundleId: string,
+    amount: ProductAmount = ProductAmount.one(),
+  ): void {
     if (amount.isLessThanOrEqual(ProductAmount.zero())) {
-      throw new HttpException('Amount must be positive', HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        'Amount must be positive',
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     const existingBundle = this.bundles?.find((b) => b.bundleId === bundleId);
@@ -170,7 +179,9 @@ export class BasketEntity extends TechnicalEntity {
    * Get total number of bundles
    */
   getTotalBundleCount(): number {
-    return this.bundles?.reduce((sum, bundle) => sum + bundle.amount.value, 0) ?? 0;
+    return (
+      this.bundles?.reduce((sum, bundle) => sum + bundle.amount.value, 0) ?? 0
+    );
   }
 
   /**

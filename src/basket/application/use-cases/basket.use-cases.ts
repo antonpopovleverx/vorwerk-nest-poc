@@ -83,7 +83,9 @@ export class BasketUseCases {
    * Add item to basket
    */
   async addItem(command: AddItemCommand): Promise<BasketEntity> {
-    const basket = await this.basketRepository.getOrCreateForUser(command.userId);
+    const basket = await this.basketRepository.getOrCreateForUser(
+      command.userId,
+    );
     const amount = new ProductAmount(command.amount ?? 1);
     basket.addItem(command.itemId, amount);
     return this.basketRepository.save(basket);
@@ -93,7 +95,9 @@ export class BasketUseCases {
    * Update item amount in basket
    */
   async updateItem(command: UpdateItemCommand): Promise<BasketEntity> {
-    const basket = await this.basketRepository.getOrCreateForUser(command.userId);
+    const basket = await this.basketRepository.getOrCreateForUser(
+      command.userId,
+    );
     const amount = new ProductAmount(command.amount);
     basket.updateItemAmount(command.itemId, amount);
     return this.basketRepository.save(basket);
@@ -103,7 +107,9 @@ export class BasketUseCases {
    * Remove item from basket
    */
   async removeItem(command: RemoveItemCommand): Promise<BasketEntity> {
-    const basket = await this.basketRepository.getOrCreateForUser(command.userId);
+    const basket = await this.basketRepository.getOrCreateForUser(
+      command.userId,
+    );
     basket.removeItem(command.itemId);
     return this.basketRepository.save(basket);
   }
@@ -112,7 +118,9 @@ export class BasketUseCases {
    * Add bundle to basket
    */
   async addBundle(command: AddBundleCommand): Promise<BasketEntity> {
-    const basket = await this.basketRepository.getOrCreateForUser(command.userId);
+    const basket = await this.basketRepository.getOrCreateForUser(
+      command.userId,
+    );
     const amount = new ProductAmount(command.amount ?? 1);
     basket.addBundle(command.bundleId, amount);
     return this.basketRepository.save(basket);
@@ -122,7 +130,9 @@ export class BasketUseCases {
    * Update bundle amount in basket
    */
   async updateBundle(command: UpdateBundleCommand): Promise<BasketEntity> {
-    const basket = await this.basketRepository.getOrCreateForUser(command.userId);
+    const basket = await this.basketRepository.getOrCreateForUser(
+      command.userId,
+    );
     const amount = new ProductAmount(command.amount);
     basket.updateBundleAmount(command.bundleId, amount);
     return this.basketRepository.save(basket);
@@ -132,7 +142,9 @@ export class BasketUseCases {
    * Remove bundle from basket
    */
   async removeBundle(command: RemoveBundleCommand): Promise<BasketEntity> {
-    const basket = await this.basketRepository.getOrCreateForUser(command.userId);
+    const basket = await this.basketRepository.getOrCreateForUser(
+      command.userId,
+    );
     basket.removeBundle(command.bundleId);
     return this.basketRepository.save(basket);
   }

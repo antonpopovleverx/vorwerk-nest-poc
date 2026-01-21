@@ -39,7 +39,9 @@ export class BasketController {
    * Get basket for user
    */
   @Get(':userId')
-  async getBasket(@Param('userId') userId: string): Promise<BasketGetResponseDto> {
+  async getBasket(
+    @Param('userId') userId: string,
+  ): Promise<BasketGetResponseDto> {
     const basket = await this.basketUseCases.getBasketForUser(userId);
     return {
       basketId: basket.basketId,
@@ -165,7 +167,9 @@ export class BasketController {
    * Clear basket
    */
   @Delete(':userId')
-  async clearBasket(@Param('userId') userId: string): Promise<BasketSuccessResponseDto> {
+  async clearBasket(
+    @Param('userId') userId: string,
+  ): Promise<BasketSuccessResponseDto> {
     await this.basketUseCases.clearBasket(userId);
     return { success: true };
   }
@@ -174,7 +178,9 @@ export class BasketController {
    * Get basket pricing
    */
   @Get(':userId/pricing')
-  async getPricing(@Param('userId') userId: string): Promise<BasketPricingGetResponseDto> {
+  async getPricing(
+    @Param('userId') userId: string,
+  ): Promise<BasketPricingGetResponseDto> {
     return this.basketUseCases.getBasketPricing(userId);
   }
 
@@ -182,7 +188,9 @@ export class BasketController {
    * Validate basket
    */
   @Get(':userId/validate')
-  async validateBasket(@Param('userId') userId: string): Promise<BasketValidationGetResponseDto> {
+  async validateBasket(
+    @Param('userId') userId: string,
+  ): Promise<BasketValidationGetResponseDto> {
     return this.basketUseCases.validateBasket(userId);
   }
 
@@ -190,7 +198,9 @@ export class BasketController {
    * Preview checkout
    */
   @Get(':userId/checkout/preview')
-  async previewCheckout(@Param('userId') userId: string): Promise<BasketCheckoutPreviewGetResponseDto> {
+  async previewCheckout(
+    @Param('userId') userId: string,
+  ): Promise<BasketCheckoutPreviewGetResponseDto> {
     return this.checkoutUseCases.previewCheckout(userId);
   }
 

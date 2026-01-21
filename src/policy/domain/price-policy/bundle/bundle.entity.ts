@@ -55,7 +55,10 @@ export class BundleEntity extends TechnicalEntity {
    */
   addItem(itemId: string, quantity: ProductAmount = ProductAmount.one()): void {
     if (quantity.isLessThanOrEqual(ProductAmount.zero())) {
-      throw new HttpException('Quantity must be positive', HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        'Quantity must be positive',
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     const existing = this.contents?.find((c) => c.itemId === itemId);
@@ -98,7 +101,10 @@ export class BundleEntity extends TechnicalEntity {
     if (content) {
       content.quantity = quantity;
     } else {
-      throw new HttpException(`Item ${itemId} not found in bundle`, HttpStatus.NOT_FOUND);
+      throw new HttpException(
+        `Item ${itemId} not found in bundle`,
+        HttpStatus.NOT_FOUND,
+      );
     }
   }
 
@@ -107,7 +113,10 @@ export class BundleEntity extends TechnicalEntity {
    */
   setDiscountRate(rate: number): void {
     if (rate < 0 || rate >= 1) {
-      throw new HttpException('Discount rate must be between 0 and 1 (exclusive)', HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        'Discount rate must be between 0 and 1 (exclusive)',
+        HttpStatus.BAD_REQUEST,
+      );
     }
     this.discountRate = rate;
   }

@@ -47,7 +47,9 @@ export class CheckoutUseCases {
   async checkout(command: CheckoutCommand): Promise<CheckoutResult> {
     try {
       // 1. Validate basket
-      const validation = await this.basketUseCases.validateBasket(command.userId);
+      const validation = await this.basketUseCases.validateBasket(
+        command.userId,
+      );
       if (!validation.valid) {
         return {
           success: false,
