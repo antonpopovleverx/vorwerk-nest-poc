@@ -97,8 +97,8 @@ export class BundleUseCases {
    * Create a new bundle
    */
   async createBundle(command: CreateBundleCommand): Promise<BundleData> {
-    const basePrice = new Money(command.basePrice, Currency.EUR);
-    const bundle = BundleEntity.create(
+    const basePrice: Money = new Money(command.basePrice, Currency.EUR);
+    const bundle: BundleEntity = BundleEntity.create(
       command.name,
       command.description,
       basePrice,
@@ -107,12 +107,12 @@ export class BundleUseCases {
 
     if (command.items) {
       for (const item of command.items) {
-        const quantity = new ProductAmount(item.quantity);
+        const quantity: ProductAmount = new ProductAmount(item.quantity);
         bundle.addItem(item.itemId, quantity);
       }
     }
 
-    const savedBundle = await this.bundleRepository.save(bundle);
+    const savedBundle: BundleEntity = await this.bundleRepository.save(bundle);
 
     return this.mapEntityToData(savedBundle);
   }
@@ -121,7 +121,7 @@ export class BundleUseCases {
    * Get bundle by ID
    */
   async getBundle(bundleId: string): Promise<BundleData> {
-    const bundle = await this.bundleRepository.findById(bundleId);
+    const bundle: BundleEntity | null = await this.bundleRepository.findById(bundleId);
     if (!isFound(bundle)) {
       throw new HttpException(
         `Bundle ${bundleId} not found`,
@@ -136,7 +136,7 @@ export class BundleUseCases {
    * Get all bundles
    */
   async getAllBundles(): Promise<BundleData[]> {
-    const bundles = await this.bundleRepository.findAll();
+    const bundles: BundleEntity[] = await this.bundleRepository.findAll();
 
     return bundles.map((bundle) => this.mapEntityToData(bundle));
   }
@@ -145,7 +145,7 @@ export class BundleUseCases {
    * Get active bundles only
    */
   async getActiveBundles(): Promise<BundleData[]> {
-    const bundles = await this.bundleRepository.findActive();
+    const bundles: BundleEntity[] = await this.bundleRepository.findActive();
 
     return bundles.map((bundle) => this.mapEntityToData(bundle));
   }
@@ -157,7 +157,7 @@ export class BundleUseCases {
     bundleId: string,
     command: UpdateBundleCommand,
   ): Promise<BundleData> {
-    const bundle = await this.bundleRepository.findById(bundleId);
+    const bundle: BundleEntity | null = await this.bundleRepository.findById(bundleId);
     if (!isFound(bundle)) {
       throw new HttpException(
         `Bundle ${bundleId} not found`,
@@ -176,7 +176,7 @@ export class BundleUseCases {
 
     bundle.setNew(bundlePatch);
 
-    const savedBundle = await this.bundleRepository.save(bundle);
+    const savedBundle: BundleEntity = await this.bundleRepository.save(bundle);
 
     return this.mapEntityToData(savedBundle);
   }
@@ -195,7 +195,7 @@ export class BundleUseCases {
     bundleId: string,
     item: BundleItemCommand,
   ): Promise<BundleData> {
-    const bundle = await this.bundleRepository.findById(bundleId);
+    const bundle: BundleEntity | null = await this.bundleRepository.findById(bundleId);
     if (!isFound(bundle)) {
       throw new HttpException(
         `Bundle ${bundleId} not found`,
@@ -203,10 +203,10 @@ export class BundleUseCases {
       );
     }
 
-    const quantity = new ProductAmount(item.quantity);
+    const quantity: ProductAmount = new ProductAmount(item.quantity);
     bundle.addItem(item.itemId, quantity);
 
-    const savedBundle = await this.bundleRepository.save(bundle);
+    const savedBundle: BundleEntity = await this.bundleRepository.save(bundle);
 
     return this.mapEntityToData(savedBundle);
   }
@@ -218,7 +218,7 @@ export class BundleUseCases {
     bundleId: string,
     itemId: string,
   ): Promise<BundleData> {
-    const bundle = await this.bundleRepository.findById(bundleId);
+    const bundle: BundleEntity | null = await this.bundleRepository.findById(bundleId);
     if (!isFound(bundle)) {
       throw new HttpException(
         `Bundle ${bundleId} not found`,
@@ -228,7 +228,7 @@ export class BundleUseCases {
 
     bundle.removeItem(itemId);
 
-    const savedBundle = await this.bundleRepository.save(bundle);
+    const savedBundle: BundleEntity = await this.bundleRepository.save(bundle);
 
     return this.mapEntityToData(savedBundle);
   }
@@ -241,7 +241,7 @@ export class BundleUseCases {
     itemId: string,
     quantity: number,
   ): Promise<BundleData> {
-    const bundle = await this.bundleRepository.findById(bundleId);
+    const bundle: BundleEntity | null = await this.bundleRepository.findById(bundleId);
     if (!isFound(bundle)) {
       throw new HttpException(
         `Bundle ${bundleId} not found`,
@@ -249,10 +249,10 @@ export class BundleUseCases {
       );
     }
 
-    const productAmount = new ProductAmount(quantity);
+    const productAmount: ProductAmount = new ProductAmount(quantity);
     bundle.updateItemQuantity(itemId, productAmount);
 
-    const savedBundle = await this.bundleRepository.save(bundle);
+    const savedBundle: BundleEntity = await this.bundleRepository.save(bundle);
 
     return this.mapEntityToData(savedBundle);
   }

@@ -113,7 +113,7 @@ export class BasketUseCases {
    * Get basket for user (creates if not exists)
    */
   async getBasketForUser(userId: string): Promise<BasketData> {
-    const basket = await this.basketRepository.getOrCreateForUser(userId);
+    const basket: BasketEntity = await this.basketRepository.getOrCreateForUser(userId);
 
     return this.mapEntityToData(basket);
   }
@@ -122,14 +122,14 @@ export class BasketUseCases {
    * Add item to basket
    */
   async addItem(command: AddItemCommand): Promise<BasketData> {
-    const basket = await this.basketRepository.getOrCreateForUser(
+    const basket: BasketEntity = await this.basketRepository.getOrCreateForUser(
       command.userId,
     );
 
-    const amount = new ProductAmount(command.amount ?? 1);
+    const amount: ProductAmount = new ProductAmount(command.amount ?? 1);
     basket.addItem(command.itemId, amount);
 
-    const savedBasket = await this.basketRepository.save(basket);
+    const savedBasket: BasketEntity = await this.basketRepository.save(basket);
 
     return this.mapEntityToData(savedBasket);
   }
@@ -138,14 +138,14 @@ export class BasketUseCases {
    * Update item amount in basket
    */
   async updateItem(command: UpdateItemCommand): Promise<BasketData> {
-    const basket = await this.basketRepository.getOrCreateForUser(
+    const basket: BasketEntity = await this.basketRepository.getOrCreateForUser(
       command.userId,
     );
 
-    const amount = new ProductAmount(command.amount);
+    const amount: ProductAmount = new ProductAmount(command.amount);
     basket.updateItemAmount(command.itemId, amount);
 
-    const savedBasket = await this.basketRepository.save(basket);
+    const savedBasket: BasketEntity = await this.basketRepository.save(basket);
 
     return this.mapEntityToData(savedBasket);
   }
@@ -154,13 +154,13 @@ export class BasketUseCases {
    * Remove item from basket
    */
   async removeItem(command: RemoveItemCommand): Promise<BasketData> {
-    const basket = await this.basketRepository.getOrCreateForUser(
+    const basket: BasketEntity = await this.basketRepository.getOrCreateForUser(
       command.userId,
     );
 
     basket.removeItem(command.itemId);
 
-    const savedBasket = await this.basketRepository.save(basket);
+    const savedBasket: BasketEntity = await this.basketRepository.save(basket);
 
     return this.mapEntityToData(savedBasket);
   }
@@ -169,14 +169,14 @@ export class BasketUseCases {
    * Add bundle to basket
    */
   async addBundle(command: AddBundleCommand): Promise<BasketData> {
-    const basket = await this.basketRepository.getOrCreateForUser(
+    const basket: BasketEntity = await this.basketRepository.getOrCreateForUser(
       command.userId,
     );
 
-    const amount = new ProductAmount(command.amount ?? 1);
+    const amount: ProductAmount = new ProductAmount(command.amount ?? 1);
     basket.addBundle(command.bundleId, amount);
 
-    const savedBasket = await this.basketRepository.save(basket);
+    const savedBasket: BasketEntity = await this.basketRepository.save(basket);
 
     return this.mapEntityToData(savedBasket);
   }
@@ -185,14 +185,14 @@ export class BasketUseCases {
    * Update bundle amount in basket
    */
   async updateBundle(command: UpdateBundleCommand): Promise<BasketData> {
-    const basket = await this.basketRepository.getOrCreateForUser(
+    const basket: BasketEntity = await this.basketRepository.getOrCreateForUser(
       command.userId,
     );
 
-    const amount = new ProductAmount(command.amount);
+    const amount: ProductAmount = new ProductAmount(command.amount);
     basket.updateBundleAmount(command.bundleId, amount);
 
-    const savedBasket = await this.basketRepository.save(basket);
+    const savedBasket: BasketEntity = await this.basketRepository.save(basket);
 
     return this.mapEntityToData(savedBasket);
   }
@@ -201,13 +201,13 @@ export class BasketUseCases {
    * Remove bundle from basket
    */
   async removeBundle(command: RemoveBundleCommand): Promise<BasketData> {
-    const basket = await this.basketRepository.getOrCreateForUser(
+    const basket: BasketEntity = await this.basketRepository.getOrCreateForUser(
       command.userId,
     );
 
     basket.removeBundle(command.bundleId);
 
-    const savedBasket = await this.basketRepository.save(basket);
+    const savedBasket: BasketEntity = await this.basketRepository.save(basket);
 
     return this.mapEntityToData(savedBasket);
   }
@@ -216,11 +216,11 @@ export class BasketUseCases {
    * Clear basket
    */
   async clearBasket(userId: string): Promise<BasketData> {
-    const basket = await this.basketRepository.getOrCreateForUser(userId);
+    const basket: BasketEntity = await this.basketRepository.getOrCreateForUser(userId);
 
     basket.clear();
 
-    const savedBasket = await this.basketRepository.save(basket);
+    const savedBasket: BasketEntity = await this.basketRepository.save(basket);
 
     return this.mapEntityToData(savedBasket);
   }
@@ -229,7 +229,7 @@ export class BasketUseCases {
    * Get basket pricing
    */
   async getBasketPricing(userId: string): Promise<BasketPricingResult> {
-    const basket = await this.basketRepository.getOrCreateForUser(userId);
+    const basket: BasketEntity = await this.basketRepository.getOrCreateForUser(userId);
 
     const snapshot: BasketSnapshot = basket.createSnapshot();
 
@@ -240,8 +240,8 @@ export class BasketUseCases {
    * Validate basket against policy checks
    */
   async validateBasket(userId: string): Promise<BasketValidationResult> {
-    const basket = await this.basketRepository.getOrCreateForUser(userId);
-    const snapshot = basket.createSnapshot();
+    const basket: BasketEntity = await this.basketRepository.getOrCreateForUser(userId);
+    const snapshot: BasketSnapshot = basket.createSnapshot();
 
     const checkNames: BasketPolicyCheckName[] =
       await this.policyService.getBasketPolicyChecks(snapshot);
@@ -284,7 +284,7 @@ export class BasketUseCases {
    * Get basket snapshot for checkout
    */
   async getBasketSnapshot(userId: string): Promise<BasketSnapshot> {
-    const basket = await this.basketRepository.getOrCreateForUser(userId);
+    const basket: BasketEntity = await this.basketRepository.getOrCreateForUser(userId);
 
     return basket.createSnapshot();
   }

@@ -7,6 +7,9 @@ import { Region, DEFAULT_REGION } from 'src/_common/domain/enums/region.enum';
 import { BasketSnapshotForPolicy } from 'src/policy/application/ports/basket-data.port';
 import { IBundleRepository } from 'src/policy/domain/price-policy/bundle.repository';
 import { IPricePolicyRepository } from 'src/policy/domain/price-policy/price-policy.repository';
+import { BundleEntity } from '../../domain/price-policy/bundle.entity';
+import { ItemPriceEntity } from '../../domain/price-policy/item-price.entity';
+import { ItemDiscountEntity } from '../../domain/price-policy/item-discount.entity';
 import { isFound } from '../../../_common/domain/specifications/specification.interface';
 
 /**
@@ -65,35 +68,35 @@ export class PricePolicyUseCases {
   ): Promise<BasketPricingResult> {
     const itemResults: ItemPricingResult[] = [];
     const bundleResults: BundlePricingResult[] = [];
-    let subtotal = 0;
-    let totalDiscount = 0;
+    let subtotal: number = 0;
+    let totalDiscount: number = 0;
 
     // Calculate item pricing
     if (basketSnapshot.items.length > 0) {
       const itemIds = basketSnapshot.items.map((i) => i.itemId);
-      const prices = await this.pricePolicyRepository.getItemPrices(
+      const prices: ItemPriceEntity[] = await this.pricePolicyRepository.getItemPrices(
         itemIds,
         this.region,
       );
-      const discounts = await this.pricePolicyRepository.getActiveItemDiscounts(
+      const discounts: ItemDiscountEntity[] = await this.pricePolicyRepository.getActiveItemDiscounts(
         itemIds,
         this.region,
       );
 
-      const priceMap = new Map(prices.map((p) => [p.itemId, p.getPrice()]));
-      const discountMap = new Map(
+      const priceMap: Map<string, number> = new Map(prices.map((p) => [p.itemId, p.getPrice()]));
+      const discountMap: Map<string, number> = new Map(
         discounts
           .filter((d) => d.isCurrentlyValid())
           .map((d) => [d.itemId, d.getDiscountRate()]),
       );
 
       for (const item of basketSnapshot.items) {
-        const unitPrice = priceMap.get(item.itemId) ?? 0;
-        const discountRate = discountMap.get(item.itemId) ?? 0;
-        const discountAmount = unitPrice * discountRate;
-        const finalUnitPrice = unitPrice - discountAmount;
-        const totalPrice = Math.round(finalUnitPrice * item.amount * 100) / 100;
-        const itemDiscount =
+        const unitPrice: number = priceMap.get(item.itemId) ?? 0;
+        const discountRate: number = discountMap.get(item.itemId) ?? 0;
+        const discountAmount: number = unitPrice * discountRate;
+        const finalUnitPrice: number = unitPrice - discountAmount;
+        const totalPrice: number = Math.round(finalUnitPrice * item.amount * 100) / 100;
+        const itemDiscount: number =
           Math.round(discountAmount * item.amount * 100) / 100;
 
         itemResults.push({
@@ -112,18 +115,18 @@ export class PricePolicyUseCases {
     // Calculate bundle pricing
     if (basketSnapshot.bundles.length > 0) {
       const bundleIds = basketSnapshot.bundles.map((b) => b.bundleId);
-      const bundles = await this.bundleRepository.findByIds(bundleIds);
-      const bundleMap = new Map(bundles.map((b) => [b.bundleId, b]));
+      const bundles: BundleEntity[] = await this.bundleRepository.findByIds(bundleIds);
+      const bundleMap: Map<string, BundleEntity> = new Map(bundles.map((b) => [b.bundleId, b]));
 
       for (const basketBundle of basketSnapshot.bundles) {
-        const bundle = bundleMap.get(basketBundle.bundleId);
+        const bundle: BundleEntity | undefined = bundleMap.get(basketBundle.bundleId);
         if (isFound(bundle)) {
-          const unitPrice = bundle.basePrice.amount;
-          const discountAmount = bundle.getDiscountAmount().amount;
-          const finalUnitPrice = bundle.getDiscountedPrice().amount;
-          const totalPrice =
+          const unitPrice: number = bundle.basePrice.amount;
+          const discountAmount: number = bundle.getDiscountAmount().amount;
+          const finalUnitPrice: number = bundle.getDiscountedPrice().amount;
+          const totalPrice: number =
             Math.round(finalUnitPrice * basketBundle.amount * 100) / 100;
-          const bundleDiscount =
+          const bundleDiscount: number =
             Math.round(discountAmount * basketBundle.amount * 100) / 100;
 
           bundleResults.push({
@@ -189,7 +192,7 @@ export class PricePolicyUseCases {
     discountedPrice: number;
     discountRate: number;
   } | null> {
-    const bundle = await this.bundleRepository.findById(bundleId);
+    const bundle: BundleEntity | null = await this.bundleRepository.findById(bundleId);
     if (!isFound(bundle)) return null;
 
     return {

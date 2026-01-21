@@ -31,7 +31,7 @@ export class QuoteUseCases {
    * Create a new quote
    */
   async createQuote(dto: CreateQuoteDto): Promise<QuoteEntity> {
-    const quote = QuoteEntity.create(
+    const quote: QuoteEntity = QuoteEntity.create(
       dto.userId,
       dto.basketSnapshot,
       dto.policySnapshot,
@@ -45,7 +45,7 @@ export class QuoteUseCases {
    * Get quote by ID
    */
   async getQuote(quoteId: string): Promise<QuoteEntity> {
-    const quote = await this.quoteRepository.findById(quoteId);
+    const quote: QuoteEntity | null = await this.quoteRepository.findById(quoteId);
     if (!isFound(quote)) {
       throw new HttpException(
         `Quote ${quoteId} not found`,
