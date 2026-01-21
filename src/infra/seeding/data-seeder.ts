@@ -7,7 +7,6 @@ import { ItemDiscountEntity } from 'src/policy/domain/price-policy/item-discount
 import { ItemPriceEntity } from 'src/policy/domain/price-policy/item-price.entity';
 import { Repository } from 'typeorm';
 
-
 /**
  * Data seeder for POC - seeds initial test data
  */

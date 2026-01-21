@@ -9,7 +9,6 @@ import { BasketSnapshot } from '../../../basket/domain/basket/basket.entity';
 import { BasketPolicyUseCases } from 'src/policy/application/use-cases/basket-policy.use-cases';
 import { PricePolicyUseCases } from 'src/policy/application/use-cases/price-policy.use-cases';
 
-
 /**
  * Adapter implementing IPolicyServicePort for basket subdomain
  * This bridges basket subdomain to policy subdomain
@@ -47,7 +46,7 @@ export class PolicyServiceAdapter implements IPolicyServicePort {
         case 'BUNDLE_AVAILABILITY':
           return BasketPolicyCheckName.BUNDLE_AVAILABILITY;
         default:
-          return check as BasketPolicyCheckName;
+          return check;
       }
     });
   }

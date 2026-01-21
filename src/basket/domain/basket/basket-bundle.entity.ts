@@ -37,7 +37,10 @@ export class BasketBundleEntity extends TechnicalEntity {
    */
   increaseAmount(by: number = 1): void {
     if (by <= 0) {
-      throw new HttpException('Increment must be positive', HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        'Increment must be positive',
+        HttpStatus.BAD_REQUEST,
+      );
     }
     this.amount += by;
   }
@@ -47,10 +50,16 @@ export class BasketBundleEntity extends TechnicalEntity {
    */
   decreaseAmount(by: number = 1): void {
     if (by <= 0) {
-      throw new HttpException('Decrement must be positive', HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        'Decrement must be positive',
+        HttpStatus.BAD_REQUEST,
+      );
     }
     if (this.amount - by < 0) {
-      throw new HttpException('Cannot decrease amount below 0', HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        'Cannot decrease amount below 0',
+        HttpStatus.BAD_REQUEST,
+      );
     }
     this.amount -= by;
   }
