@@ -126,6 +126,25 @@ export class BundleEntity extends TechnicalEntity {
   }
 
   /**
+   * Update bundle fields from DTO
+   */
+  updateFromDto(dto: {
+    name?: string;
+    description?: string;
+    basePrice?: number;
+    discountRate?: number;
+    isActive?: boolean;
+  }): void {
+    if (dto.name !== undefined) this.name = dto.name;
+    if (dto.description !== undefined) this.description = dto.description;
+    if (dto.basePrice !== undefined) this.basePrice = dto.basePrice;
+    if (dto.discountRate !== undefined) this.setDiscountRate(dto.discountRate);
+    if (dto.isActive !== undefined) {
+      dto.isActive ? this.activate() : this.deactivate();
+    }
+  }
+
+  /**
    * Get all item IDs in the bundle
    */
   getItemIds(): string[] {

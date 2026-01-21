@@ -93,14 +93,7 @@ export class BundleUseCases {
     const bundle = await this.bundleRepository.findById(bundleId);
     if (!bundle) return null;
 
-    if (dto.name !== undefined) bundle.name = dto.name;
-    if (dto.description !== undefined) bundle.description = dto.description;
-    if (dto.basePrice !== undefined) bundle.basePrice = dto.basePrice;
-    if (dto.discountRate !== undefined)
-      bundle.setDiscountRate(dto.discountRate);
-    if (dto.isActive !== undefined) {
-      dto.isActive ? bundle.activate() : bundle.deactivate();
-    }
+    bundle.updateFromDto(dto);
 
     return this.bundleRepository.save(bundle);
   }

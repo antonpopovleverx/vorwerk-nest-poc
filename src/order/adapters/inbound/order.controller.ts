@@ -135,7 +135,7 @@ export class OrderController {
     return {
       quoteId: quote.quoteId,
       userId: quote.userId,
-      businessPartnerId: quote.businessPartnerId,
+      businessPartnerId: quote.businessPartnerId || undefined,
       price: quote.price,
       currency: quote.currency,
       basketSnapshot: quote.basketSnapshot,
@@ -149,7 +149,7 @@ export class OrderController {
       orderId: order.orderId,
       userId: order.userId,
       quoteId: order.quoteId,
-      businessPartnerId: order.businessPartnerId,
+      businessPartnerId: order.businessPartnerId || undefined,
       status: order.status,
       paymentReference: order.paymentReference,
       deliveryReference: order.deliveryReference,
