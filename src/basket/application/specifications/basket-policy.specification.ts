@@ -95,3 +95,22 @@ export const BasketSpecificationRegistry: Record<
   [BasketPolicyCheckName.BUNDLE_AVAILABILITY]: () =>
     new BundleAvailabilitySpecification(),
 };
+
+/**
+ * Get failure message for a basket policy check
+ */
+export function getCheckFailureMessage(checkName: BasketPolicyCheckName): string {
+  const messages: Record<BasketPolicyCheckName, string> = {
+    [BasketPolicyCheckName.MAX_ITEMS_PER_BASKET]:
+      'Maximum number of items per basket exceeded',
+    [BasketPolicyCheckName.MAX_BUNDLES_PER_BASKET]:
+      'Maximum number of bundles per basket exceeded',
+    [BasketPolicyCheckName.MIN_ORDER_VALUE]:
+      'Order value is below minimum required',
+    [BasketPolicyCheckName.ITEM_AVAILABILITY]:
+      'One or more items are not available',
+    [BasketPolicyCheckName.BUNDLE_AVAILABILITY]:
+      'One or more bundles are not available',
+  };
+  return messages[checkName] || 'Policy check failed';
+}

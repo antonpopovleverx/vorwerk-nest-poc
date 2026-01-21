@@ -12,6 +12,7 @@ import {
 import {
   BasketSpecificationRegistry,
   BasketSpecificationContext,
+  getCheckFailureMessage,
 } from '../specifications/basket-policy.specification';
 import { ProductAmount } from '../../../_common/domain/value-objects/product-amount.value-object';
 
@@ -230,7 +231,7 @@ export class BasketUseCases {
   async getBasketPricing(userId: string): Promise<BasketPricingResult> {
     const basket = await this.basketRepository.getOrCreateForUser(userId);
 
-    const snapshot = basket.createSnapshot();
+    const snapshot: BasketSnapshot = basket.createSnapshot();
 
     return this.policyService.calculateBasketPricing(snapshot);
   }
@@ -242,13 +243,12 @@ export class BasketUseCases {
     const basket = await this.basketRepository.getOrCreateForUser(userId);
     const snapshot = basket.createSnapshot();
 
-    // Get required policy checks
-    const checkNames = await this.policyService.getBasketPolicyChecks(snapshot);
+    const checkNames: BasketPolicyCheckName[] =
+      await this.policyService.getBasketPolicyChecks(snapshot);
 
-    // Get pricing for specifications that need it
-    const pricing = await this.policyService.calculateBasketPricing(snapshot);
+    const pricing: BasketPricingResult =
+      await this.policyService.calculateBasketPricing(snapshot);
 
-    // Build specification context
     const context: BasketSpecificationContext = {
       basket,
       pricing: {
@@ -256,7 +256,6 @@ export class BasketUseCases {
       },
     };
 
-    // Run all specifications
     const failedChecks: Array<{
       checkName: BasketPolicyCheckName;
       message: string;
@@ -269,11 +268,11 @@ export class BasketUseCases {
         if (!spec.isSatisfiedBy(context)) {
           failedChecks.push({
             checkName,
-            message: this.getCheckFailureMessage(checkName),
+            message: getCheckFailureMessage(checkName),
           });
         }
       }
-    };
+    }
 
     return {
       valid: failedChecks.length === 0,
@@ -288,21 +287,5 @@ export class BasketUseCases {
     const basket = await this.basketRepository.getOrCreateForUser(userId);
 
     return basket.createSnapshot();
-  }
-
-  private getCheckFailureMessage(checkName: BasketPolicyCheckName): string {
-    const messages: Record<BasketPolicyCheckName, string> = {
-      [BasketPolicyCheckName.MAX_ITEMS_PER_BASKET]:
-        'Maximum number of items per basket exceeded',
-      [BasketPolicyCheckName.MAX_BUNDLES_PER_BASKET]:
-        'Maximum number of bundles per basket exceeded',
-      [BasketPolicyCheckName.MIN_ORDER_VALUE]:
-        'Order value is below minimum required',
-      [BasketPolicyCheckName.ITEM_AVAILABILITY]:
-        'One or more items are not available',
-      [BasketPolicyCheckName.BUNDLE_AVAILABILITY]:
-        'One or more bundles are not available',
-    };
-    return messages[checkName] || 'Policy check failed';
   }
 }
