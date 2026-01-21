@@ -12,7 +12,7 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 import { Money } from '../../../_common/domain/value-objects/money.value-object';
 import { Currency } from '../../../_common/domain/enums/currency.enum';
 import { ProductAmount } from '../../../_common/domain/value-objects/product-amount.value-object';
-import { BundleContentEntity } from 'src/policy/domain/price-policy/bundle-content.entity.js';
+import { BundleContentEntity } from 'src/policy/domain/price-policy/bundle-content.entity';
 
 /**
  * Bundle aggregate root
