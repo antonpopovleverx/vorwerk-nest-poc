@@ -7,8 +7,13 @@ import { IQuoteRepository } from '../../domain/quote/quote.repository';
 /**
  * Create order from quote command
  */
+<<<<<<< Current (Your changes)
 export interface CreateOrderFromQuoteCommand {
   quoteId: string;
+=======
+export class CreateOrderFromQuoteDto {
+  quoteId!: string;
+>>>>>>> Incoming (Background Agent changes)
 }
 
 /**

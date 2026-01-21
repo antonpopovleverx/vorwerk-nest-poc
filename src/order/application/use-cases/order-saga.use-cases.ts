@@ -9,9 +9,9 @@ import { OrderUseCases } from './order.use-cases';
 /**
  * Order saga result
  */
-export interface OrderSagaResult {
-  success: boolean;
-  order: OrderEntity;
+export class OrderSagaResult {
+  success!: boolean;
+  order!: OrderEntity;
   error?: string;
 }
 

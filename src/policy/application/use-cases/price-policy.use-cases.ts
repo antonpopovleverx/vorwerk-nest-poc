@@ -9,35 +9,35 @@ import { IPricePolicyRepository } from 'src/policy/domain/price-policy/price-pol
 /**
  * Item pricing result
  */
-export interface ItemPricingResult {
-  itemId: string;
-  amount: number;
-  unitPrice: number;
-  discount: number;
-  totalPrice: number;
+export class ItemPricingResult {
+  itemId!: string;
+  amount!: number;
+  unitPrice!: number;
+  discount!: number;
+  totalPrice!: number;
 }
 
 /**
  * Bundle pricing result
  */
-export interface BundlePricingResult {
-  bundleId: string;
-  amount: number;
-  unitPrice: number;
-  discount: number;
-  totalPrice: number;
+export class BundlePricingResult {
+  bundleId!: string;
+  amount!: number;
+  unitPrice!: number;
+  discount!: number;
+  totalPrice!: number;
 }
 
 /**
  * Full basket pricing result
  */
-export interface BasketPricingResult {
-  items: ItemPricingResult[];
-  bundles: BundlePricingResult[];
-  subtotal: number;
-  totalDiscount: number;
-  total: number;
-  currency: Currency;
+export class BasketPricingResult {
+  items!: ItemPricingResult[];
+  bundles!: BundlePricingResult[];
+  subtotal!: number;
+  totalDiscount!: number;
+  total!: number;
+  currency!: Currency;
 }
 
 /**

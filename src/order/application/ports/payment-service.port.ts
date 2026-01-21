@@ -1,18 +1,18 @@
 /**
  * Payment request
  */
-export interface PaymentRequest {
-  orderId: string;
-  userId: string;
-  amount: number;
-  currency: string;
+export class PaymentRequest {
+  orderId!: string;
+  userId!: string;
+  amount!: number;
+  currency!: string;
 }
 
 /**
  * Payment result
  */
-export interface PaymentResult {
-  success: boolean;
+export class PaymentResult {
+  success!: boolean;
   paymentReference?: string;
   error?: string;
 }
@@ -20,10 +20,10 @@ export interface PaymentResult {
 /**
  * Refund request
  */
-export interface RefundRequest {
-  paymentReference: string;
-  amount: number;
-  reason: string;
+export class RefundRequest {
+  paymentReference!: string;
+  amount!: number;
+  reason!: string;
 }
 
 /**

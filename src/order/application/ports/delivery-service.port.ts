@@ -1,18 +1,18 @@
 /**
  * Delivery request
  */
-export interface DeliveryRequest {
-  orderId: string;
-  userId: string;
-  items: Array<{ itemId: string; amount: number }>;
-  bundles: Array<{ bundleId: string; amount: number }>;
+export class DeliveryRequest {
+  orderId!: string;
+  userId!: string;
+  items!: Array<{ itemId: string; amount: number }>;
+  bundles!: Array<{ bundleId: string; amount: number }>;
 }
 
 /**
  * Delivery result
  */
-export interface DeliveryResult {
-  success: boolean;
+export class DeliveryResult {
+  success!: boolean;
   deliveryReference?: string;
   estimatedDeliveryDate?: Date;
   error?: string;
@@ -21,9 +21,9 @@ export interface DeliveryResult {
 /**
  * Cancel delivery request
  */
-export interface CancelDeliveryRequest {
-  deliveryReference: string;
-  reason: string;
+export class CancelDeliveryRequest {
+  deliveryReference!: string;
+  reason!: string;
 }
 
 /**

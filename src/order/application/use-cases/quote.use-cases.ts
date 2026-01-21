@@ -9,10 +9,10 @@ import { IQuoteRepository } from '../../domain/quote/quote.repository';
 /**
  * Create quote DTO
  */
-export interface CreateQuoteDto {
-  userId: string;
-  basketSnapshot: QuoteBasketSnapshot;
-  policySnapshot: QuotePolicySnapshot;
+export class CreateQuoteDto {
+  userId!: string;
+  basketSnapshot!: QuoteBasketSnapshot;
+  policySnapshot!: QuotePolicySnapshot;
   businessPartnerId?: string;
 }
 

@@ -1,22 +1,22 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { BundleEntity } from '../../domain/price-policy/bundle/bundle.entity';
-import { IBundleRepository } from '../../domain/price-policy/bundle/bundle.repository';
+import { BundleEntity } from '../../domain/price-policy/bundle.entity';
+import { IBundleRepository } from '../../domain/price-policy/bundle.repository';
 
 /**
- * Create bundle command
+ * Create bundle DTO
  */
-export interface CreateBundleCommand {
-  name: string;
-  description: string;
-  basePrice: number;
-  discountRate: number;
+export class CreateBundleDto {
+  name!: string;
+  description!: string;
+  basePrice!: number;
+  discountRate!: number;
   items?: Array<{ itemId: string; quantity: number }>;
 }
 
 /**
- * Update bundle command
+ * Update bundle DTO
  */
-export interface UpdateBundleCommand {
+export class UpdateBundleDto {
   name?: string;
   description?: string;
   basePrice?: number;
@@ -25,11 +25,11 @@ export interface UpdateBundleCommand {
 }
 
 /**
- * Bundle item command
+ * Bundle item DTO
  */
-export interface BundleItemCommand {
-  itemId: string;
-  quantity: number;
+export class BundleItemDto {
+  itemId!: string;
+  quantity!: number;
 }
 
 /**
@@ -45,16 +45,16 @@ export class BundleUseCases {
   /**
    * Create a new bundle
    */
-  async createBundle(command: CreateBundleCommand): Promise<BundleEntity> {
+  async createBundle(dto: CreateBundleDto): Promise<BundleEntity> {
     const bundle = BundleEntity.create(
-      command.name,
-      command.description,
-      command.basePrice,
-      command.discountRate,
+      dto.name,
+      dto.description,
+      dto.basePrice,
+      dto.discountRate,
     );
 
-    if (command.items) {
-      for (const item of command.items) {
+    if (dto.items) {
+      for (const item of dto.items) {
         bundle.addItem(item.itemId, item.quantity);
       }
     }
@@ -88,19 +88,12 @@ export class BundleUseCases {
    */
   async updateBundle(
     bundleId: string,
-    command: UpdateBundleCommand,
+    dto: UpdateBundleDto,
   ): Promise<BundleEntity | null> {
     const bundle = await this.bundleRepository.findById(bundleId);
     if (!bundle) return null;
 
-    if (command.name !== undefined) bundle.name = command.name;
-    if (command.description !== undefined) bundle.description = command.description;
-    if (command.basePrice !== undefined) bundle.basePrice = command.basePrice;
-    if (command.discountRate !== undefined)
-      bundle.setDiscountRate(command.discountRate);
-    if (command.isActive !== undefined) {
-      command.isActive ? bundle.activate() : bundle.deactivate();
-    }
+    bundle.updateFromDto(dto);
 
     return this.bundleRepository.save(bundle);
   }
@@ -117,7 +110,7 @@ export class BundleUseCases {
    */
   async addItemToBundle(
     bundleId: string,
-    item: BundleItemCommand,
+    item: BundleItemDto,
   ): Promise<BundleEntity | null> {
     const bundle = await this.bundleRepository.findById(bundleId);
     if (!bundle) return null;

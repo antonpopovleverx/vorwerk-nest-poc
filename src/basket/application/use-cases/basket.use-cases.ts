@@ -17,6 +17,7 @@ import {
 /**
  * Commands for basket operations
  */
+<<<<<<< Current (Your changes)
 export interface AddItemCommand {
   userId: string;
   itemId: string;
@@ -49,11 +50,45 @@ export interface UpdateBundleCommand {
 export interface RemoveBundleCommand {
   userId: string;
   bundleId: string;
+=======
+export class AddItemDto {
+  userId!: string;
+  itemId!: string;
+  amount?: number;
 }
 
-export interface BasketValidationResult {
-  valid: boolean;
-  failedChecks: Array<{
+export class UpdateItemDto {
+  userId!: string;
+  itemId!: string;
+  amount!: number;
+}
+
+export class RemoveItemDto {
+  userId!: string;
+  itemId!: string;
+}
+
+export class AddBundleDto {
+  userId!: string;
+  bundleId!: string;
+  amount?: number;
+}
+
+export class UpdateBundleDto {
+  userId!: string;
+  bundleId!: string;
+  amount!: number;
+}
+
+export class RemoveBundleDto {
+  userId!: string;
+  bundleId!: string;
+>>>>>>> Incoming (Background Agent changes)
+}
+
+export class BasketValidationResult {
+  valid!: boolean;
+  failedChecks!: Array<{
     checkName: BasketPolicyCheckName;
     message: string;
   }>;

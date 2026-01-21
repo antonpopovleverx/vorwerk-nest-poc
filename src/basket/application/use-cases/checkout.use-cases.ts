@@ -10,16 +10,17 @@ import { BasketUseCases } from './basket.use-cases';
 /**
  * Checkout command
  */
-export interface CheckoutCommand {
-  userId: string;
+
+export class CheckoutCommand {
+  userId!: string;
   businessPartnerId?: string;
 }
 
 /**
  * Checkout result
  */
-export interface CheckoutResult {
-  success: boolean;
+export class CheckoutResult {
+  success!: boolean;
   quote?: CreateQuoteResult;
   error?: string;
   validationErrors?: Array<{ checkName: string; message: string }>;

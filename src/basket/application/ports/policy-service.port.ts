@@ -5,9 +5,9 @@ import { BasketSnapshot } from "src/basket/domain/basket/basket.entity";
 /**
  * Policy check result
  */
-export interface PolicyCheckResult {
-  checkName: BasketPolicyCheckName;
-  passed: boolean;
+export class PolicyCheckResult {
+  checkName!: BasketPolicyCheckName;
+  passed!: boolean;
   message?: string;
 }
 
@@ -25,34 +25,34 @@ export enum BasketPolicyCheckName {
 /**
  * Pricing result for basket
  */
-export interface BasketPricingResult {
-  items: Array<{
+export class BasketPricingResult {
+  items!: Array<{
     itemId: string;
     amount: number;
     unitPrice: number;
     discount: number;
     totalPrice: number;
   }>;
-  bundles: Array<{
+  bundles!: Array<{
     bundleId: string;
     amount: number;
     unitPrice: number;
     discount: number;
     totalPrice: number;
   }>;
-  subtotal: number;
-  totalDiscount: number;
-  total: number;
-  currency: Currency;
+  subtotal!: number;
+  totalDiscount!: number;
+  total!: number;
+  currency!: Currency;
 }
 
 /**
  * Policy snapshot for quotes
  */
-export interface PolicySnapshot {
-  pricing: BasketPricingResult;
-  checksPerformed: BasketPolicyCheckName[];
-  pricedAt: Date;
+export class PolicySnapshot {
+  pricing!: BasketPricingResult;
+  checksPerformed!: BasketPolicyCheckName[];
+  pricedAt!: Date;
 }
 
 /**
