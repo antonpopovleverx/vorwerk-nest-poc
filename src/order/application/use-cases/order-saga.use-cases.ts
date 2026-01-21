@@ -47,9 +47,9 @@ export class OrderSagaUseCases {
       quoteId: order.quoteId,
       businessPartnerId: order.businessPartnerId || undefined,
       status: order.status,
-      paymentReference: order.paymentReference,
-      deliveryReference: order.deliveryReference,
-      failureReason: order.failureReason,
+      paymentReference: order.paymentReference ?? undefined,
+      deliveryReference: order.deliveryReference ?? undefined,
+      failureReason: order.failureReason ?? undefined,
       createdAt: order.createdAt,
       updatedAt: order.updatedAt,
     };

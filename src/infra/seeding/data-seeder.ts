@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Currency } from 'src/_common/domain/enums/currency.enum';
 import { Region } from 'src/_common/domain/enums/region.enum';
 import { Money } from 'src/_common/domain/value-objects/money.value-object';
+import { ProductAmount } from 'src/_common/domain/value-objects/product-amount.value-object';
 import { BundleEntity } from 'src/policy/domain/price-policy/bundle.entity';
 import { ItemDiscountEntity } from 'src/policy/domain/price-policy/item-discount.entity';
 import { ItemPriceEntity } from 'src/policy/domain/price-policy/item-price.entity';
@@ -91,9 +92,9 @@ export class DataSeeder {
       new Money(59.99, Currency.EUR),
       0.15, // 15% discount
     );
-    starterPack.addItem('ITEM-001', 1); // Basic Widget
-    starterPack.addItem('ITEM-006', 1); // Accessory A
-    starterPack.addItem('ITEM-007', 1); // Accessory B
+    starterPack.addItem('ITEM-001', new ProductAmount(1)); // Basic Widget
+    starterPack.addItem('ITEM-006', new ProductAmount(1)); // Accessory A
+    starterPack.addItem('ITEM-007', new ProductAmount(1)); // Accessory B
     await this.bundleRepository.save(starterPack);
 
     // Bundle 2: Pro Pack
@@ -103,10 +104,10 @@ export class DataSeeder {
       new Money(99.99, Currency.EUR),
       0.2, // 20% discount
     );
-    proPack.addItem('ITEM-002', 1); // Premium Widget
-    proPack.addItem('ITEM-006', 2); // Accessory A x2
-    proPack.addItem('ITEM-007', 2); // Accessory B x2
-    proPack.addItem('ITEM-008', 1); // Accessory C
+    proPack.addItem('ITEM-002', new ProductAmount(1)); // Premium Widget
+    proPack.addItem('ITEM-006', new ProductAmount(2)); // Accessory A x2
+    proPack.addItem('ITEM-007', new ProductAmount(2)); // Accessory B x2
+    proPack.addItem('ITEM-008', new ProductAmount(1)); // Accessory C
     await this.bundleRepository.save(proPack);
 
     // Bundle 3: Ultimate Pack
@@ -116,11 +117,11 @@ export class DataSeeder {
       new Money(349.99, Currency.EUR),
       0.25, // 25% discount
     );
-    ultimatePack.addItem('ITEM-003', 1); // Deluxe Widget
-    ultimatePack.addItem('ITEM-005', 1); // Ultra Widget
-    ultimatePack.addItem('ITEM-006', 3); // Accessory A x3
-    ultimatePack.addItem('ITEM-007', 3); // Accessory B x3
-    ultimatePack.addItem('ITEM-008', 2); // Accessory C x2
+    ultimatePack.addItem('ITEM-003', new ProductAmount(1)); // Deluxe Widget
+    ultimatePack.addItem('ITEM-005', new ProductAmount(1)); // Ultra Widget
+    ultimatePack.addItem('ITEM-006', new ProductAmount(3)); // Accessory A x3
+    ultimatePack.addItem('ITEM-007', new ProductAmount(3)); // Accessory B x3
+    ultimatePack.addItem('ITEM-008', new ProductAmount(2)); // Accessory C x2
     await this.bundleRepository.save(ultimatePack);
 
     this.logger.log('Seeded 3 bundles');
