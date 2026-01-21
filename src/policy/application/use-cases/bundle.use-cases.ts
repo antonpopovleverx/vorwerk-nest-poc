@@ -86,7 +86,7 @@ export class BundleUseCases {
       contents:
         bundle.contents?.map((c) => ({
           itemId: c.itemId,
-          quantity: c.quantity.value,
+          quantity: c.amount.value,
         })) ?? [],
       createdAt: bundle.createdAt,
       updatedAt: bundle.updatedAt,

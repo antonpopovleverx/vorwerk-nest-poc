@@ -4,7 +4,7 @@ import { IOrderRepository } from '../../domain/order/order.repository';
 import { IQuoteRepository } from '../../domain/quote/quote.repository';
 import { IPaymentServicePort } from '../ports/payment-service.port';
 import { IDeliveryServicePort } from '../ports/delivery-service.port';
-import { OrderUseCases } from './order.use-cases';
+import { OrderUseCases, OrderData } from './order.use-cases';
 import { isFound } from '../../../_common/domain/specifications/specification.interface';
 
 /**
@@ -12,7 +12,7 @@ import { isFound } from '../../../_common/domain/specifications/specification.in
  */
 export class OrderSagaResult {
   success!: boolean;
-  order!: OrderEntity;
+  order?: OrderData;
   error?: string;
 }
 
@@ -38,6 +38,24 @@ export class OrderSagaUseCases {
   ) {}
 
   /**
+   * Convert OrderEntity to neutral OrderData
+   */
+  private mapEntityToData(order: OrderEntity): OrderData {
+    return {
+      orderId: order.orderId,
+      userId: order.userId,
+      quoteId: order.quoteId,
+      businessPartnerId: order.businessPartnerId || undefined,
+      status: order.status,
+      paymentReference: order.paymentReference,
+      deliveryReference: order.deliveryReference,
+      failureReason: order.failureReason,
+      createdAt: order.createdAt,
+      updatedAt: order.updatedAt,
+    };
+  }
+
+  /**
    * Execute the full order saga
    */
   async executeOrderSaga(orderId: string): Promise<OrderSagaResult> {
@@ -45,7 +63,7 @@ export class OrderSagaUseCases {
     if (!isFound(order)) {
       return {
         success: false,
-        order: null as any,
+        order: undefined,
         error: `Order ${orderId} not found`,
       };
     }
@@ -56,7 +74,7 @@ export class OrderSagaUseCases {
       order = await this.orderRepository.save(order);
       return {
         success: false,
-        order,
+        order: this.mapEntityToData(order),
         error: 'Quote not found',
       };
     }
@@ -76,7 +94,7 @@ export class OrderSagaUseCases {
         order = await this.orderRepository.save(order);
         return {
           success: false,
-          order,
+          order: this.mapEntityToData(order),
           error: `Payment failed: ${paymentResult.error}`,
         };
       }
@@ -104,7 +122,7 @@ export class OrderSagaUseCases {
         order = await this.orderRepository.save(order);
         return {
           success: false,
-          order,
+          order: this.mapEntityToData(order),
           error: `Delivery failed: ${deliveryResult.error}`,
         };
       }
@@ -123,7 +141,7 @@ export class OrderSagaUseCases {
 
       return {
         success: true,
-        order,
+        order: this.mapEntityToData(order),
       };
     } catch (error) {
       this.logger.error(`Saga failed: ${error}`);
@@ -143,7 +161,7 @@ export class OrderSagaUseCases {
 
       return {
         success: false,
-        order,
+        order: this.mapEntityToData(order),
         error: error instanceof Error ? error.message : 'Saga execution failed',
       };
     }
@@ -201,12 +219,12 @@ export class OrderSagaUseCases {
   async executePaymentStep(orderId: string): Promise<OrderSagaResult> {
     let order = await this.orderRepository.findById(orderId);
     if (!isFound(order)) {
-      return { success: false, order: null as any, error: 'Order not found' };
+      return { success: false, order: undefined, error: 'Order not found' };
     }
 
     const quote = await this.quoteRepository.findById(order.quoteId);
     if (!isFound(quote)) {
-      return { success: false, order, error: 'Quote not found' };
+      return { success: false, order: this.mapEntityToData(order), error: 'Quote not found' };
     }
 
     const result = await this.paymentService.processPayment({
@@ -219,23 +237,23 @@ export class OrderSagaUseCases {
     if (result.success && result.paymentReference) {
       order.initiatePayment(result.paymentReference);
       order = await this.orderRepository.save(order);
-      return { success: true, order };
+      return { success: true, order: this.mapEntityToData(order) };
     }
 
     order.markFailed(`Payment failed: ${result.error}`);
     order = await this.orderRepository.save(order);
-    return { success: false, order, error: result.error };
+    return { success: false, order: this.mapEntityToData(order), error: result.error };
   }
 
   async executeDeliveryStep(orderId: string): Promise<OrderSagaResult> {
     let order = await this.orderRepository.findById(orderId);
     if (!isFound(order)) {
-      return { success: false, order: null as any, error: 'Order not found' };
+      return { success: false, order: undefined, error: 'Order not found' };
     }
 
     const quote = await this.quoteRepository.findById(order.quoteId);
     if (!isFound(quote)) {
-      return { success: false, order, error: 'Quote not found' };
+      return { success: false, order: this.mapEntityToData(order), error: 'Quote not found' };
     }
 
     const basketSnapshot = quote.basketSnapshot;
@@ -249,13 +267,13 @@ export class OrderSagaUseCases {
     if (result.success && result.deliveryReference) {
       order.initiateDelivery(result.deliveryReference);
       order = await this.orderRepository.save(order);
-      return { success: true, order };
+      return { success: true, order: this.mapEntityToData(order) };
     }
 
     // Compensate payment
     await this.compensatePayment(order, 'Delivery failed');
     order.markFailed(`Delivery failed: ${result.error}`);
     order = await this.orderRepository.save(order);
-    return { success: false, order, error: result.error };
+    return { success: false, order: this.mapEntityToData(order), error: result.error };
   }
 }

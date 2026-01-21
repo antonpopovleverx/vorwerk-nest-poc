@@ -6,6 +6,22 @@ import { IQuoteRepository } from '../../domain/quote/quote.repository';
 import { isFound } from '../../../_common/domain/specifications/specification.interface';
 
 /**
+ * Neutral order data structure returned by use cases
+ */
+export class OrderData {
+  orderId: string;
+  userId: string;
+  quoteId: string;
+  businessPartnerId?: string;
+  status: OrderStatus;
+  paymentReference?: string;
+  deliveryReference?: string;
+  failureReason?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+/**
  * Create order from quote command
  */
 export class CreateOrderFromQuoteCommand {
@@ -25,11 +41,29 @@ export class OrderUseCases {
   ) {}
 
   /**
+   * Convert OrderEntity to neutral OrderData
+   */
+  private mapEntityToData(order: OrderEntity): OrderData {
+    return {
+      orderId: order.orderId,
+      userId: order.userId,
+      quoteId: order.quoteId,
+      businessPartnerId: order.businessPartnerId || undefined,
+      status: order.status,
+      paymentReference: order.paymentReference ?? undefined,
+      deliveryReference: order.deliveryReference ?? undefined,
+      failureReason: order.failureReason ?? undefined,
+      createdAt: order.createdAt,
+      updatedAt: order.updatedAt,
+    };
+  }
+
+  /**
    * Create order from quote
    */
   async createOrderFromQuote(
     command: CreateOrderFromQuoteCommand,
-  ): Promise<OrderEntity> {
+  ): Promise<OrderData> {
     const quote = await this.quoteRepository.findById(command.quoteId);
     if (!isFound(quote)) {
       throw new HttpException(
@@ -55,41 +89,47 @@ export class OrderUseCases {
       quote.businessPartnerId ?? undefined,
     );
 
-    return this.orderRepository.save(order);
+    const savedOrder = await this.orderRepository.save(order);
+    return this.mapEntityToData(savedOrder);
   }
 
   /**
    * Get order by ID
    */
-  async getOrder(orderId: string): Promise<OrderEntity | null> {
-    return this.orderRepository.findById(orderId);
+  async getOrder(orderId: string): Promise<OrderData | null> {
+    const order = await this.orderRepository.findById(orderId);
+    return order ? this.mapEntityToData(order) : null;
   }
 
   /**
    * Get order by quote ID
    */
-  async getOrderByQuoteId(quoteId: string): Promise<OrderEntity | null> {
-    return this.orderRepository.findByQuoteId(quoteId);
+  async getOrderByQuoteId(quoteId: string): Promise<OrderData | null> {
+    const order = await this.orderRepository.findByQuoteId(quoteId);
+    return order ? this.mapEntityToData(order) : null;
   }
 
   /**
    * Get orders for user
    */
-  async getOrdersForUser(userId: string): Promise<OrderEntity[]> {
-    return this.orderRepository.findByUserId(userId);
+  async getOrdersForUser(userId: string): Promise<OrderData[]> {
+    const orders = await this.orderRepository.findByUserId(userId);
+    return orders.map((order) => this.mapEntityToData(order));
   }
 
   /**
    * Get orders by status
    */
-  async getOrdersByStatus(status: OrderStatus): Promise<OrderEntity[]> {
-    return this.orderRepository.findByStatus(status);
+  async getOrdersByStatus(status: OrderStatus): Promise<OrderData[]> {
+    const orders = await this.orderRepository.findByStatus(status);
+    return orders.map((order) => this.mapEntityToData(order));
   }
 
   /**
    * Update order (save changes)
    */
-  async updateOrder(order: OrderEntity): Promise<OrderEntity> {
-    return this.orderRepository.save(order);
+  async updateOrder(order: OrderEntity): Promise<OrderData> {
+    const savedOrder = await this.orderRepository.save(order);
+    return this.mapEntityToData(savedOrder);
   }
 }

@@ -6,7 +6,7 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
-import { OrderUseCases } from '../../application/use-cases/order.use-cases';
+import { OrderUseCases, OrderData } from '../../application/use-cases/order.use-cases';
 import { OrderSagaUseCases } from '../../application/use-cases/order-saga.use-cases';
 import { QuoteUseCases } from '../../application/use-cases/quote.use-cases';
 import {
@@ -168,12 +168,12 @@ export class OrderController {
     };
   }
 
-  private mapOrderToResponse(order: any): OrderGetResponseDto {
+  private mapOrderToResponse(order: OrderData): OrderGetResponseDto {
     return {
       orderId: order.orderId,
       userId: order.userId,
       quoteId: order.quoteId,
-      businessPartnerId: order.businessPartnerId || undefined,
+      businessPartnerId: order.businessPartnerId,
       status: order.status,
       paymentReference: order.paymentReference,
       deliveryReference: order.deliveryReference,

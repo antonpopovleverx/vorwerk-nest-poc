@@ -8,11 +8,11 @@ import {
   BeforeUpdate,
 } from 'typeorm';
 import { TechnicalEntity } from '../../../_common/domain/base/base.entity';
-import { BundleContentEntity } from './bundle/bundle-content.entity';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { Money } from '../../../_common/domain/value-objects/money.value-object';
 import { Currency } from '../../../_common/domain/enums/currency.enum';
 import { ProductAmount } from '../../../_common/domain/value-objects/product-amount.value-object';
+import { BundleContentEntity } from 'src/policy/domain/price-policy/bundle-content.entity.js';
 
 /**
  * Bundle aggregate root
@@ -99,12 +99,12 @@ export class BundleEntity extends TechnicalEntity {
 
     const existing = this.contents?.find((c) => c.itemId === itemId);
     if (existing) {
-      existing.quantity = existing.quantity.add(quantity);
+      existing.amount = existing.amount.add(quantity);
     } else {
       const content = new BundleContentEntity();
       content.bundleId = this.bundleId;
       content.itemId = itemId;
-      content.quantity = quantity;
+      content.amount = quantity;
 
       if (!this.contents) {
         this.contents = [];
@@ -135,7 +135,7 @@ export class BundleEntity extends TechnicalEntity {
 
     const content = this.contents?.find((c) => c.itemId === itemId);
     if (content) {
-      content.quantity = quantity;
+      content.amount = quantity;
     } else {
       throw new HttpException(
         `Item ${itemId} not found in bundle`,

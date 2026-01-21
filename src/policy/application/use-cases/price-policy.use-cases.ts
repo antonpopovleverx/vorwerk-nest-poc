@@ -117,10 +117,10 @@ export class PricePolicyUseCases {
 
       for (const basketBundle of basketSnapshot.bundles) {
         const bundle = bundleMap.get(basketBundle.bundleId);
-        if (bundle) {
-          const unitPrice = bundle.basePrice;
-          const discountAmount = bundle.getDiscountAmount();
-          const finalUnitPrice = bundle.getDiscountedPrice();
+        if (isFound(bundle)) {
+          const unitPrice = bundle.basePrice.amount;
+          const discountAmount = bundle.getDiscountAmount().amount;
+          const finalUnitPrice = bundle.getDiscountedPrice().amount;
           const totalPrice =
             Math.round(finalUnitPrice * basketBundle.amount * 100) / 100;
           const bundleDiscount =
@@ -191,8 +191,8 @@ export class PricePolicyUseCases {
     if (!isFound(bundle)) return null;
 
     return {
-      basePrice: bundle.basePrice,
-      discountedPrice: bundle.getDiscountedPrice(),
+      basePrice: bundle.basePrice.amount,
+      discountedPrice: bundle.getDiscountedPrice().amount,
       discountRate: Number(bundle.discountRate),
     };
   }

@@ -9,7 +9,7 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
-import { BasketUseCases } from '../../application/use-cases/basket.use-cases';
+import { BasketUseCases, BasketData } from '../../application/use-cases/basket.use-cases';
 import { CheckoutUseCases } from '../../application/use-cases/checkout.use-cases';
 import {
   BasketPostRequestDto,
@@ -46,16 +46,8 @@ export class BasketController {
     return {
       basketId: basket.basketId,
       userId: basket.userId,
-      items:
-        basket.items?.map((i) => ({
-          itemId: i.itemId,
-          amount: i.amount.value,
-        })) ?? [],
-      bundles:
-        basket.bundles?.map((b) => ({
-          bundleId: b.bundleId,
-          amount: b.amount.value,
-        })) ?? [],
+      items: basket.items,
+      bundles: basket.bundles,
     };
   }
 
@@ -67,12 +59,12 @@ export class BasketController {
     @Param('userId') userId: string,
     @Body() body: BasketPostRequestDto,
   ): Promise<BasketSuccessResponseDto> {
-    const basket = await this.basketUseCases.addItem({
+    const basketData = await this.basketUseCases.addItem({
       userId,
       itemId: body.itemId,
       amount: body.amount,
     });
-    return { success: true, basketId: basket.basketId };
+    return { success: true, basketId: basketData.basketId };
   }
 
   /**
@@ -85,12 +77,12 @@ export class BasketController {
     @Body() body: BasketPutRequestDto,
   ): Promise<BasketSuccessResponseDto> {
     try {
-      const basket = await this.basketUseCases.updateItem({
+      const basketData = await this.basketUseCases.updateItem({
         userId,
         itemId,
         amount: body.amount,
       });
-      return { success: true, basketId: basket.basketId };
+      return { success: true, basketId: basketData.basketId };
     } catch (error) {
       throw new HttpException(
         error instanceof Error ? error.message : 'Update failed',
@@ -119,12 +111,12 @@ export class BasketController {
     @Param('userId') userId: string,
     @Body() body: BasketBundlePostRequestDto,
   ): Promise<BasketSuccessResponseDto> {
-    const basket = await this.basketUseCases.addBundle({
+    const basketData = await this.basketUseCases.addBundle({
       userId,
       bundleId: body.bundleId,
       amount: body.amount,
     });
-    return { success: true, basketId: basket.basketId };
+    return { success: true, basketId: basketData.basketId };
   }
 
   /**
@@ -137,12 +129,12 @@ export class BasketController {
     @Body() body: BasketBundlePutRequestDto,
   ): Promise<BasketSuccessResponseDto> {
     try {
-      const basket = await this.basketUseCases.updateBundle({
+      const basketData = await this.basketUseCases.updateBundle({
         userId,
         bundleId,
         amount: body.amount,
       });
-      return { success: true, basketId: basket.basketId };
+      return { success: true, basketId: basketData.basketId };
     } catch (error) {
       throw new HttpException(
         error instanceof Error ? error.message : 'Update failed',
