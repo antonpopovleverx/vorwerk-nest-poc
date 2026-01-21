@@ -59,12 +59,12 @@ export class BasketController {
       items:
         basket.items?.map((i) => ({
           itemId: i.itemId,
-          amount: i.amount,
+          amount: i.amount.value,
         })) ?? [],
       bundles:
         basket.bundles?.map((b) => ({
           bundleId: b.bundleId,
-          amount: b.amount,
+          amount: b.amount.value,
         })) ?? [],
     };
   }

@@ -172,7 +172,7 @@ export class BundleController {
       contents:
         bundle.contents?.map((c: any) => ({
           itemId: c.itemId,
-          quantity: c.quantity,
+          quantity: c.quantity.value,
         })) ?? [],
       createdAt: bundle.createdAt,
       updatedAt: bundle.updatedAt,

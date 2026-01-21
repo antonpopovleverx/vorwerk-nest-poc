@@ -13,40 +13,41 @@ import {
   BasketSpecificationRegistry,
   BasketSpecificationContext,
 } from '../specifications/basket-policy.specification';
+import { ProductAmount } from '../../../_common/domain/value-objects/product-amount.value-object';
 
 /**
- * DTOs for basket operations
+ * Commands for basket operations
  */
-export interface AddItemDto {
+export interface AddItemCommand {
   userId: string;
   itemId: string;
   amount?: number;
 }
 
-export interface UpdateItemDto {
+export interface UpdateItemCommand {
   userId: string;
   itemId: string;
   amount: number;
 }
 
-export interface RemoveItemDto {
+export interface RemoveItemCommand {
   userId: string;
   itemId: string;
 }
 
-export interface AddBundleDto {
+export interface AddBundleCommand {
   userId: string;
   bundleId: string;
   amount?: number;
 }
 
-export interface UpdateBundleDto {
+export interface UpdateBundleCommand {
   userId: string;
   bundleId: string;
   amount: number;
 }
 
-export interface RemoveBundleDto {
+export interface RemoveBundleCommand {
   userId: string;
   bundleId: string;
 }
@@ -81,54 +82,58 @@ export class BasketUseCases {
   /**
    * Add item to basket
    */
-  async addItem(dto: AddItemDto): Promise<BasketEntity> {
-    const basket = await this.basketRepository.getOrCreateForUser(dto.userId);
-    basket.addItem(dto.itemId, dto.amount ?? 1);
+  async addItem(command: AddItemCommand): Promise<BasketEntity> {
+    const basket = await this.basketRepository.getOrCreateForUser(command.userId);
+    const amount = new ProductAmount(command.amount ?? 1);
+    basket.addItem(command.itemId, amount);
     return this.basketRepository.save(basket);
   }
 
   /**
    * Update item amount in basket
    */
-  async updateItem(dto: UpdateItemDto): Promise<BasketEntity> {
-    const basket = await this.basketRepository.getOrCreateForUser(dto.userId);
-    basket.updateItemAmount(dto.itemId, dto.amount);
+  async updateItem(command: UpdateItemCommand): Promise<BasketEntity> {
+    const basket = await this.basketRepository.getOrCreateForUser(command.userId);
+    const amount = new ProductAmount(command.amount);
+    basket.updateItemAmount(command.itemId, amount);
     return this.basketRepository.save(basket);
   }
 
   /**
    * Remove item from basket
    */
-  async removeItem(dto: RemoveItemDto): Promise<BasketEntity> {
-    const basket = await this.basketRepository.getOrCreateForUser(dto.userId);
-    basket.removeItem(dto.itemId);
+  async removeItem(command: RemoveItemCommand): Promise<BasketEntity> {
+    const basket = await this.basketRepository.getOrCreateForUser(command.userId);
+    basket.removeItem(command.itemId);
     return this.basketRepository.save(basket);
   }
 
   /**
    * Add bundle to basket
    */
-  async addBundle(dto: AddBundleDto): Promise<BasketEntity> {
-    const basket = await this.basketRepository.getOrCreateForUser(dto.userId);
-    basket.addBundle(dto.bundleId, dto.amount ?? 1);
+  async addBundle(command: AddBundleCommand): Promise<BasketEntity> {
+    const basket = await this.basketRepository.getOrCreateForUser(command.userId);
+    const amount = new ProductAmount(command.amount ?? 1);
+    basket.addBundle(command.bundleId, amount);
     return this.basketRepository.save(basket);
   }
 
   /**
    * Update bundle amount in basket
    */
-  async updateBundle(dto: UpdateBundleDto): Promise<BasketEntity> {
-    const basket = await this.basketRepository.getOrCreateForUser(dto.userId);
-    basket.updateBundleAmount(dto.bundleId, dto.amount);
+  async updateBundle(command: UpdateBundleCommand): Promise<BasketEntity> {
+    const basket = await this.basketRepository.getOrCreateForUser(command.userId);
+    const amount = new ProductAmount(command.amount);
+    basket.updateBundleAmount(command.bundleId, amount);
     return this.basketRepository.save(basket);
   }
 
   /**
    * Remove bundle from basket
    */
-  async removeBundle(dto: RemoveBundleDto): Promise<BasketEntity> {
-    const basket = await this.basketRepository.getOrCreateForUser(dto.userId);
-    basket.removeBundle(dto.bundleId);
+  async removeBundle(command: RemoveBundleCommand): Promise<BasketEntity> {
+    const basket = await this.basketRepository.getOrCreateForUser(command.userId);
+    basket.removeBundle(command.bundleId);
     return this.basketRepository.save(basket);
   }
 

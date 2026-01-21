@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { IBasketRepository } from '../domain/basket/basket.repository';
 import { BasketEntity } from '../domain/basket/basket.entity';
+import { ProductAmount } from '../../_common/domain/value-objects/product-amount.value-object';
 
 
 /**

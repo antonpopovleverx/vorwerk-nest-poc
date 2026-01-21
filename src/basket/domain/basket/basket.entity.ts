@@ -3,6 +3,7 @@ import { TechnicalEntity } from '../../../_common/domain/base/base.entity';
 import { BasketItemEntity } from './basket-item.entity';
 import { BasketBundleEntity } from './basket-bundle.entity';
 import { HttpException, HttpStatus } from '@nestjs/common';
+import { ProductAmount } from '../../../_common/domain/value-objects/product-amount.value-object';
 
 /**
  * Basket aggregate root
@@ -33,14 +34,14 @@ export class BasketEntity extends TechnicalEntity {
   /**
    * Add an item to the basket or increase quantity if already present
    */
-  addItem(itemId: string, amount: number = 1): void {
-    if (amount <= 0) {
+  addItem(itemId: string, amount: ProductAmount = ProductAmount.one()): void {
+    if (amount.isLessThanOrEqual(ProductAmount.zero())) {
       throw new HttpException('Amount must be positive', HttpStatus.BAD_REQUEST);
     }
 
     const existingItem = this.items?.find((i) => i.itemId === itemId);
     if (existingItem) {
-      existingItem.amount += amount;
+      existingItem.increaseAmount(amount);
     } else {
       const newItem = new BasketItemEntity();
       newItem.basketId = this.basketId;
@@ -68,8 +69,8 @@ export class BasketEntity extends TechnicalEntity {
   /**
    * Update item quantity
    */
-  updateItemAmount(itemId: string, amount: number): void {
-    if (amount <= 0) {
+  updateItemAmount(itemId: string, amount: ProductAmount): void {
+    if (amount.isLessThanOrEqual(ProductAmount.zero())) {
       this.removeItem(itemId);
       return;
     }
@@ -85,14 +86,14 @@ export class BasketEntity extends TechnicalEntity {
   /**
    * Add a bundle to the basket
    */
-  addBundle(bundleId: string, amount: number = 1): void {
-    if (amount <= 0) {
+  addBundle(bundleId: string, amount: ProductAmount = ProductAmount.one()): void {
+    if (amount.isLessThanOrEqual(ProductAmount.zero())) {
       throw new HttpException('Amount must be positive', HttpStatus.BAD_REQUEST);
     }
 
     const existingBundle = this.bundles?.find((b) => b.bundleId === bundleId);
     if (existingBundle) {
-      existingBundle.amount += amount;
+      existingBundle.increaseAmount(amount);
     } else {
       const newBundle = new BasketBundleEntity();
       newBundle.basketId = this.basketId;
@@ -120,8 +121,8 @@ export class BasketEntity extends TechnicalEntity {
   /**
    * Update bundle quantity
    */
-  updateBundleAmount(bundleId: string, amount: number): void {
-    if (amount <= 0) {
+  updateBundleAmount(bundleId: string, amount: ProductAmount): void {
+    if (amount.isLessThanOrEqual(ProductAmount.zero())) {
       this.removeBundle(bundleId);
       return;
     }
@@ -156,14 +157,14 @@ export class BasketEntity extends TechnicalEntity {
    * Get total number of individual items (excluding bundle contents)
    */
   getTotalItemCount(): number {
-    return this.items?.reduce((sum, item) => sum + item.amount, 0) ?? 0;
+    return this.items?.reduce((sum, item) => sum + item.amount.value, 0) ?? 0;
   }
 
   /**
    * Get total number of bundles
    */
   getTotalBundleCount(): number {
-    return this.bundles?.reduce((sum, bundle) => sum + bundle.amount, 0) ?? 0;
+    return this.bundles?.reduce((sum, bundle) => sum + bundle.amount.value, 0) ?? 0;
   }
 
   /**
@@ -176,12 +177,12 @@ export class BasketEntity extends TechnicalEntity {
       items:
         this.items?.map((i) => ({
           itemId: i.itemId,
-          amount: i.amount,
+          amount: i.amount.value,
         })) ?? [],
       bundles:
         this.bundles?.map((b) => ({
           bundleId: b.bundleId,
-          amount: b.amount,
+          amount: b.amount.value,
         })) ?? [],
       snapshotAt: new Date(),
     };
