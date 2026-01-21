@@ -17,73 +17,38 @@ import {
 /**
  * Commands for basket operations
  */
-<<<<<<< Current (Your changes)
-export interface AddItemCommand {
-  userId: string;
-  itemId: string;
-  amount?: number;
-}
-
-export interface UpdateItemCommand {
-  userId: string;
-  itemId: string;
-  amount: number;
-}
-
-export interface RemoveItemCommand {
-  userId: string;
-  itemId: string;
-}
-
-export interface AddBundleCommand {
-  userId: string;
-  bundleId: string;
-  amount?: number;
-}
-
-export interface UpdateBundleCommand {
-  userId: string;
-  bundleId: string;
-  amount: number;
-}
-
-export interface RemoveBundleCommand {
-  userId: string;
-  bundleId: string;
-=======
-export class AddItemDto {
+export class AddItemCommand {
   userId!: string;
   itemId!: string;
   amount?: number;
 }
 
-export class UpdateItemDto {
+export class UpdateItemCommand {
   userId!: string;
   itemId!: string;
   amount!: number;
 }
 
-export class RemoveItemDto {
+export class RemoveItemCommand {
   userId!: string;
   itemId!: string;
 }
 
-export class AddBundleDto {
+export class AddBundleCommand {
   userId!: string;
   bundleId!: string;
   amount?: number;
 }
 
-export class UpdateBundleDto {
+export class UpdateBundleCommand {
   userId!: string;
   bundleId!: string;
   amount!: number;
 }
 
-export class RemoveBundleDto {
+export class RemoveBundleCommand {
   userId!: string;
   bundleId!: string;
->>>>>>> Incoming (Background Agent changes)
 }
 
 export class BasketValidationResult {
