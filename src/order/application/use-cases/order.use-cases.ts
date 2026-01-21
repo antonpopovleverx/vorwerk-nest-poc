@@ -3,6 +3,7 @@ import { OrderEntity } from '../../domain/order/order.entity';
 import { OrderStatus } from '../../domain/order/order-status.enum';
 import { IOrderRepository } from '../../domain/order/order.repository';
 import { IQuoteRepository } from '../../domain/quote/quote.repository';
+import { isFound } from '../../../_common/domain/specifications/specification.interface';
 
 /**
  * Create order from quote command
@@ -30,7 +31,7 @@ export class OrderUseCases {
     command: CreateOrderFromQuoteCommand,
   ): Promise<OrderEntity> {
     const quote = await this.quoteRepository.findById(command.quoteId);
-    if (!quote) {
+    if (!isFound(quote)) {
       throw new HttpException(
         `Quote ${command.quoteId} not found`,
         HttpStatus.NOT_FOUND,
@@ -41,7 +42,7 @@ export class OrderUseCases {
     const existingOrder = await this.orderRepository.findByQuoteId(
       command.quoteId,
     );
-    if (existingOrder) {
+    if (isFound(existingOrder)) {
       throw new HttpException(
         `Order already exists for quote ${command.quoteId}`,
         HttpStatus.CONFLICT,

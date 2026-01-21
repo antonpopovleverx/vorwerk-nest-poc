@@ -1,4 +1,13 @@
-import { Entity, Column, ManyToOne, JoinColumn, PrimaryColumn, AfterLoad, BeforeInsert, BeforeUpdate } from 'typeorm';
+import {
+  Entity,
+  Column,
+  ManyToOne,
+  JoinColumn,
+  PrimaryColumn,
+  AfterLoad,
+  BeforeInsert,
+  BeforeUpdate,
+} from 'typeorm';
 import { TechnicalEntity } from '../../../../_common/domain/base/base.entity';
 import { BundleEntity } from '../bundle.entity';
 import { ProductAmount } from '../../../../_common/domain/value-objects/product-amount.value-object';

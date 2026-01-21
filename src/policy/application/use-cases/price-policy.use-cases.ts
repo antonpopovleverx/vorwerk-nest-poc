@@ -7,6 +7,7 @@ import { Region, DEFAULT_REGION } from 'src/_common/domain/enums/region.enum';
 import { BasketSnapshotForPolicy } from 'src/policy/application/ports/basket-data.port';
 import { IBundleRepository } from 'src/policy/domain/price-policy/bundle.repository';
 import { IPricePolicyRepository } from 'src/policy/domain/price-policy/price-policy.repository';
+import { isFound } from '../../../_common/domain/specifications/specification.interface';
 
 /**
  * Item pricing result
@@ -187,7 +188,7 @@ export class PricePolicyUseCases {
     discountRate: number;
   } | null> {
     const bundle = await this.bundleRepository.findById(bundleId);
-    if (!bundle) return null;
+    if (!isFound(bundle)) return null;
 
     return {
       basePrice: bundle.basePrice,

@@ -1,4 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, AfterLoad, BeforeInsert, BeforeUpdate } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  AfterLoad,
+  BeforeInsert,
+  BeforeUpdate,
+} from 'typeorm';
 import { TechnicalEntity } from '../../../_common/domain/base/base.entity';
 import { BundleContentEntity } from './bundle/bundle-content.entity';
 import { HttpException, HttpStatus } from '@nestjs/common';
@@ -62,7 +70,6 @@ export class BundleEntity extends TechnicalEntity {
     eager: true,
   })
   contents: BundleContentEntity[];
-
   // Domain methods
 
   /**
@@ -167,7 +174,7 @@ export class BundleEntity extends TechnicalEntity {
   /**
    * Update bundle fields from DTO
    */
-  updateFromDto(dto: {
+  setNew(dto: {
     name?: string;
     description?: string;
     basePrice?: Money;

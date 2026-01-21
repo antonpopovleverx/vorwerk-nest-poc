@@ -9,7 +9,7 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
-import { BundleUseCases } from '../../application/use-cases/bundle.use-cases';
+import { BundleUseCases, BundleData } from '../../application/use-cases/bundle.use-cases';
 import {
   BundlePostRequestDto,
   BundlePutRequestDto,
@@ -156,20 +156,16 @@ export class BundleController {
     return this.mapBundleToResponse(bundle);
   }
 
-  private mapBundleToResponse(bundle: any): BundleGetResponseDto {
+  private mapBundleToResponse(bundle: BundleData): BundleGetResponseDto {
     return {
       bundleId: bundle.bundleId,
       name: bundle.name,
       description: bundle.description,
-      basePrice: bundle.basePrice.amount,
+      basePrice: bundle.basePrice,
       discountRate: bundle.discountRate,
-      discountedPrice: bundle.getDiscountedPrice().amount,
+      discountedPrice: bundle.discountedPrice,
       isActive: bundle.isActive,
-      contents:
-        bundle.contents?.map((c: any) => ({
-          itemId: c.itemId,
-          quantity: c.quantity.value,
-        })) ?? [],
+      contents: bundle.contents,
       createdAt: bundle.createdAt,
       updatedAt: bundle.updatedAt,
     };

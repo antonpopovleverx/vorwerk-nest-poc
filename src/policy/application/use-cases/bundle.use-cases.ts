@@ -4,6 +4,26 @@ import { IBundleRepository } from '../../domain/price-policy/bundle.repository';
 import { ProductAmount } from '../../../_common/domain/value-objects/product-amount.value-object';
 import { Money } from '../../../_common/domain/value-objects/money.value-object';
 import { Currency } from '../../../_common/domain/enums/currency.enum';
+import { isFound } from '../../../_common/domain/specifications/specification.interface';
+
+/**
+ * Neutral bundle data structure returned by use cases
+ */
+export class BundleData {
+  bundleId: string;
+  name: string;
+  description: string;
+  basePrice: number;
+  discountRate: number;
+  discountedPrice: number;
+  isActive: boolean;
+  contents: Array<{
+    itemId: string;
+    quantity: number;
+  }>;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
 /**
  * Create bundle command
@@ -52,9 +72,31 @@ export class BundleUseCases {
   ) {}
 
   /**
+   * Convert BundleEntity to neutral BundleData
+   */
+  private mapEntityToData(bundle: BundleEntity): BundleData {
+    return {
+      bundleId: bundle.bundleId,
+      name: bundle.name,
+      description: bundle.description,
+      basePrice: bundle.basePrice.amount,
+      discountRate: bundle.discountRate,
+      discountedPrice: bundle.getDiscountedPrice().amount,
+      isActive: bundle.isActive,
+      contents:
+        bundle.contents?.map((c) => ({
+          itemId: c.itemId,
+          quantity: c.quantity.value,
+        })) ?? [],
+      createdAt: bundle.createdAt,
+      updatedAt: bundle.updatedAt,
+    };
+  }
+
+  /**
    * Create a new bundle
    */
-  async createBundle(command: CreateBundleCommand): Promise<BundleEntity> {
+  async createBundle(command: CreateBundleCommand): Promise<BundleData> {
     const basePrice = new Money(command.basePrice, Currency.EUR);
     const bundle = BundleEntity.create(
       command.name,
@@ -70,28 +112,32 @@ export class BundleUseCases {
       }
     }
 
-    return this.bundleRepository.save(bundle);
+    const savedBundle = await this.bundleRepository.save(bundle);
+    return this.mapEntityToData(savedBundle);
   }
 
   /**
    * Get bundle by ID
    */
-  async getBundle(bundleId: string): Promise<BundleEntity | null> {
-    return this.bundleRepository.findById(bundleId);
+  async getBundle(bundleId: string): Promise<BundleData | null> {
+    const bundle = await this.bundleRepository.findById(bundleId);
+    return bundle ? this.mapEntityToData(bundle) : null;
   }
 
   /**
    * Get all bundles
    */
-  async getAllBundles(): Promise<BundleEntity[]> {
-    return this.bundleRepository.findAll();
+  async getAllBundles(): Promise<BundleData[]> {
+    const bundles = await this.bundleRepository.findAll();
+    return bundles.map((bundle) => this.mapEntityToData(bundle));
   }
 
   /**
    * Get active bundles only
    */
-  async getActiveBundles(): Promise<BundleEntity[]> {
-    return this.bundleRepository.findActive();
+  async getActiveBundles(): Promise<BundleData[]> {
+    const bundles = await this.bundleRepository.findActive();
+    return bundles.map((bundle) => this.mapEntityToData(bundle));
   }
 
   /**
@@ -100,12 +146,12 @@ export class BundleUseCases {
   async updateBundle(
     bundleId: string,
     command: UpdateBundleCommand,
-  ): Promise<BundleEntity | null> {
+  ): Promise<BundleData | null> {
     const bundle = await this.bundleRepository.findById(bundleId);
-    if (!bundle) return null;
+    if (!isFound(bundle)) return null;
 
     // Convert basePrice to Money if provided
-    const updateDto = {
+    const bundlePatch = {
       ...command,
       basePrice:
         command.basePrice !== undefined
@@ -113,8 +159,9 @@ export class BundleUseCases {
           : undefined,
     };
 
-    bundle.updateFromDto(updateDto);
-    return this.bundleRepository.save(bundle);
+    bundle.setNew(bundlePatch);
+    const savedBundle = await this.bundleRepository.save(bundle);
+    return this.mapEntityToData(savedBundle);
   }
 
   /**
@@ -130,13 +177,14 @@ export class BundleUseCases {
   async addItemToBundle(
     bundleId: string,
     item: BundleItemCommand,
-  ): Promise<BundleEntity | null> {
+  ): Promise<BundleData | null> {
     const bundle = await this.bundleRepository.findById(bundleId);
-    if (!bundle) return null;
+    if (!isFound(bundle)) return null;
 
     const quantity = new ProductAmount(item.quantity);
     bundle.addItem(item.itemId, quantity);
-    return this.bundleRepository.save(bundle);
+    const savedBundle = await this.bundleRepository.save(bundle);
+    return this.mapEntityToData(savedBundle);
   }
 
   /**
@@ -145,12 +193,13 @@ export class BundleUseCases {
   async removeItemFromBundle(
     bundleId: string,
     itemId: string,
-  ): Promise<BundleEntity | null> {
+  ): Promise<BundleData | null> {
     const bundle = await this.bundleRepository.findById(bundleId);
-    if (!bundle) return null;
+    if (!isFound(bundle)) return null;
 
     bundle.removeItem(itemId);
-    return this.bundleRepository.save(bundle);
+    const savedBundle = await this.bundleRepository.save(bundle);
+    return this.mapEntityToData(savedBundle);
   }
 
   /**
@@ -160,12 +209,13 @@ export class BundleUseCases {
     bundleId: string,
     itemId: string,
     quantity: number,
-  ): Promise<BundleEntity | null> {
+  ): Promise<BundleData | null> {
     const bundle = await this.bundleRepository.findById(bundleId);
-    if (!bundle) return null;
+    if (!isFound(bundle)) return null;
 
     const productAmount = new ProductAmount(quantity);
     bundle.updateItemQuantity(itemId, productAmount);
-    return this.bundleRepository.save(bundle);
+    const savedBundle = await this.bundleRepository.save(bundle);
+    return this.mapEntityToData(savedBundle);
   }
 }

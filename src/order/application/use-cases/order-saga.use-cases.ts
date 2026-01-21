@@ -5,6 +5,7 @@ import { IQuoteRepository } from '../../domain/quote/quote.repository';
 import { IPaymentServicePort } from '../ports/payment-service.port';
 import { IDeliveryServicePort } from '../ports/delivery-service.port';
 import { OrderUseCases } from './order.use-cases';
+import { isFound } from '../../../_common/domain/specifications/specification.interface';
 
 /**
  * Order saga result
@@ -41,7 +42,7 @@ export class OrderSagaUseCases {
    */
   async executeOrderSaga(orderId: string): Promise<OrderSagaResult> {
     let order = await this.orderRepository.findById(orderId);
-    if (!order) {
+    if (!isFound(order)) {
       return {
         success: false,
         order: null as any,
@@ -50,7 +51,7 @@ export class OrderSagaUseCases {
     }
 
     const quote = await this.quoteRepository.findById(order.quoteId);
-    if (!quote) {
+    if (!isFound(quote)) {
       order.markFailed('Quote not found');
       order = await this.orderRepository.save(order);
       return {
@@ -159,7 +160,7 @@ export class OrderSagaUseCases {
 
     try {
       const quote = await this.quoteRepository.findById(order.quoteId);
-      if (quote) {
+      if (isFound(quote)) {
         await this.paymentService.refundPayment({
           paymentReference: order.paymentReference,
           amount: quote.getTotalPrice(),
@@ -199,12 +200,12 @@ export class OrderSagaUseCases {
    */
   async executePaymentStep(orderId: string): Promise<OrderSagaResult> {
     let order = await this.orderRepository.findById(orderId);
-    if (!order) {
+    if (!isFound(order)) {
       return { success: false, order: null as any, error: 'Order not found' };
     }
 
     const quote = await this.quoteRepository.findById(order.quoteId);
-    if (!quote) {
+    if (!isFound(quote)) {
       return { success: false, order, error: 'Quote not found' };
     }
 
@@ -228,12 +229,12 @@ export class OrderSagaUseCases {
 
   async executeDeliveryStep(orderId: string): Promise<OrderSagaResult> {
     let order = await this.orderRepository.findById(orderId);
-    if (!order) {
+    if (!isFound(order)) {
       return { success: false, order: null as any, error: 'Order not found' };
     }
 
     const quote = await this.quoteRepository.findById(order.quoteId);
-    if (!quote) {
+    if (!isFound(quote)) {
       return { success: false, order, error: 'Quote not found' };
     }
 

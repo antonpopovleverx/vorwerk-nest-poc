@@ -70,3 +70,11 @@ class NotSpecification<T> extends Specification<T> {
     return !this.spec.isSatisfiedBy(candidate);
   }
 }
+
+/**
+ * Type guard helper for checking if an entity was found from database
+ * Provides type assertion and consistent null/undefined checking
+ */
+export function isFound<T>(entity: T | null | undefined): entity is T {
+  return entity !== null && entity !== undefined;
+}
