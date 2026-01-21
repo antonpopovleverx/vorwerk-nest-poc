@@ -99,7 +99,9 @@ export const BasketSpecificationRegistry: Record<
 /**
  * Get failure message for a basket policy check
  */
-export function getCheckFailureMessage(checkName: BasketPolicyCheckName): string {
+export function getCheckFailureMessage(
+  checkName: BasketPolicyCheckName,
+): string {
   const messages: Record<BasketPolicyCheckName, string> = {
     [BasketPolicyCheckName.MAX_ITEMS_PER_BASKET]:
       'Maximum number of items per basket exceeded',

@@ -224,7 +224,11 @@ export class OrderSagaUseCases {
 
     const quote = await this.quoteRepository.findById(order.quoteId);
     if (!isFound(quote)) {
-      return { success: false, order: this.mapEntityToData(order), error: 'Quote not found' };
+      return {
+        success: false,
+        order: this.mapEntityToData(order),
+        error: 'Quote not found',
+      };
     }
 
     const result = await this.paymentService.processPayment({
@@ -244,7 +248,11 @@ export class OrderSagaUseCases {
     order.markFailed(`Payment failed: ${result.error}`);
     order = await this.orderRepository.save(order);
 
-    return { success: false, order: this.mapEntityToData(order), error: result.error };
+    return {
+      success: false,
+      order: this.mapEntityToData(order),
+      error: result.error,
+    };
   }
 
   async executeDeliveryStep(orderId: string): Promise<OrderSagaResult> {
@@ -255,7 +263,11 @@ export class OrderSagaUseCases {
 
     const quote = await this.quoteRepository.findById(order.quoteId);
     if (!isFound(quote)) {
-      return { success: false, order: this.mapEntityToData(order), error: 'Quote not found' };
+      return {
+        success: false,
+        order: this.mapEntityToData(order),
+        error: 'Quote not found',
+      };
     }
 
     const basketSnapshot = quote.basketSnapshot;
@@ -278,6 +290,10 @@ export class OrderSagaUseCases {
     order.markFailed(`Delivery failed: ${result.error}`);
     order = await this.orderRepository.save(order);
 
-    return { success: false, order: this.mapEntityToData(order), error: result.error };
+    return {
+      success: false,
+      order: this.mapEntityToData(order),
+      error: result.error,
+    };
   }
 }
