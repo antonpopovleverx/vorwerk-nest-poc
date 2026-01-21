@@ -6,6 +6,14 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBadRequestResponse,
+  ApiNotFoundResponse,
+  ApiParam,
+} from '@nestjs/swagger';
 import { OrderUseCases, OrderData } from '../../application/use-cases/order.use-cases';
 import { OrderSagaUseCases } from '../../application/use-cases/order-saga.use-cases';
 import { QuoteUseCases } from '../../application/use-cases/quote.use-cases';
@@ -21,6 +29,7 @@ import {
 /**
  * Order controller - handles HTTP requests for order operations
  */
+@ApiTags('Orders')
 @Controller('orders')
 export class OrderController {
   constructor(
@@ -33,6 +42,31 @@ export class OrderController {
    * Get order by ID
    */
   @Get(':orderId')
+  @ApiOperation({
+    summary: 'Get order by ID',
+    description: 'Retrieves detailed information about a specific order by its unique identifier.',
+  })
+  @ApiParam({
+    name: 'orderId',
+    description: 'The unique identifier of the order',
+    example: 'order-123',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Order retrieved successfully',
+    type: OrderGetResponseDto,
+  })
+  @ApiNotFoundResponse({
+    description: 'Order not found',
+    schema: {
+      type: 'object',
+      properties: {
+        statusCode: { type: 'number', example: 404 },
+        message: { type: 'string', example: 'Order not found' },
+        error: { type: 'string', example: 'Not Found' },
+      },
+    },
+  })
   async getOrder(
     @Param('orderId') orderId: string,
   ): Promise<OrderGetResponseDto> {
@@ -44,6 +78,31 @@ export class OrderController {
    * Get orders for user
    */
   @Get('user/:userId')
+  @ApiOperation({
+    summary: 'Get orders for user',
+    description: 'Retrieves a list of all orders placed by a specific user.',
+  })
+  @ApiParam({
+    name: 'userId',
+    description: 'The unique identifier of the user',
+    example: 'user-456',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Orders retrieved successfully',
+    type: OrderGetQueryResponseDto,
+  })
+  @ApiNotFoundResponse({
+    description: 'User not found',
+    schema: {
+      type: 'object',
+      properties: {
+        statusCode: { type: 'number', example: 404 },
+        message: { type: 'string', example: 'User not found' },
+        error: { type: 'string', example: 'Not Found' },
+      },
+    },
+  })
   async getOrdersForUser(
     @Param('userId') userId: string,
   ): Promise<OrderGetQueryResponseDto> {
@@ -55,6 +114,42 @@ export class OrderController {
    * Create order from quote and execute saga
    */
   @Post('from-quote/:quoteId')
+  @ApiOperation({
+    summary: 'Create order from quote',
+    description: 'Creates a new order from an existing quote and automatically executes the order fulfillment saga (payment and delivery).',
+  })
+  @ApiParam({
+    name: 'quoteId',
+    description: 'The unique identifier of the quote to create order from',
+    example: 'quote-789',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Order created and saga executed successfully',
+    type: OrderSagaExecutionResponseDto,
+  })
+  @ApiBadRequestResponse({
+    description: 'Quote not found, invalid quote state, or saga execution failed',
+    schema: {
+      type: 'object',
+      properties: {
+        statusCode: { type: 'number', example: 400 },
+        message: { type: 'string', example: 'Quote not found or quote already used to create order' },
+        error: { type: 'string', example: 'Bad Request' },
+      },
+    },
+  })
+  @ApiNotFoundResponse({
+    description: 'Quote not found',
+    schema: {
+      type: 'object',
+      properties: {
+        statusCode: { type: 'number', example: 404 },
+        message: { type: 'string', example: 'Quote not found' },
+        error: { type: 'string', example: 'Not Found' },
+      },
+    },
+  })
   async createOrderFromQuote(
     @Param('quoteId') quoteId: string,
   ): Promise<OrderSagaExecutionResponseDto> {
@@ -79,6 +174,42 @@ export class OrderController {
    * Execute saga for existing order
    */
   @Post(':orderId/execute-saga')
+  @ApiOperation({
+    summary: 'Execute order fulfillment saga',
+    description: 'Executes the complete order fulfillment saga (payment and delivery) for an existing order.',
+  })
+  @ApiParam({
+    name: 'orderId',
+    description: 'The unique identifier of the order',
+    example: 'order-123',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Saga executed successfully',
+    type: OrderSagaExecutionResponseDto,
+  })
+  @ApiNotFoundResponse({
+    description: 'Order not found',
+    schema: {
+      type: 'object',
+      properties: {
+        statusCode: { type: 'number', example: 404 },
+        message: { type: 'string', example: 'Order not found' },
+        error: { type: 'string', example: 'Not Found' },
+      },
+    },
+  })
+  @ApiBadRequestResponse({
+    description: 'Order is not in correct state for saga execution',
+    schema: {
+      type: 'object',
+      properties: {
+        statusCode: { type: 'number', example: 400 },
+        message: { type: 'string', example: 'Order is not in pending state' },
+        error: { type: 'string', example: 'Bad Request' },
+      },
+    },
+  })
   async executeSaga(
     @Param('orderId') orderId: string,
   ): Promise<OrderSagaExecutionResponseDto> {
@@ -99,6 +230,42 @@ export class OrderController {
    * Execute payment step only
    */
   @Post(':orderId/payment')
+  @ApiOperation({
+    summary: 'Execute payment step',
+    description: 'Executes only the payment processing step of the order fulfillment saga.',
+  })
+  @ApiParam({
+    name: 'orderId',
+    description: 'The unique identifier of the order',
+    example: 'order-123',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Payment step executed successfully',
+    type: OrderPaymentResponseDto,
+  })
+  @ApiNotFoundResponse({
+    description: 'Order not found',
+    schema: {
+      type: 'object',
+      properties: {
+        statusCode: { type: 'number', example: 404 },
+        message: { type: 'string', example: 'Order not found' },
+        error: { type: 'string', example: 'Not Found' },
+      },
+    },
+  })
+  @ApiBadRequestResponse({
+    description: 'Payment already processed or order in wrong state',
+    schema: {
+      type: 'object',
+      properties: {
+        statusCode: { type: 'number', example: 400 },
+        message: { type: 'string', example: 'Payment already processed for this order' },
+        error: { type: 'string', example: 'Bad Request' },
+      },
+    },
+  })
   async executePayment(
     @Param('orderId') orderId: string,
   ): Promise<OrderPaymentResponseDto> {
@@ -119,6 +286,42 @@ export class OrderController {
    * Execute delivery step only
    */
   @Post(':orderId/delivery')
+  @ApiOperation({
+    summary: 'Execute delivery step',
+    description: 'Executes only the delivery processing step of the order fulfillment saga.',
+  })
+  @ApiParam({
+    name: 'orderId',
+    description: 'The unique identifier of the order',
+    example: 'order-123',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Delivery step executed successfully',
+    type: OrderDeliveryResponseDto,
+  })
+  @ApiNotFoundResponse({
+    description: 'Order not found',
+    schema: {
+      type: 'object',
+      properties: {
+        statusCode: { type: 'number', example: 404 },
+        message: { type: 'string', example: 'Order not found' },
+        error: { type: 'string', example: 'Not Found' },
+      },
+    },
+  })
+  @ApiBadRequestResponse({
+    description: 'Delivery already processed, payment not completed, or order in wrong state',
+    schema: {
+      type: 'object',
+      properties: {
+        statusCode: { type: 'number', example: 400 },
+        message: { type: 'string', example: 'Payment must be completed before delivery' },
+        error: { type: 'string', example: 'Bad Request' },
+      },
+    },
+  })
   async executeDelivery(
     @Param('orderId') orderId: string,
   ): Promise<OrderDeliveryResponseDto> {
@@ -139,6 +342,31 @@ export class OrderController {
    * Get quote by ID
    */
   @Get('quotes/:quoteId')
+  @ApiOperation({
+    summary: 'Get quote by ID',
+    description: 'Retrieves detailed information about a specific quote by its unique identifier.',
+  })
+  @ApiParam({
+    name: 'quoteId',
+    description: 'The unique identifier of the quote',
+    example: 'quote-789',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Quote retrieved successfully',
+    type: QuoteGetResponseDto,
+  })
+  @ApiNotFoundResponse({
+    description: 'Quote not found',
+    schema: {
+      type: 'object',
+      properties: {
+        statusCode: { type: 'number', example: 404 },
+        message: { type: 'string', example: 'Quote not found' },
+        error: { type: 'string', example: 'Not Found' },
+      },
+    },
+  })
   async getQuote(
     @Param('quoteId') quoteId: string,
   ): Promise<QuoteGetResponseDto> {
