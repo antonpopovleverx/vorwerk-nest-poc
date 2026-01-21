@@ -35,7 +35,10 @@ export class BasketEntity extends TechnicalEntity {
    */
   addItem(itemId: string, amount: number = 1): void {
     if (amount <= 0) {
-      throw new HttpException('Amount must be positive', HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        'Amount must be positive',
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     const existingItem = this.items?.find((i) => i.itemId === itemId);
@@ -78,7 +81,10 @@ export class BasketEntity extends TechnicalEntity {
     if (item) {
       item.amount = amount;
     } else {
-      throw new HttpException(`Item ${itemId} not found in basket`, HttpStatus.NOT_FOUND);
+      throw new HttpException(
+        `Item ${itemId} not found in basket`,
+        HttpStatus.NOT_FOUND,
+      );
     }
   }
 
@@ -87,7 +93,10 @@ export class BasketEntity extends TechnicalEntity {
    */
   addBundle(bundleId: string, amount: number = 1): void {
     if (amount <= 0) {
-      throw new HttpException('Amount must be positive', HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        'Amount must be positive',
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     const existingBundle = this.bundles?.find((b) => b.bundleId === bundleId);
@@ -130,7 +139,10 @@ export class BasketEntity extends TechnicalEntity {
     if (bundle) {
       bundle.amount = amount;
     } else {
-      throw new HttpException(`Bundle ${bundleId} not found in basket`, HttpStatus.NOT_FOUND);
+      throw new HttpException(
+        `Bundle ${bundleId} not found in basket`,
+        HttpStatus.NOT_FOUND,
+      );
     }
   }
 

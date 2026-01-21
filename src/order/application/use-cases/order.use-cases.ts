@@ -21,7 +21,7 @@ export class OrderUseCases {
     private readonly orderRepository: IOrderRepository,
     @Inject('IQuoteRepository')
     private readonly quoteRepository: IQuoteRepository,
-  ) {}
+  ) { }
 
   /**
    * Create order from quote
@@ -33,7 +33,6 @@ export class OrderUseCases {
     if (!quote) {
       throw new HttpException(`Quote ${command.quoteId} not found`, HttpStatus.NOT_FOUND);
     }
-
 
     // Check if order already exists for this quote
     const existingOrder = await this.orderRepository.findByQuoteId(command.quoteId);

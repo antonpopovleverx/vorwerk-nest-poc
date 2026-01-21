@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { TechnicalEntity } from '../../../../_common/domain/base/base.entity';
+import { TechnicalEntity } from '../../../_common/domain/base/base.entity';
 import { BundleContentEntity } from './bundle-content.entity';
 import { HttpException, HttpStatus } from '@nestjs/common';
 
@@ -54,7 +54,10 @@ export class BundleEntity extends TechnicalEntity {
    */
   addItem(itemId: string, quantity: number = 1): void {
     if (quantity <= 0) {
-      throw new HttpException('Quantity must be positive', HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        'Quantity must be positive',
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     const existing = this.contents?.find((c) => c.itemId === itemId);
@@ -97,7 +100,10 @@ export class BundleEntity extends TechnicalEntity {
     if (content) {
       content.quantity = quantity;
     } else {
-      throw new HttpException(`Item ${itemId} not found in bundle`, HttpStatus.NOT_FOUND);
+      throw new HttpException(
+        `Item ${itemId} not found in bundle`,
+        HttpStatus.NOT_FOUND,
+      );
     }
   }
 
@@ -106,7 +112,10 @@ export class BundleEntity extends TechnicalEntity {
    */
   setDiscountRate(rate: number): void {
     if (rate < 0 || rate >= 1) {
-      throw new HttpException('Discount rate must be between 0 and 1 (exclusive)', HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        'Discount rate must be between 0 and 1 (exclusive)',
+        HttpStatus.BAD_REQUEST,
+      );
     }
     this.discountRate = rate;
   }
@@ -123,6 +132,25 @@ export class BundleEntity extends TechnicalEntity {
    */
   deactivate(): void {
     this.isActive = false;
+  }
+
+  /**
+   * Update bundle fields from DTO
+   */
+  updateFromDto(dto: {
+    name?: string;
+    description?: string;
+    basePrice?: number;
+    discountRate?: number;
+    isActive?: boolean;
+  }): void {
+    if (dto.name !== undefined) this.name = dto.name;
+    if (dto.description !== undefined) this.description = dto.description;
+    if (dto.basePrice !== undefined) this.basePrice = dto.basePrice;
+    if (dto.discountRate !== undefined) this.setDiscountRate(dto.discountRate);
+    if (dto.isActive !== undefined) {
+      dto.isActive ? this.activate() : this.deactivate();
+    }
   }
 
   /**

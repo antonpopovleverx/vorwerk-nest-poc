@@ -4,7 +4,6 @@ import { Repository } from 'typeorm';
 import { IBasketRepository } from '../domain/basket/basket.repository';
 import { BasketEntity } from '../domain/basket/basket.entity';
 
-
 /**
  * TypeORM implementation of basket repository
  */
@@ -22,14 +21,10 @@ export class BasketRepositoryImplementation implements IBasketRepository {
     });
   }
 
-  
-
   async findByUserId(userId: string): Promise<BasketEntity | null> {
-
     return this.repository.findOne({
       where: { userId },
       relations: ['items', 'bundles'],
-      
     });
   }
 

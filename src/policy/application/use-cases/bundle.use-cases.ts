@@ -1,6 +1,7 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { BundleEntity } from 'src/policy/domain/price-policy/bundle/bundle.entity.js';
-import { IBundleRepository } from 'src/policy/domain/price-policy/bundle/bundle.repository.js';
+import { BundleEntity } from 'src/policy/domain/price-policy/bundle.entity.js';
+import { IBundleRepository } from 'src/policy/domain/price-policy/bundle.repository.js';
+
 
 /**
  * Create bundle DTO
@@ -93,7 +94,7 @@ export class BundleUseCases {
     const bundle = await this.bundleRepository.findById(bundleId);
     if (!bundle) return null;
 
-    bundle.update(dto);
+    bundle.updateFromDto(dto);
 
     return this.bundleRepository.save(bundle);
   }
