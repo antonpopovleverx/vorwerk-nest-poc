@@ -37,9 +37,6 @@ export class OrderController {
     @Param('orderId') orderId: string,
   ): Promise<OrderGetResponseDto> {
     const order = await this.orderUseCases.getOrder(orderId);
-    if (!order) {
-      throw new HttpException('Order not found', HttpStatus.NOT_FOUND);
-    }
     return this.mapOrderToResponse(order);
   }
 
@@ -61,28 +58,21 @@ export class OrderController {
   async createOrderFromQuote(
     @Param('quoteId') quoteId: string,
   ): Promise<OrderSagaExecutionResponseDto> {
-    try {
-      // Create order
-      const order = await this.orderUseCases.createOrderFromQuote({ quoteId });
+    // Create order
+    const order = await this.orderUseCases.createOrderFromQuote({ quoteId });
 
-      // Execute saga
-      const sagaResult = await this.orderSagaUseCases.executeOrderSaga(
-        order.orderId,
-      );
+    // Execute saga
+    const sagaResult = await this.orderSagaUseCases.executeOrderSaga(
+      order.orderId,
+    );
 
-      return {
-        success: sagaResult.success,
-        order: sagaResult.order
-          ? this.mapOrderToResponse(sagaResult.order)
-          : undefined,
-        error: sagaResult.error,
-      };
-    } catch (error) {
-      throw new HttpException(
-        error instanceof Error ? error.message : 'Failed to create order',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
+    return {
+      success: sagaResult.success,
+      order: sagaResult.order
+        ? this.mapOrderToResponse(sagaResult.order)
+        : undefined,
+      error: sagaResult.error,
+    };
   }
 
   /**
@@ -153,9 +143,6 @@ export class OrderController {
     @Param('quoteId') quoteId: string,
   ): Promise<QuoteGetResponseDto> {
     const quote = await this.quoteUseCases.getQuote(quoteId);
-    if (!quote) {
-      throw new HttpException('Quote not found', HttpStatus.NOT_FOUND);
-    }
     return {
       quoteId: quote.quoteId,
       userId: quote.userId,

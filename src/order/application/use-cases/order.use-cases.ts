@@ -96,9 +96,15 @@ export class OrderUseCases {
   /**
    * Get order by ID
    */
-  async getOrder(orderId: string): Promise<OrderData | null> {
+  async getOrder(orderId: string): Promise<OrderData> {
     const order = await this.orderRepository.findById(orderId);
-    return order ? this.mapEntityToData(order) : null;
+    if (!isFound(order)) {
+      throw new HttpException(
+        `Order ${orderId} not found`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    return this.mapEntityToData(order);
   }
 
   /**

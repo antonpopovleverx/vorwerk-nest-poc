@@ -79,14 +79,13 @@ export class BasketEntity extends TechnicalEntity {
     }
 
     const item = this.items?.find((i) => i.itemId === itemId);
-    if (item) {
-      item.amount = amount;
-    } else {
+    if (!item) {
       throw new HttpException(
         `Item ${itemId} not found in basket`,
         HttpStatus.NOT_FOUND,
       );
     }
+    item.amount = amount;
   }
 
   /**
@@ -140,14 +139,13 @@ export class BasketEntity extends TechnicalEntity {
     }
 
     const bundle = this.bundles?.find((b) => b.bundleId === bundleId);
-    if (bundle) {
-      bundle.amount = amount;
-    } else {
+    if (!bundle) {
       throw new HttpException(
         `Bundle ${bundleId} not found in basket`,
         HttpStatus.NOT_FOUND,
       );
     }
+    bundle.amount = amount;
   }
 
   /**

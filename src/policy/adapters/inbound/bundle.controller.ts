@@ -64,9 +64,6 @@ export class BundleController {
     @Param('bundleId') bundleId: string,
   ): Promise<BundleGetResponseDto> {
     const bundle = await this.bundleUseCases.getBundle(bundleId);
-    if (!bundle) {
-      throw new HttpException('Bundle not found', HttpStatus.NOT_FOUND);
-    }
     return this.mapBundleToResponse(bundle);
   }
 
@@ -79,9 +76,6 @@ export class BundleController {
     @Body() dto: BundlePutRequestDto,
   ): Promise<BundleGetResponseDto> {
     const bundle = await this.bundleUseCases.updateBundle(bundleId, dto);
-    if (!bundle) {
-      throw new HttpException('Bundle not found', HttpStatus.NOT_FOUND);
-    }
     return this.mapBundleToResponse(bundle);
   }
 
@@ -105,9 +99,6 @@ export class BundleController {
     @Body() body: BundleItemPostRequestDto,
   ): Promise<BundleGetResponseDto> {
     const bundle = await this.bundleUseCases.addItemToBundle(bundleId, body);
-    if (!bundle) {
-      throw new HttpException('Bundle not found', HttpStatus.NOT_FOUND);
-    }
     return this.mapBundleToResponse(bundle);
   }
 
@@ -120,22 +111,12 @@ export class BundleController {
     @Param('itemId') itemId: string,
     @Body() body: BundleItemPutRequestDto,
   ): Promise<BundleGetResponseDto> {
-    try {
-      const bundle = await this.bundleUseCases.updateBundleItemQuantity(
-        bundleId,
-        itemId,
-        body.quantity,
-      );
-      if (!bundle) {
-        throw new HttpException('Bundle not found', HttpStatus.NOT_FOUND);
-      }
-      return this.mapBundleToResponse(bundle);
-    } catch (error) {
-      throw new HttpException(
-        error instanceof Error ? error.message : 'Update failed',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
+    const bundle = await this.bundleUseCases.updateBundleItemQuantity(
+      bundleId,
+      itemId,
+      body.quantity,
+    );
+    return this.mapBundleToResponse(bundle);
   }
 
   /**
@@ -150,9 +131,6 @@ export class BundleController {
       bundleId,
       itemId,
     );
-    if (!bundle) {
-      throw new HttpException('Bundle not found', HttpStatus.NOT_FOUND);
-    }
     return this.mapBundleToResponse(bundle);
   }
 

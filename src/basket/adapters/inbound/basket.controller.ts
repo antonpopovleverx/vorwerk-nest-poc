@@ -76,19 +76,12 @@ export class BasketController {
     @Param('itemId') itemId: string,
     @Body() body: BasketPutRequestDto,
   ): Promise<BasketSuccessResponseDto> {
-    try {
-      const basketData = await this.basketUseCases.updateItem({
-        userId,
-        itemId,
-        amount: body.amount,
-      });
-      return { success: true, basketId: basketData.basketId };
-    } catch (error) {
-      throw new HttpException(
-        error instanceof Error ? error.message : 'Update failed',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
+    const basketData = await this.basketUseCases.updateItem({
+      userId,
+      itemId,
+      amount: body.amount,
+    });
+    return { success: true, basketId: basketData.basketId };
   }
 
   /**
@@ -128,19 +121,12 @@ export class BasketController {
     @Param('bundleId') bundleId: string,
     @Body() body: BasketBundlePutRequestDto,
   ): Promise<BasketSuccessResponseDto> {
-    try {
-      const basketData = await this.basketUseCases.updateBundle({
-        userId,
-        bundleId,
-        amount: body.amount,
-      });
-      return { success: true, basketId: basketData.basketId };
-    } catch (error) {
-      throw new HttpException(
-        error instanceof Error ? error.message : 'Update failed',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
+    const basketData = await this.basketUseCases.updateBundle({
+      userId,
+      bundleId,
+      amount: body.amount,
+    });
+    return { success: true, basketId: basketData.basketId };
   }
 
   /**
@@ -217,7 +203,7 @@ export class BasketController {
         },
         HttpStatus.BAD_REQUEST,
       );
-    }
+    } //TODO: stop throwing the error in here
 
     return result;
   }

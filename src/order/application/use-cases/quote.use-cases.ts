@@ -1,10 +1,11 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, HttpException, HttpStatus } from '@nestjs/common';
 import {
   QuoteEntity,
   QuoteBasketSnapshot,
   QuotePolicySnapshot,
 } from '../../domain/quote/quote.entity';
 import { IQuoteRepository } from '../../domain/quote/quote.repository';
+import { isFound } from '../../../_common/domain/specifications/specification.interface';
 
 /**
  * Create quote DTO
@@ -42,8 +43,15 @@ export class QuoteUseCases {
   /**
    * Get quote by ID
    */
-  async getQuote(quoteId: string): Promise<QuoteEntity | null> {
-    return this.quoteRepository.findById(quoteId);
+  async getQuote(quoteId: string): Promise<QuoteEntity> {
+    const quote = await this.quoteRepository.findById(quoteId);
+    if (!isFound(quote)) {
+      throw new HttpException(
+        `Quote ${quoteId} not found`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    return quote;
   }
 
   /**

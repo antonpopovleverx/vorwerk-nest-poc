@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, HttpException, HttpStatus } from '@nestjs/common';
 import { BundleEntity } from '../../domain/price-policy/bundle.entity';
 import { IBundleRepository } from '../../domain/price-policy/bundle.repository';
 import { ProductAmount } from '../../../_common/domain/value-objects/product-amount.value-object';
@@ -119,9 +119,15 @@ export class BundleUseCases {
   /**
    * Get bundle by ID
    */
-  async getBundle(bundleId: string): Promise<BundleData | null> {
+  async getBundle(bundleId: string): Promise<BundleData> {
     const bundle = await this.bundleRepository.findById(bundleId);
-    return bundle ? this.mapEntityToData(bundle) : null;
+    if (!isFound(bundle)) {
+      throw new HttpException(
+        `Bundle ${bundleId} not found`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    return this.mapEntityToData(bundle);
   }
 
   /**
@@ -146,9 +152,14 @@ export class BundleUseCases {
   async updateBundle(
     bundleId: string,
     command: UpdateBundleCommand,
-  ): Promise<BundleData | null> {
+  ): Promise<BundleData> {
     const bundle = await this.bundleRepository.findById(bundleId);
-    if (!isFound(bundle)) return null;
+    if (!isFound(bundle)) {
+      throw new HttpException(
+        `Bundle ${bundleId} not found`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
 
     // Convert basePrice to Money if provided
     const bundlePatch = {
@@ -177,9 +188,14 @@ export class BundleUseCases {
   async addItemToBundle(
     bundleId: string,
     item: BundleItemCommand,
-  ): Promise<BundleData | null> {
+  ): Promise<BundleData> {
     const bundle = await this.bundleRepository.findById(bundleId);
-    if (!isFound(bundle)) return null;
+    if (!isFound(bundle)) {
+      throw new HttpException(
+        `Bundle ${bundleId} not found`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
 
     const quantity = new ProductAmount(item.quantity);
     bundle.addItem(item.itemId, quantity);
@@ -193,9 +209,14 @@ export class BundleUseCases {
   async removeItemFromBundle(
     bundleId: string,
     itemId: string,
-  ): Promise<BundleData | null> {
+  ): Promise<BundleData> {
     const bundle = await this.bundleRepository.findById(bundleId);
-    if (!isFound(bundle)) return null;
+    if (!isFound(bundle)) {
+      throw new HttpException(
+        `Bundle ${bundleId} not found`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
 
     bundle.removeItem(itemId);
     const savedBundle = await this.bundleRepository.save(bundle);
@@ -209,9 +230,14 @@ export class BundleUseCases {
     bundleId: string,
     itemId: string,
     quantity: number,
-  ): Promise<BundleData | null> {
+  ): Promise<BundleData> {
     const bundle = await this.bundleRepository.findById(bundleId);
-    if (!isFound(bundle)) return null;
+    if (!isFound(bundle)) {
+      throw new HttpException(
+        `Bundle ${bundleId} not found`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
 
     const productAmount = new ProductAmount(quantity);
     bundle.updateItemQuantity(itemId, productAmount);
