@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import {
-  IPolicyServicePort,
+  PolicyServicePort,
   BasketPolicyCheckName,
   BasketPricingResult,
   PolicySnapshot,
@@ -14,7 +14,7 @@ import { PricePolicyUseCases } from 'src/policy/application/use-cases/price-poli
  * This bridges basket subdomain to policy subdomain
  */
 @Injectable()
-export class PolicyServiceAdapter implements IPolicyServicePort {
+export class PolicyServiceAdapter implements PolicyServicePort {
   constructor(
     private readonly pricePolicyUseCases: PricePolicyUseCases,
     private readonly basketPolicyUseCases: BasketPolicyUseCases,

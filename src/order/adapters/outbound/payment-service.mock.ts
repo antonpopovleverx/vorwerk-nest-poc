@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import {
-  IPaymentServicePort,
+  PaymentServicePort,
   PaymentRequest,
   PaymentResult,
   RefundRequest,
@@ -12,7 +12,7 @@ import {
  * Simulates payment processing with configurable failure rate
  */
 @Injectable()
-export class PaymentServiceMock implements IPaymentServicePort {
+export class PaymentServiceMock implements PaymentServicePort {
   private readonly logger = new Logger(PaymentServiceMock.name);
   private failureRate = 0; // Set to 0-1 to simulate failures
 

@@ -57,7 +57,7 @@ export class PolicySnapshot {
 /**
  * Port for policy service (basket subdomain -> policy subdomain)
  */
-export abstract class IPolicyServicePort {
+export abstract class PolicyServicePort {
   /**
    * Get basket policy checks to perform
    */

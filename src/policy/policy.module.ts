@@ -17,7 +17,9 @@ import { BundleController } from './adapters/inbound/bundle.controller.js';
 import { BundleRepositoryImplementation } from './repository/bundle.repository.impl.js';
 import { PricePolicyRepositoryImplementation } from './repository/price-policy.repository.impl.js';
 import { PolicyServiceAdapter } from './adapters/outbound/policy-service.adapter.js';
-import { IPolicyServicePort } from 'src/basket/application/ports/policy-service.port';
+import { IBundleRepository } from './domain/price-policy/bundle.repository';
+import { IPricePolicyRepository } from './domain/price-policy/price-policy.repository';
+import { PolicyServicePort } from 'src/basket/application/ports/policy-service.port';
 
 @Module({
   imports: [
@@ -36,16 +38,16 @@ import { IPolicyServicePort } from 'src/basket/application/ports/policy-service.
     BundleUseCases,
     // Repositories
     {
-      provide: 'IBundleRepository',
+      provide: IBundleRepository.name,
       useClass: BundleRepositoryImplementation,
     },
     {
-      provide: 'IPricePolicyRepository', //TODO: don't hardcode the abstract class name
+      provide: IPricePolicyRepository.name,
       useClass: PricePolicyRepositoryImplementation,
     },
     // Adapter for basket subdomain
     {
-      provide: IPolicyServicePort.name, //TODO: no "I" in front of ports, just "port" is enough
+      provide: PolicyServicePort.name,
       useClass: PolicyServiceAdapter,
     },
   ],
@@ -53,9 +55,9 @@ import { IPolicyServicePort } from 'src/basket/application/ports/policy-service.
     PricePolicyUseCases,
     BasketPolicyUseCases,
     BundleUseCases,
-    'IBundleRepository',
-    'IPricePolicyRepository',
-    'IPolicyServicePort',
+    IBundleRepository.name,
+    IPricePolicyRepository.name,
+    PolicyServicePort.name,
   ],
 })
 export class PolicyModule {}

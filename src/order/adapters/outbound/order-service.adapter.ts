@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import {
-  IOrderServicePort,
+  OrderServicePort,
   CreateQuoteResult,
 } from '../../../basket/application/ports/order-service.port';
 import { BasketSnapshot } from '../../../basket/domain/basket/basket.entity';
@@ -12,7 +12,7 @@ import { QuoteUseCases } from '../../application/use-cases/quote.use-cases';
  * This bridges basket subdomain to order subdomain
  */
 @Injectable()
-export class OrderServiceAdapter implements IOrderServicePort {
+export class OrderServiceAdapter implements OrderServicePort {
   constructor(private readonly quoteUseCases: QuoteUseCases) {}
 
   async createQuote(

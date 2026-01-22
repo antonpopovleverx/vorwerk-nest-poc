@@ -23,7 +23,7 @@ export class CreateQuoteDto {
 @Injectable()
 export class QuoteUseCases {
   constructor(
-    @Inject('IQuoteRepository')
+    @Inject(IQuoteRepository.name)
     private readonly quoteRepository: IQuoteRepository,
   ) {}
 

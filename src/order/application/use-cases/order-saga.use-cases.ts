@@ -7,11 +7,11 @@ import {
   QuoteBasketSnapshot,
 } from '../../domain/quote/quote.entity';
 import {
-  IPaymentServicePort,
+  PaymentServicePort,
   PaymentResult,
 } from '../ports/payment-service.port';
 import {
-  IDeliveryServicePort,
+  DeliveryServicePort,
   DeliveryResult,
 } from '../ports/delivery-service.port';
 import { OrderUseCases, OrderData } from './order.use-cases';
@@ -36,14 +36,14 @@ export class OrderSagaUseCases {
   private readonly logger = new Logger(OrderSagaUseCases.name);
 
   constructor(
-    @Inject('IOrderRepository')
+    @Inject(IOrderRepository.name)
     private readonly orderRepository: IOrderRepository,
-    @Inject('IQuoteRepository')
+    @Inject(IQuoteRepository.name)
     private readonly quoteRepository: IQuoteRepository,
-    @Inject('IPaymentServicePort')
-    private readonly paymentService: IPaymentServicePort,
-    @Inject('IDeliveryServicePort')
-    private readonly deliveryService: IDeliveryServicePort,
+    @Inject(PaymentServicePort.name)
+    private readonly paymentAdapter: PaymentServicePort,
+    @Inject(DeliveryServicePort.name)
+    private readonly deliveryAdapter: DeliveryServicePort,
     private readonly orderUseCases: OrderUseCases,
   ) {}
 
@@ -96,7 +96,7 @@ export class OrderSagaUseCases {
       // Step 1: Process payment
       this.logger.log(`Processing payment for order ${orderId}`);
       const paymentResult: PaymentResult =
-        await this.paymentService.processPayment({
+        await this.paymentAdapter.processPayment({
           orderId,
           userId: order.userId,
           amount: quote.getTotalPrice(),
@@ -121,7 +121,7 @@ export class OrderSagaUseCases {
       this.logger.log(`Initiating delivery for order ${orderId}`);
       const basketSnapshot: QuoteBasketSnapshot = quote.basketSnapshot;
       const deliveryResult: DeliveryResult =
-        await this.deliveryService.initiateDelivery({
+        await this.deliveryAdapter.initiateDelivery({
           orderId,
           userId: order.userId,
           items: basketSnapshot.items,
@@ -196,7 +196,7 @@ export class OrderSagaUseCases {
         order.quoteId,
       );
       if (isFound(quote)) {
-        await this.paymentService.refundPayment({
+        await this.paymentAdapter.refundPayment({
           paymentReference: order.paymentReference,
           amount: quote.getTotalPrice(),
           reason,
@@ -219,7 +219,7 @@ export class OrderSagaUseCases {
     if (!order.deliveryReference) return;
 
     try {
-      await this.deliveryService.cancelDelivery({
+      await this.deliveryAdapter.cancelDelivery({
         deliveryReference: order.deliveryReference,
         reason,
       });
@@ -251,7 +251,7 @@ export class OrderSagaUseCases {
       };
     }
 
-    const result: PaymentResult = await this.paymentService.processPayment({
+    const result: PaymentResult = await this.paymentAdapter.processPayment({
       orderId,
       userId: order.userId,
       amount: quote.getTotalPrice(),
@@ -294,7 +294,7 @@ export class OrderSagaUseCases {
     }
 
     const basketSnapshot: QuoteBasketSnapshot = quote.basketSnapshot;
-    const result: DeliveryResult = await this.deliveryService.initiateDelivery({
+    const result: DeliveryResult = await this.deliveryAdapter.initiateDelivery({
       orderId,
       userId: order.userId,
       items: basketSnapshot.items,

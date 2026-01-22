@@ -5,7 +5,7 @@ import {
   BasketSnapshot,
 } from '../../domain/basket/basket.entity';
 import {
-  IPolicyServicePort,
+  PolicyServicePort,
   BasketPolicyCheckName,
   BasketPricingResult,
 } from '../ports/policy-service.port';
@@ -83,10 +83,10 @@ export class BasketValidationResult {
 @Injectable()
 export class BasketUseCases {
   constructor(
-    @Inject('IBasketRepository')
+    @Inject(IBasketRepository.name)
     private readonly basketRepository: IBasketRepository,
-    @Inject('IPolicyServicePort')
-    private readonly policyService: IPolicyServicePort,
+    @Inject(PolicyServicePort.name)
+    private readonly policyAdapter: PolicyServicePort,
   ) {}
 
   /**
@@ -236,7 +236,7 @@ export class BasketUseCases {
 
     const snapshot: BasketSnapshot = basket.createSnapshot();
 
-    return this.policyService.calculateBasketPricing(snapshot);
+    return this.policyAdapter.calculateBasketPricing(snapshot);
   }
 
   /**
@@ -248,10 +248,10 @@ export class BasketUseCases {
     const snapshot: BasketSnapshot = basket.createSnapshot();
 
     const checkNames: BasketPolicyCheckName[] =
-      await this.policyService.getBasketPolicyChecks(snapshot);
+      await this.policyAdapter.getBasketPolicyChecks(snapshot);
 
     const pricing: BasketPricingResult =
-      await this.policyService.calculateBasketPricing(snapshot);
+      await this.policyAdapter.calculateBasketPricing(snapshot);
 
     const context: BasketSpecificationContext = {
       basket,

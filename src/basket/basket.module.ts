@@ -13,6 +13,7 @@ import { CheckoutUseCases } from './application/use-cases/checkout.use-cases';
 // Adapters
 import { BasketController } from './adapters/inbound/basket.controller.js';
 import { BasketRepositoryImplementation } from './repository/basket.repository.impl.js';
+import { IBasketRepository } from './domain/basket/basket.repository';
 
 // Policy module import will be handled via forwardRef
 import { PolicyModule } from '../policy/policy.module';
@@ -35,10 +36,10 @@ import { OrderModule } from 'src/order/order.module';
     CheckoutUseCases,
     // Repository
     {
-      provide: 'IBasketRepository',
+      provide: IBasketRepository.name,
       useClass: BasketRepositoryImplementation,
     },
   ],
-  exports: [BasketUseCases, CheckoutUseCases, 'IBasketRepository'],
+  exports: [BasketUseCases, CheckoutUseCases, IBasketRepository.name],
 })
 export class BasketModule {}

@@ -15,7 +15,7 @@ export class CreateQuoteResult {
 /**
  * Port for order service (basket subdomain -> order subdomain)
  */
-export abstract class IOrderServicePort {
+export abstract class OrderServicePort {
   /**
    * Create a quote from basket and policy snapshots
    */

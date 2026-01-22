@@ -35,9 +35,9 @@ export class CreateOrderFromQuoteCommand {
 @Injectable()
 export class OrderUseCases {
   constructor(
-    @Inject('IOrderRepository')
+    @Inject(IOrderRepository.name)
     private readonly orderRepository: IOrderRepository,
-    @Inject('IQuoteRepository')
+    @Inject(IQuoteRepository.name)
     private readonly quoteRepository: IQuoteRepository,
   ) {}
 

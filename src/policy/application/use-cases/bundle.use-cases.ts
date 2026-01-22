@@ -67,7 +67,7 @@ class BundleItemWithAmountCommand {
 @Injectable()
 export class BundleUseCases {
   constructor(
-    @Inject('IBundleRepository')
+    @Inject(IBundleRepository.name)
     private readonly bundleRepository: IBundleRepository,
   ) {}
 

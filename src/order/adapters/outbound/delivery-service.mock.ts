@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import {
-  IDeliveryServicePort,
+  DeliveryServicePort,
   DeliveryRequest,
   DeliveryResult,
   CancelDeliveryRequest,
@@ -12,7 +12,7 @@ import {
  * Simulates delivery processing with configurable failure rate
  */
 @Injectable()
-export class DeliveryServiceMock implements IDeliveryServicePort {
+export class DeliveryServiceMock implements DeliveryServicePort {
   private readonly logger = new Logger(DeliveryServiceMock.name);
   private failureRate = 0; // Set to 0-1 to simulate failures
   private readonly deliveryStatuses = new Map<

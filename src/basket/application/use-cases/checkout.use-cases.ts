@@ -1,11 +1,11 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { IBasketRepository } from '../../domain/basket/basket.repository';
 import {
-  IPolicyServicePort,
+  PolicyServicePort,
   PolicySnapshot,
 } from '../ports/policy-service.port';
 import {
-  IOrderServicePort,
+  OrderServicePort,
   CreateQuoteResult,
 } from '../ports/order-service.port';
 import { BasketUseCases } from './basket.use-cases';
@@ -27,12 +27,12 @@ export class CheckoutResult {
 @Injectable()
 export class CheckoutUseCases {
   constructor(
-    @Inject('IBasketRepository')
+    @Inject(IBasketRepository.name)
     private readonly basketRepository: IBasketRepository,
-    @Inject('IPolicyServicePort')
-    private readonly policyService: IPolicyServicePort,
-    @Inject('IOrderServicePort')
-    private readonly orderService: IOrderServicePort,
+    @Inject(PolicyServicePort.name)
+    private readonly policyAdapter: PolicyServicePort,
+    @Inject(OrderServicePort.name)
+    private readonly orderAdapter: OrderServicePort,
     private readonly basketUseCases: BasketUseCases,
   ) {}
 
@@ -70,10 +70,10 @@ export class CheckoutUseCases {
 
       // 3. Create policy snapshot
       const policySnapshot: PolicySnapshot =
-        await this.policyService.createPolicySnapshot(basketSnapshot);
+        await this.policyAdapter.createPolicySnapshot(basketSnapshot);
 
       // 4. Create quote via order service
-      const quote: CreateQuoteResult = await this.orderService.createQuote(
+      const quote: CreateQuoteResult = await this.orderAdapter.createQuote(
         basketSnapshot,
         policySnapshot,
         command.businessPartnerId,

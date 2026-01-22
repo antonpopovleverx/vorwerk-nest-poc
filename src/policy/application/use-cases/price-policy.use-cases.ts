@@ -54,9 +54,9 @@ export class PricePolicyUseCases {
   private readonly region: Region = DEFAULT_REGION; // Hardcoded to DE for POC
 
   constructor(
-    @Inject('IPricePolicyRepository')
+    @Inject(IPricePolicyRepository.name)
     private readonly pricePolicyRepository: IPricePolicyRepository,
-    @Inject('IBundleRepository')
+    @Inject(IBundleRepository.name)
     private readonly bundleRepository: IBundleRepository,
   ) {}
 

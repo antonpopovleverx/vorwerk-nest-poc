@@ -29,7 +29,7 @@ export class RefundRequest {
 /**
  * Port for payment service (external microservice mock)
  */
-export abstract class IPaymentServicePort {
+export abstract class PaymentServicePort {
   /**
    * Process payment
    */

@@ -17,6 +17,11 @@ import { QuoteRepositoryImplementation } from './repository/quote.repository.imp
 import { PaymentServiceMock } from './adapters/outbound/payment-service.mock.js';
 import { DeliveryServiceMock } from './adapters/outbound/delivery-service.mock.js';
 import { OrderServiceAdapter } from './adapters/outbound/order-service.adapter.js';
+import { IOrderRepository } from './domain/order/order.repository';
+import { IQuoteRepository } from './domain/quote/quote.repository';
+import { PaymentServicePort } from './application/ports/payment-service.port';
+import { DeliveryServicePort } from './application/ports/delivery-service.port';
+import { OrderServicePort } from 'src/basket/application/ports/order-service.port';
 
 @Module({
   imports: [TypeOrmModule.forFeature([OrderEntity, QuoteEntity])],
@@ -28,25 +33,25 @@ import { OrderServiceAdapter } from './adapters/outbound/order-service.adapter.j
     OrderSagaUseCases,
     // Repositories
     {
-      provide: 'IOrderRepository',
+      provide: IOrderRepository.name,
       useClass: OrderRepositoryImplementation,
     },
     {
-      provide: 'IQuoteRepository',
+      provide: IQuoteRepository.name,
       useClass: QuoteRepositoryImplementation,
     },
     // External service mocks
     {
-      provide: 'IPaymentServicePort',
+      provide: PaymentServicePort.name,
       useClass: PaymentServiceMock,
     },
     {
-      provide: 'IDeliveryServicePort',
+      provide: DeliveryServicePort.name,
       useClass: DeliveryServiceMock,
     },
     // Adapter for basket subdomain
     {
-      provide: 'IOrderServicePort',
+      provide: OrderServicePort.name,
       useClass: OrderServiceAdapter,
     },
   ],
@@ -54,9 +59,9 @@ import { OrderServiceAdapter } from './adapters/outbound/order-service.adapter.j
     QuoteUseCases,
     OrderUseCases,
     OrderSagaUseCases,
-    'IOrderRepository',
-    'IQuoteRepository',
-    'IOrderServicePort',
+    IOrderRepository.name,
+    IQuoteRepository.name,
+    OrderServicePort.name,
   ],
 })
 export class OrderModule {}

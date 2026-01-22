@@ -29,7 +29,7 @@ export class CancelDeliveryRequest {
 /**
  * Port for delivery service (external microservice mock)
  */
-export abstract class IDeliveryServicePort {
+export abstract class DeliveryServicePort {
   /**
    * Initiate delivery
    */
