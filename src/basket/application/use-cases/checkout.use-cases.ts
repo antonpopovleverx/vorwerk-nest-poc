@@ -9,15 +9,7 @@ import {
   CreateQuoteResult,
 } from '../ports/order-service.port';
 import { BasketUseCases } from './basket.use-cases';
-
-/**
- * Checkout command
- */
-
-export class CheckoutCommand {
-  userId!: string;
-  businessPartnerId?: string;
-}
+import { CheckoutCommand } from './checkout.command';
 
 /**
  * Checkout result
