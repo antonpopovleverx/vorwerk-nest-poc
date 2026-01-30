@@ -15,7 +15,7 @@ import { OrderEntity } from './order/domain/order/order.entity';
 import { QuoteEntity } from './order/domain/quote/quote.entity';
 
 
-import { DataSeeder } from './_common/infra/persistence/seeding/data-seeder.js';
+import { DataSeeder } from './_common/infra/persistence/seeding/data-seeder';
 
 @Module({
   imports: [

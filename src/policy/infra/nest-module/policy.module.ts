@@ -10,10 +10,10 @@ import { PricePolicyUseCases } from '../../application/use-cases/price-policy.us
 import { BasketPolicyUseCases } from '../../application/use-cases/basket-policy.use-cases';
 import { BundleUseCases } from '../../application/use-cases/bundle.use-cases';
 
-import { BundleController } from '../../adapters/inbound/bundle.controller.js';
-import { BundleRepositoryImplementation } from '../../repository/bundle.repository.impl.js';
-import { PricePolicyRepositoryImplementation } from '../../repository/price-policy.repository.impl.js';
-import { PolicyServiceAdapter } from '../../adapters/outbound/policy-service.adapter.js';
+import { BundleController } from '../../adapters/inbound/bundle.controller';
+import { BundleRepositoryImplementation } from '../../repository/bundle.repository.impl';
+import { PricePolicyRepositoryImplementation } from '../../repository/price-policy.repository.impl';
+import { PolicyServiceAdapter } from '../../../basket/adapters/outbound/policy-service.adapter';
 import { IBundleRepository } from '../../domain/price-policy/bundle.repository';
 import { IPricePolicyRepository } from '../../domain/price-policy/price-policy.repository';
 import { PolicyServicePort } from 'src/basket/application/ports/policy-service.port';

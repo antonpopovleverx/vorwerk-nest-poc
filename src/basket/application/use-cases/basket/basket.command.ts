@@ -1,4 +1,4 @@
-import { BasketPolicyCheckName } from 'src/basket/application/ports/policy-service.port.js';
+import { BasketPolicyCheckName } from 'src/basket/application/ports/policy-service.port';
 
 export class BasketData {
   basketId: string;

@@ -38,16 +38,16 @@ function registerBundledSwaggerAssets(app: INestApplication) {
   adapter.get('/swagger/swagger-ui.css', (_req: any, res: any) =>
     send(res, 'text/css; charset=utf-8', 'swagger-ui.css'),
   );
-  adapter.get('/swagger/swagger-ui-bundle.js', (_req: any, res: any) =>
-    send(res, 'application/javascript; charset=utf-8', 'swagger-ui-bundle.js'),
+  adapter.get('/swagger/swagger-ui-bundle', (_req: any, res: any) =>
+    send(res, 'application/javascript; charset=utf-8', 'swagger-ui-bundle'),
   );
   adapter.get(
-    '/swagger/swagger-ui-standalone-preset.js',
+    '/swagger/swagger-ui-standalone-preset',
     (_req: any, res: any) =>
       send(
         res,
         'application/javascript; charset=utf-8',
-        'swagger-ui-standalone-preset.js',
+        'swagger-ui-standalone-preset',
       ),
   );
   adapter.get('/swagger/favicon-32x32.png', (_req: any, res: any) =>
@@ -120,8 +120,8 @@ export function setupSwagger(
       ? {
           customCssUrl: '/swagger/swagger-ui.css',
           customJs: [
-            '/swagger/swagger-ui-bundle.js',
-            '/swagger/swagger-ui-standalone-preset.js',
+            '/swagger/swagger-ui-bundle',
+            '/swagger/swagger-ui-standalone-preset',
           ],
           swaggerOptions: {
             url: '/docs-json', // absolute; not affected by global prefix

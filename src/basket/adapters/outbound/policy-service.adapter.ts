@@ -4,8 +4,8 @@ import {
   BasketPolicyCheckName,
   BasketPricingResult,
   PolicySnapshot,
-} from '../../../basket/application/ports/policy-service.port';
-import { BasketSnapshot } from '../../../basket/domain/basket/basket.entity';
+} from '../../application/ports/policy-service.port';
+import { BasketSnapshot } from '../../domain/basket/basket.entity';
 import { BasketPolicyUseCases } from 'src/policy/application/use-cases/basket-policy.use-cases';
 import { PricePolicyUseCases } from 'src/policy/application/use-cases/price-policy.use-cases';
 

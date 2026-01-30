@@ -1,4 +1,4 @@
-import { CreateQuoteResult } from 'src/basket/application/ports/order-service.port.js';
+import { CreateQuoteResult } from 'src/basket/application/ports/order-service.port';
 
 export class CheckoutCommand {
   userId!: string;

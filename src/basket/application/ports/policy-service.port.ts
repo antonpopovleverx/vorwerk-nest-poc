@@ -1,5 +1,5 @@
 
-import { SupportedCurrency } from 'src/_common/domain/enums/currency.enum.js';
+import { SupportedCurrency } from 'src/_common/domain/enums/currency.enum';
 import { BasketSnapshot } from 'src/basket/domain/basket/basket.entity';
 
 export class PolicyCheckResult {
