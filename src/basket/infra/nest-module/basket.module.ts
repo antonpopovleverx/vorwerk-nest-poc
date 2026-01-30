@@ -8,8 +8,7 @@ import { CheckoutUseCases } from '../../application/use-cases/checkout/checkout.
 import { BasketController } from '../../adapters/inbound/basket.controller';
 import { BasketRepositoryImplementation } from '../../repository/basket.repository.impl';
 import { IBasketRepository } from '../../domain/basket/basket.repository';
-import { PolicyModule } from '../../../policy/infra/nest-module/policy.module';
-import { OrderModule } from 'src/order/infra/nest-module/order.module';
+
 import { PolicyServicePort } from 'src/basket/application/ports/policy-service.port';
 import { PolicyServiceAdapter } from 'src/basket/adapters/outbound/policy-service.adapter';
 import { OrderServicePort } from 'src/basket/application/ports/order-service.port';
@@ -22,8 +21,6 @@ import { OrderServiceAdapter } from 'src/basket/adapters/outbound/order-service.
       BasketItemEntity,
       BasketBundleEntity,
     ]),
-    PolicyModule,
-    OrderModule,
   ],
   controllers: [BasketController],
   providers: [

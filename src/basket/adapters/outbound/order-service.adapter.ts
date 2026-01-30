@@ -5,44 +5,23 @@ import {
 } from '../../application/ports/order-service.port';
 import { BasketSnapshot } from '../../domain/basket/basket.entity';
 import { PolicySnapshot } from '../../application/ports/policy-service.port';
-import { QuoteUseCases } from '../../../order/application/use-cases/quote/quote.use-cases';
 
-/**
- * Adapter implementing IOrderServicePort for basket subdomain
- * This bridges basket subdomain to order subdomain
- */
+// Mock
 @Injectable()
 export class OrderServiceAdapter implements OrderServicePort {
-  constructor(private readonly quoteUseCases: QuoteUseCases) {}
 
   async createQuote(
     basketSnapshot: BasketSnapshot,
     policySnapshot: PolicySnapshot,
     businessPartnerId?: string,
   ): Promise<CreateQuoteResult> {
-    const quote = await this.quoteUseCases.createQuote({
-      userId: basketSnapshot.userId,
-      basketSnapshot: {
-        basketId: basketSnapshot.basketId,
-        userId: basketSnapshot.userId,
-        items: basketSnapshot.items,
-        bundles: basketSnapshot.bundles,
-        snapshotAt: basketSnapshot.snapshotAt,
-      },
-      policySnapshot: {
-        pricing: policySnapshot.pricing,
-        checksPerformed: policySnapshot.checksPerformed,
-        pricedAt: policySnapshot.pricedAt,
-      },
-      businessPartnerId,
-    });
 
     return {
-      quoteId: quote.quoteId,
-      userId: quote.userId,
-      totalPrice: quote.getTotalPrice(),
-      SupportedCurrency: quote.SupportedCurrency,
-      createdAt: quote.createdAt,
+      quoteId: 'mock-quote-id',
+      userId: 'mock-user-id',
+      totalPrice: 123.45,
+      SupportedCurrency: 'USD',
+      createdAt: new Date('2023-01-01T00:00:00Z'),
     };
   }
 }

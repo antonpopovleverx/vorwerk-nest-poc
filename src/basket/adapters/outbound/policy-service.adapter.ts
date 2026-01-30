@@ -6,57 +6,35 @@ import {
   PolicySnapshot,
 } from '../../application/ports/policy-service.port';
 import { BasketSnapshot } from '../../domain/basket/basket.entity';
-import { BasketPolicyUseCases } from 'src/policy/application/use-cases/basket-policy.use-cases';
-import { PricePolicyUseCases } from 'src/policy/application/use-cases/price-policy.use-cases';
+import { SupportedCurrency } from 'src/_common/domain/enums/currency.enum';
 
+// Mock
 @Injectable()
 export class PolicyServiceAdapter implements PolicyServicePort {
-  constructor(
-    private readonly pricePolicyUseCases: PricePolicyUseCases,
-    private readonly basketPolicyUseCases: BasketPolicyUseCases,
-  ) {}
-
   async getBasketPolicyChecks(
     basketSnapshot: BasketSnapshot,
   ): Promise<BasketPolicyCheckName[]> {
-    const policyChecks = this.basketPolicyUseCases.getBasketPolicyChecks({
-      basketId: basketSnapshot.basketId,
-      userId: basketSnapshot.userId,
-      items: basketSnapshot.items,
-      bundles: basketSnapshot.bundles,
-      snapshotAt: basketSnapshot.snapshotAt,
-    });
-
-    return policyChecks.map((check) => {
-      switch (check) {
-        case 'MAX_ITEMS_PER_BASKET':
-          return BasketPolicyCheckName.MAX_ITEMS_PER_BASKET;
-        case 'MAX_BUNDLES_PER_BASKET':
-          return BasketPolicyCheckName.MAX_BUNDLES_PER_BASKET;
-        case 'MIN_ORDER_VALUE':
-          return BasketPolicyCheckName.MIN_ORDER_VALUE;
-        case 'ITEM_AVAILABILITY':
-          return BasketPolicyCheckName.ITEM_AVAILABILITY;
-        case 'BUNDLE_AVAILABILITY':
-          return BasketPolicyCheckName.BUNDLE_AVAILABILITY;
-        default:
-          return check;
-      }
-    });
+    return [
+      BasketPolicyCheckName.MAX_ITEMS_PER_BASKET,
+      BasketPolicyCheckName.MAX_BUNDLES_PER_BASKET,
+      BasketPolicyCheckName.MIN_ORDER_VALUE,
+      BasketPolicyCheckName.ITEM_AVAILABILITY,
+      BasketPolicyCheckName.BUNDLE_AVAILABILITY,
+    ];
   }
 
   async calculateBasketPricing(
     basketSnapshot: BasketSnapshot,
   ): Promise<BasketPricingResult> {
-    const pricing = await this.pricePolicyUseCases.calculateBasketPricing({
-      basketId: basketSnapshot.basketId,
-      userId: basketSnapshot.userId,
-      items: basketSnapshot.items,
-      bundles: basketSnapshot.bundles,
-      snapshotAt: basketSnapshot.snapshotAt,
-    });
 
-    return pricing;
+    return {
+      items: basketSnapshot.items as any[],
+      bundles: basketSnapshot.bundles as any[],
+      subtotal: 0,
+      totalDiscount: 0,
+      total: 0,
+      SupportedCurrency: SupportedCurrency.EUR,
+    };
   }
 
   async createPolicySnapshot(
