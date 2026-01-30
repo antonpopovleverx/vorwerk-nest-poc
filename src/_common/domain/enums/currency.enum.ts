@@ -1,9 +1,9 @@
 /**
  * Supported currencies
  */
-export enum Currency {
+export enum SupportedCurrency {
   EUR = 'EUR',
   USD = 'USD',
 }
 
-export const DEFAULT_CURRENCY = Currency.EUR;
+export const DEFAULT_SupportedCurrency = SupportedCurrency.EUR;

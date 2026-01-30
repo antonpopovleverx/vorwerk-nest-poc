@@ -1,6 +1,3 @@
-/**
- * Basket policy check names - defines which checks should be performed
- */
 export enum BasketPolicyCheckName {
   MAX_ITEMS_PER_BASKET = 'MAX_ITEMS_PER_BASKET',
   MAX_BUNDLES_PER_BASKET = 'MAX_BUNDLES_PER_BASKET',
@@ -9,9 +6,6 @@ export enum BasketPolicyCheckName {
   BUNDLE_AVAILABILITY = 'BUNDLE_AVAILABILITY',
 }
 
-/**
- * Basket policy decision
- */
 export interface BasketPolicyDecision {
   checksToPerform: BasketPolicyCheckName[];
   reason?: string;

@@ -3,13 +3,10 @@ import {
   QuoteEntity,
   QuoteBasketSnapshot,
   QuotePolicySnapshot,
-} from '../../domain/quote/quote.entity';
-import { IQuoteRepository } from '../../domain/quote/quote.repository';
-import { isFound } from '../../../_common/domain/specifications/specification.interface';
+} from '../../../domain/quote/quote.entity';
+import { IQuoteRepository } from '../../../domain/quote/quote.repository';
+import { isFound } from '../../../../_common/domain/specifications/specification.interface';
 
-/**
- * Create quote DTO
- */
 export class CreateQuoteDto {
   userId!: string;
   basketSnapshot!: QuoteBasketSnapshot;
@@ -17,9 +14,6 @@ export class CreateQuoteDto {
   businessPartnerId?: string;
 }
 
-/**
- * Quote use cases
- */
 @Injectable()
 export class QuoteUseCases {
   constructor(
@@ -27,9 +21,6 @@ export class QuoteUseCases {
     private readonly quoteRepository: IQuoteRepository,
   ) {}
 
-  /**
-   * Create a new quote
-   */
   async createQuote(dto: CreateQuoteDto): Promise<QuoteEntity> {
     const quote: QuoteEntity = QuoteEntity.create(
       dto.userId,
@@ -41,9 +32,6 @@ export class QuoteUseCases {
     return this.quoteRepository.save(quote);
   }
 
-  /**
-   * Get quote by ID
-   */
   async getQuote(quoteId: string): Promise<QuoteEntity> {
     const quote: QuoteEntity | null =
       await this.quoteRepository.findById(quoteId);
@@ -57,16 +45,10 @@ export class QuoteUseCases {
     return quote;
   }
 
-  /**
-   * Get quotes for user
-   */
   async getQuotesForUser(userId: string): Promise<QuoteEntity[]> {
     return this.quoteRepository.findByUserId(userId);
   }
 
-  /**
-   * Delete quote
-   */
   async deleteQuote(quoteId: string): Promise<void> {
     await this.quoteRepository.delete(quoteId);
   }

@@ -2,20 +2,13 @@ import { Specification } from 'src/_common/domain/specifications/specification.i
 import { BasketPolicyCheckName } from 'src/basket/application/ports/policy-service.port';
 import { BasketEntity } from 'src/basket/domain/basket/basket.entity';
 
-/**
- * Specification context for basket policy checks
- */
 export interface BasketSpecificationContext {
   basket: BasketEntity;
-  // Additional context can be added here (e.g., pricing info, availability)
   pricing?: {
     total: number;
   };
 }
 
-/**
- * Max items per basket specification
- */
 export class MaxItemsPerBasketSpecification extends Specification<BasketSpecificationContext> {
   constructor(private readonly maxItems: number = 50) {
     super();
@@ -26,9 +19,6 @@ export class MaxItemsPerBasketSpecification extends Specification<BasketSpecific
   }
 }
 
-/**
- * Max bundles per basket specification
- */
 export class MaxBundlesPerBasketSpecification extends Specification<BasketSpecificationContext> {
   constructor(private readonly maxBundles: number = 10) {
     super();
@@ -39,9 +29,6 @@ export class MaxBundlesPerBasketSpecification extends Specification<BasketSpecif
   }
 }
 
-/**
- * Min order value specification
- */
 export class MinOrderValueSpecification extends Specification<BasketSpecificationContext> {
   constructor(private readonly minValue: number = 10) {
     super();
@@ -49,37 +36,24 @@ export class MinOrderValueSpecification extends Specification<BasketSpecificatio
 
   isSatisfiedBy(context: BasketSpecificationContext): boolean {
     if (!context.pricing) {
-      return true; // If no pricing context, skip check
+      return true;
     }
     return context.pricing.total >= this.minValue;
   }
 }
 
-/**
- * Item availability specification (placeholder - would check external service)
- */
 export class ItemAvailabilitySpecification extends Specification<BasketSpecificationContext> {
   isSatisfiedBy(_context: BasketSpecificationContext): boolean {
-    // In real implementation, would check item availability
-    // For POC, always returns true
     return true;
   }
 }
 
-/**
- * Bundle availability specification (placeholder - would check external service)
- */
 export class BundleAvailabilitySpecification extends Specification<BasketSpecificationContext> {
   isSatisfiedBy(_context: BasketSpecificationContext): boolean {
-    // In real implementation, would check bundle availability
-    // For POC, always returns true
     return true;
   }
 }
 
-/**
- * Registry mapping policy check names to specifications
- */
 export const BasketSpecificationRegistry: Record<
   BasketPolicyCheckName,
   () => Specification<BasketSpecificationContext>
@@ -96,9 +70,6 @@ export const BasketSpecificationRegistry: Record<
     new BundleAvailabilitySpecification(),
 };
 
-/**
- * Get failure message for a basket policy check
- */
 export function getCheckFailureMessage(
   checkName: BasketPolicyCheckName,
 ): string {

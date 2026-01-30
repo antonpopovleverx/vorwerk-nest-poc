@@ -9,10 +9,6 @@ import { BasketSnapshot } from '../../../basket/domain/basket/basket.entity';
 import { BasketPolicyUseCases } from 'src/policy/application/use-cases/basket-policy.use-cases';
 import { PricePolicyUseCases } from 'src/policy/application/use-cases/price-policy.use-cases';
 
-/**
- * Adapter implementing IPolicyServicePort for basket subdomain
- * This bridges basket subdomain to policy subdomain
- */
 @Injectable()
 export class PolicyServiceAdapter implements PolicyServicePort {
   constructor(
@@ -23,7 +19,6 @@ export class PolicyServiceAdapter implements PolicyServicePort {
   async getBasketPolicyChecks(
     basketSnapshot: BasketSnapshot,
   ): Promise<BasketPolicyCheckName[]> {
-    // Map to policy subdomain's expected format
     const policyChecks = this.basketPolicyUseCases.getBasketPolicyChecks({
       basketId: basketSnapshot.basketId,
       userId: basketSnapshot.userId,
@@ -32,7 +27,6 @@ export class PolicyServiceAdapter implements PolicyServicePort {
       snapshotAt: basketSnapshot.snapshotAt,
     });
 
-    // Map policy subdomain check names to basket subdomain check names
     return policyChecks.map((check) => {
       switch (check) {
         case 'MAX_ITEMS_PER_BASKET':

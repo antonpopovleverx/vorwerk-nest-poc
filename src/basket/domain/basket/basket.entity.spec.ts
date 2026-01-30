@@ -19,35 +19,33 @@ describe('BasketEntity', () => {
 
   describe('addItem', () => {
     it('should add a new item to the basket', () => {
-      basket.addItem('ITEM-001', 2);
+      basket.addItem('ITEM-001', new ProductAmount(2));
 
       expect(basket.items.length).toBe(1);
       expect(basket.items[0].itemId).toBe('ITEM-001');
-      expect(basket.items[0].amount).toBe(2);
+      expect(basket.items[0].amount.value).toBe(2);
     });
 
     it('should increase amount if item already exists', () => {
-      basket.addItem('ITEM-001', 2);
-      basket.addItem('ITEM-001', 3);
+      basket.addItem('ITEM-001', new ProductAmount(2));
+      basket.addItem('ITEM-001', new ProductAmount(3));
 
       expect(basket.items.length).toBe(1);
-      expect(basket.items[0].amount).toBe(5);
+      expect(basket.items[0].amount.value).toBe(5);
     });
 
     it('should throw error for non-positive amount', () => {
-      expect(() => basket.addItem('ITEM-001', 0)).toThrow(
+      expect(() => basket.addItem('ITEM-001', ProductAmount.zero())).toThrow(
         'Amount must be positive',
       );
-      expect(() => basket.addItem('ITEM-001', -1)).toThrow(
-        'Amount must be positive',
-      );
+      expect(() => basket.addItem('ITEM-001', new ProductAmount(-1))).toThrow();
     });
   });
 
   describe('removeItem', () => {
     it('should remove an existing item', () => {
-      basket.addItem('ITEM-001', 2);
-      basket.addItem('ITEM-002', 1);
+      basket.addItem('ITEM-001', new ProductAmount(2));
+      basket.addItem('ITEM-002', new ProductAmount(1));
 
       basket.removeItem('ITEM-001');
 
@@ -56,7 +54,7 @@ describe('BasketEntity', () => {
     });
 
     it('should do nothing if item does not exist', () => {
-      basket.addItem('ITEM-001', 2);
+      basket.addItem('ITEM-001', new ProductAmount(2));
       basket.removeItem('ITEM-999');
 
       expect(basket.items.length).toBe(1);
@@ -65,21 +63,21 @@ describe('BasketEntity', () => {
 
   describe('updateItemAmount', () => {
     it('should update item amount', () => {
-      basket.addItem('ITEM-001', 2);
-      basket.updateItemAmount('ITEM-001', 5);
+      basket.addItem('ITEM-001', new ProductAmount(2));
+      basket.updateItemAmount('ITEM-001', new ProductAmount(5));
 
-      expect(basket.items[0].amount).toBe(5);
+      expect(basket.items[0].amount.value).toBe(5);
     });
 
     it('should remove item if amount is 0 or negative', () => {
-      basket.addItem('ITEM-001', 2);
-      basket.updateItemAmount('ITEM-001', 0);
+      basket.addItem('ITEM-001', new ProductAmount(2));
+      basket.updateItemAmount('ITEM-001', ProductAmount.zero());
 
       expect(basket.items.length).toBe(0);
     });
 
     it('should throw error if item not found', () => {
-      expect(() => basket.updateItemAmount('ITEM-999', 5)).toThrow(
+      expect(() => basket.updateItemAmount('ITEM-999', new ProductAmount(5))).toThrow(
         'Item ITEM-999 not found in basket',
       );
     });
@@ -87,19 +85,19 @@ describe('BasketEntity', () => {
 
   describe('addBundle', () => {
     it('should add a new bundle to the basket', () => {
-      basket.addBundle('BUNDLE-001', 1);
+      basket.addBundle('BUNDLE-001', new ProductAmount(1));
 
       expect(basket.bundles.length).toBe(1);
       expect(basket.bundles[0].bundleId).toBe('BUNDLE-001');
-      expect(basket.bundles[0].amount).toBe(1);
+      expect(basket.bundles[0].amount.value).toBe(1);
     });
 
     it('should increase amount if bundle already exists', () => {
-      basket.addBundle('BUNDLE-001', 1);
-      basket.addBundle('BUNDLE-001', 2);
+      basket.addBundle('BUNDLE-001', new ProductAmount(1));
+      basket.addBundle('BUNDLE-001', new ProductAmount(2));
 
       expect(basket.bundles.length).toBe(1);
-      expect(basket.bundles[0].amount).toBe(3);
+      expect(basket.bundles[0].amount.value).toBe(3);
     });
   });
 
@@ -109,20 +107,20 @@ describe('BasketEntity', () => {
     });
 
     it('should return false when basket has items', () => {
-      basket.addItem('ITEM-001', 1);
+      basket.addItem('ITEM-001', new ProductAmount(1));
       expect(basket.isEmpty()).toBe(false);
     });
 
     it('should return false when basket has bundles', () => {
-      basket.addBundle('BUNDLE-001', 1);
+      basket.addBundle('BUNDLE-001', new ProductAmount(1));
       expect(basket.isEmpty()).toBe(false);
     });
   });
 
   describe('getTotalItemCount', () => {
     it('should return sum of all item amounts', () => {
-      basket.addItem('ITEM-001', 2);
-      basket.addItem('ITEM-002', 3);
+      basket.addItem('ITEM-001', new ProductAmount(2));
+      basket.addItem('ITEM-002', new ProductAmount(3));
 
       expect(basket.getTotalItemCount()).toBe(5);
     });
@@ -134,8 +132,8 @@ describe('BasketEntity', () => {
 
   describe('getTotalBundleCount', () => {
     it('should return sum of all bundle amounts', () => {
-      basket.addBundle('BUNDLE-001', 2);
-      basket.addBundle('BUNDLE-002', 1);
+      basket.addBundle('BUNDLE-001', new ProductAmount(2));
+      basket.addBundle('BUNDLE-002', new ProductAmount(1));
 
       expect(basket.getTotalBundleCount()).toBe(3);
     });
@@ -143,8 +141,8 @@ describe('BasketEntity', () => {
 
   describe('clear', () => {
     it('should remove all items and bundles', () => {
-      basket.addItem('ITEM-001', 2);
-      basket.addBundle('BUNDLE-001', 1);
+      basket.addItem('ITEM-001', new ProductAmount(2));
+      basket.addBundle('BUNDLE-001', new ProductAmount(1));
 
       basket.clear();
 

@@ -13,10 +13,6 @@ import { BasketEntity } from './basket.entity';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { ProductAmount } from '../../../_common/domain/value-objects/product-amount.value-object';
 
-/**
- * Basket item - represents an individual item in a basket
- * Composite PK: basketId + itemId
- */
 @Entity('basket_items')
 export class BasketItemEntity extends TechnicalEntity {
   @PrimaryColumn({ name: 'basket_id' })
@@ -34,7 +30,6 @@ export class BasketItemEntity extends TechnicalEntity {
   @JoinColumn({ name: 'basket_id' })
   basket: BasketEntity;
 
-  // Value Object field
   amount: ProductAmount;
 
   @AfterLoad()
@@ -48,16 +43,10 @@ export class BasketItemEntity extends TechnicalEntity {
     this._amount = this.amount.toJSON();
   }
 
-  /**
-   * Validate that amount is positive
-   */
   isValid(): boolean {
     return this.amount.value > 0;
   }
 
-  /**
-   * Increase the amount
-   */
   increaseAmount(by: ProductAmount = ProductAmount.one()): void {
     if (by.isLessThanOrEqual(ProductAmount.zero())) {
       throw new HttpException(
@@ -68,9 +57,6 @@ export class BasketItemEntity extends TechnicalEntity {
     this.amount = this.amount.add(by);
   }
 
-  /**
-   * Decrease the amount
-   */
   decreaseAmount(by: ProductAmount = ProductAmount.one()): void {
     if (by.isLessThanOrEqual(ProductAmount.zero())) {
       throw new HttpException(

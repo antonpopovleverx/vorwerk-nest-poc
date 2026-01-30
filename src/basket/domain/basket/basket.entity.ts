@@ -5,10 +5,6 @@ import { BasketBundleEntity } from './basket-bundle.entity';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { ProductAmount } from '../../../_common/domain/value-objects/product-amount.value-object';
 
-/**
- * Basket aggregate root
- * Identified by userId (one user has one basket)
- */
 @Entity('baskets')
 export class BasketEntity extends TechnicalEntity {
   @PrimaryGeneratedColumn('uuid', { name: 'basket_id' })
@@ -29,11 +25,6 @@ export class BasketEntity extends TechnicalEntity {
   })
   bundles: BasketBundleEntity[];
 
-  // Domain methods
-
-  /**
-   * Add an item to the basket or increase quantity if already present
-   */
   addItem(itemId: string, amount: ProductAmount = ProductAmount.one()): void {
     if (amount.isLessThanOrEqual(ProductAmount.zero())) {
       throw new HttpException(
@@ -58,9 +49,6 @@ export class BasketEntity extends TechnicalEntity {
     }
   }
 
-  /**
-   * Remove an item from the basket
-   */
   removeItem(itemId: string): void {
     if (!this.items) return;
     const index = this.items.findIndex((i) => i.itemId === itemId);
@@ -69,9 +57,6 @@ export class BasketEntity extends TechnicalEntity {
     }
   }
 
-  /**
-   * Update item quantity
-   */
   updateItemAmount(itemId: string, amount: ProductAmount): void {
     if (amount.isLessThanOrEqual(ProductAmount.zero())) {
       this.removeItem(itemId);
@@ -88,9 +73,6 @@ export class BasketEntity extends TechnicalEntity {
     item.amount = amount;
   }
 
-  /**
-   * Add a bundle to the basket
-   */
   addBundle(
     bundleId: string,
     amount: ProductAmount = ProductAmount.one(),
@@ -118,9 +100,6 @@ export class BasketEntity extends TechnicalEntity {
     }
   }
 
-  /**
-   * Remove a bundle from the basket
-   */
   removeBundle(bundleId: string): void {
     if (!this.bundles) return;
     const index = this.bundles.findIndex((b) => b.bundleId === bundleId);
@@ -129,9 +108,6 @@ export class BasketEntity extends TechnicalEntity {
     }
   }
 
-  /**
-   * Update bundle quantity
-   */
   updateBundleAmount(bundleId: string, amount: ProductAmount): void {
     if (amount.isLessThanOrEqual(ProductAmount.zero())) {
       this.removeBundle(bundleId);
@@ -148,17 +124,11 @@ export class BasketEntity extends TechnicalEntity {
     bundle.amount = amount;
   }
 
-  /**
-   * Clear all items and bundles from basket
-   */
   clear(): void {
     this.items = [];
     this.bundles = [];
   }
 
-  /**
-   * Check if basket is empty
-   */
   isEmpty(): boolean {
     return (
       (!this.items || this.items.length === 0) &&
@@ -166,25 +136,16 @@ export class BasketEntity extends TechnicalEntity {
     );
   }
 
-  /**
-   * Get total number of individual items (excluding bundle contents)
-   */
   getTotalItemCount(): number {
     return this.items?.reduce((sum, item) => sum + item.amount.value, 0) ?? 0;
   }
 
-  /**
-   * Get total number of bundles
-   */
   getTotalBundleCount(): number {
     return (
       this.bundles?.reduce((sum, bundle) => sum + bundle.amount.value, 0) ?? 0
     );
   }
 
-  /**
-   * Create a snapshot of basket contents for quote
-   */
   createSnapshot(): BasketSnapshot {
     return {
       basketId: this.basketId,
@@ -203,9 +164,6 @@ export class BasketEntity extends TechnicalEntity {
     };
   }
 
-  /**
-   * Factory method to create a new basket for a user
-   */
   static createForUser(userId: string): BasketEntity {
     const basket = new BasketEntity();
     basket.userId = userId;
@@ -215,9 +173,6 @@ export class BasketEntity extends TechnicalEntity {
   }
 }
 
-/**
- * Basket snapshot for quotes/orders
- */
 export interface BasketSnapshot {
   basketId: string;
   userId: string;

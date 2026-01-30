@@ -1,9 +1,8 @@
 /**
- * Supported regions for pricing and policies
- * Currently only DE (Germany) is supported
+ * Supported SupportedRegions for pricing and policies
  */
-export enum Region {
+export enum SupportedRegion {
   DE = 'DE',
 }
 
-export const DEFAULT_REGION = Region.DE;
+export const DEFAULT_SupportedRegion = SupportedRegion.DE;

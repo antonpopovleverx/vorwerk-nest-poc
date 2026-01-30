@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { v4 as uuidv4 } from 'uuid';
+import { randomUUID } from 'crypto';
 import {
   DeliveryServicePort,
   DeliveryRequest,
@@ -39,7 +39,7 @@ export class DeliveryServiceMock implements DeliveryServicePort {
       };
     }
 
-    const deliveryReference = `DEL-${uuidv4().substring(0, 8).toUpperCase()}`;
+    const deliveryReference = `DEL-${randomUUID().substring(0, 8).toUpperCase()}`;
     const estimatedDeliveryDate = new Date();
     estimatedDeliveryDate.setDate(estimatedDeliveryDate.getDate() + 3); // 3 days from now
 

@@ -1,4 +1,4 @@
-import { Currency } from '../enums/currency.enum';
+import { SupportedCurrency } from '../enums/currency.enum';
 import { HttpException, HttpStatus } from '@nestjs/common';
 
 /**
@@ -7,7 +7,7 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 export class Money {
   constructor(
     public readonly amount: number,
-    public readonly currency: Currency,
+    public readonly SupportedCurrency: SupportedCurrency,
   ) {
     if (amount < 0) {
       throw new HttpException(
@@ -18,12 +18,12 @@ export class Money {
   }
 
   add(other: Money): Money {
-    this.assertSameCurrency(other);
-    return new Money(this.amount + other.amount, this.currency);
+    this.assertSameSupportedCurrency(other);
+    return new Money(this.amount + other.amount, this.SupportedCurrency);
   }
 
   subtract(other: Money): Money {
-    this.assertSameCurrency(other);
+    this.assertSameSupportedCurrency(other);
     const result = this.amount - other.amount;
     if (result < 0) {
       throw new HttpException(
@@ -31,7 +31,7 @@ export class Money {
         HttpStatus.BAD_REQUEST,
       );
     }
-    return new Money(result, this.currency);
+    return new Money(result, this.SupportedCurrency);
   }
 
   multiply(factor: number): Money {
@@ -43,7 +43,7 @@ export class Money {
     }
     return new Money(
       Math.round(this.amount * factor * 100) / 100,
-      this.currency,
+      this.SupportedCurrency,
     );
   }
 
@@ -58,40 +58,40 @@ export class Money {
   }
 
   equals(other: Money): boolean {
-    return this.amount === other.amount && this.currency === other.currency;
+    return this.amount === other.amount && this.SupportedCurrency === other.SupportedCurrency;
   }
 
   isGreaterThan(other: Money): boolean {
-    this.assertSameCurrency(other);
+    this.assertSameSupportedCurrency(other);
     return this.amount > other.amount;
   }
 
   isLessThan(other: Money): boolean {
-    this.assertSameCurrency(other);
+    this.assertSameSupportedCurrency(other);
     return this.amount < other.amount;
   }
 
-  private assertSameCurrency(other: Money): void {
-    if (this.currency !== other.currency) {
+  private assertSameSupportedCurrency(other: Money): void {
+    if (this.SupportedCurrency !== other.SupportedCurrency) {
       throw new HttpException(
-        `Currency mismatch: ${this.currency} vs ${other.currency}`,
+        `SupportedCurrency mismatch: ${this.SupportedCurrency} vs ${other.SupportedCurrency}`,
         HttpStatus.BAD_REQUEST,
       );
     }
   }
 
-  static zero(currency: Currency): Money {
-    return new Money(0, currency);
+  static zero(SupportedCurrency: SupportedCurrency): Money {
+    return new Money(0, SupportedCurrency);
   }
 
   toJSON() {
     return {
       amount: this.amount,
-      currency: this.currency,
+      SupportedCurrency: this.SupportedCurrency,
     };
   }
 
-  static fromJSON(json: { amount: number; currency: Currency }): Money {
-    return new Money(json.amount, json.currency);
+  static fromJSON(json: { amount: number; SupportedCurrency: SupportedCurrency }): Money {
+    return new Money(json.amount, json.SupportedCurrency);
   }
 }

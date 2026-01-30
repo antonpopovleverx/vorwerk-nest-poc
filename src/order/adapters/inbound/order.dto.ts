@@ -1,10 +1,7 @@
-/**
- * Order DTOs for HTTP communication
- */
+
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
-// Response DTOs
 export class OrderGetResponseDto {
   @ApiProperty({
     description: 'The unique identifier of the order',
@@ -121,24 +118,24 @@ export class QuoteGetResponseDto {
   price: number;
 
   @ApiProperty({
-    description: 'The currency code for the price',
+    description: 'The SupportedCurrency code for the price',
     example: 'EUR',
     type: 'string',
   })
-  currency: string;
+  SupportedCurrency: string;
 
   @ApiProperty({
     description: 'Snapshot of the basket at the time of quote creation',
     example: { items: [{ itemId: 'item-123', amount: 2 }] },
   })
-  basketSnapshot: any; // TODO: Define proper basket snapshot type
+  basketSnapshot: any;
 
   @ApiProperty({
     description:
       'Snapshot of the policies applied at the time of quote creation',
     example: { discounts: [{ type: 'percentage', value: 10 }] },
   })
-  policySnapshot: any; // TODO: Define proper policy snapshot type
+  policySnapshot: any;
 
   @ApiProperty({
     description: 'Timestamp when the quote was created',
@@ -149,7 +146,6 @@ export class QuoteGetResponseDto {
   createdAt: Date;
 }
 
-// Saga execution response
 export class OrderSagaExecutionResponseDto {
   @ApiProperty({
     description: 'Whether the saga execution was successful',
@@ -171,7 +167,6 @@ export class OrderSagaExecutionResponseDto {
   error?: string;
 }
 
-// Payment step response
 export class OrderPaymentResponseDto {
   @ApiProperty({
     description: 'Whether the payment step was successful',
@@ -193,7 +188,6 @@ export class OrderPaymentResponseDto {
   error?: string;
 }
 
-// Delivery step response
 export class OrderDeliveryResponseDto {
   @ApiProperty({
     description: 'Whether the delivery step was successful',

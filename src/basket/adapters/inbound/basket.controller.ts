@@ -18,11 +18,9 @@ import {
   ApiParam,
   ApiBody,
 } from '@nestjs/swagger';
-import {
-  BasketUseCases,
-  BasketData,
-} from '../../application/use-cases/basket.use-cases';
-import { CheckoutUseCases } from '../../application/use-cases/checkout.use-cases';
+import { BasketUseCases } from '../../application/use-cases/basket/basket.use-cases';
+import { BasketData } from 'src/basket/application/use-cases/basket/basket.command';
+import { CheckoutUseCases } from '../../application/use-cases/checkout/checkout.use-cases';
 import {
   BasketPostRequestDto,
   BasketPutRequestDto,
@@ -37,9 +35,6 @@ import {
   BasketSuccessResponseDto,
 } from './basket.dto';
 
-/**
- * Basket controller - handles HTTP requests for basket operations
- */
 @ApiTags('Baskets')
 @Controller('baskets')
 export class BasketController {
@@ -48,9 +43,6 @@ export class BasketController {
     private readonly checkoutUseCases: CheckoutUseCases,
   ) {}
 
-  /**
-   * Get basket for user
-   */
   @Get(':userId')
   @ApiOperation({
     summary: 'Get user basket',
@@ -90,9 +82,6 @@ export class BasketController {
     };
   }
 
-  /**
-   * Add item to basket
-   */
   @Post(':userId/items')
   @ApiOperation({
     summary: 'Add item to basket',
@@ -150,9 +139,6 @@ export class BasketController {
     return { success: true, basketId: basketData.basketId };
   }
 
-  /**
-   * Update item amount
-   */
   @Put(':userId/items/:itemId')
   @ApiOperation({
     summary: 'Update item quantity in basket',
@@ -220,9 +206,6 @@ export class BasketController {
     return { success: true, basketId: basketData.basketId };
   }
 
-  /**
-   * Remove item from basket
-   */
   @Delete(':userId/items/:itemId')
   @ApiOperation({
     summary: 'Remove item from basket',
@@ -265,9 +248,6 @@ export class BasketController {
     return { success: true };
   }
 
-  /**
-   * Add bundle to basket
-   */
   @Post(':userId/bundles')
   @ApiOperation({
     summary: 'Add bundle to basket',
@@ -328,9 +308,6 @@ export class BasketController {
     return { success: true, basketId: basketData.basketId };
   }
 
-  /**
-   * Update bundle amount
-   */
   @Put(':userId/bundles/:bundleId')
   @ApiOperation({
     summary: 'Update bundle quantity in basket',
@@ -398,9 +375,6 @@ export class BasketController {
     return { success: true, basketId: basketData.basketId };
   }
 
-  /**
-   * Remove bundle from basket
-   */
   @Delete(':userId/bundles/:bundleId')
   @ApiOperation({
     summary: 'Remove bundle from basket',
@@ -443,9 +417,6 @@ export class BasketController {
     return { success: true };
   }
 
-  /**
-   * Clear basket
-   */
   @Delete(':userId')
   @ApiOperation({
     summary: 'Clear entire basket',
@@ -479,9 +450,6 @@ export class BasketController {
     return { success: true };
   }
 
-  /**
-   * Get basket pricing
-   */
   @Get(':userId/pricing')
   @ApiOperation({
     summary: 'Get basket pricing information',
@@ -518,9 +486,6 @@ export class BasketController {
     return this.basketUseCases.getBasketPricing(userId);
   }
 
-  /**
-   * Validate basket
-   */
   @Get(':userId/validate')
   @ApiOperation({
     summary: 'Validate basket contents',
@@ -554,9 +519,6 @@ export class BasketController {
     return this.basketUseCases.validateBasket(userId);
   }
 
-  /**
-   * Preview checkout
-   */
   @Get(':userId/checkout/preview')
   @ApiOperation({
     summary: 'Preview checkout process',
@@ -593,9 +555,6 @@ export class BasketController {
     return this.checkoutUseCases.previewCheckout(userId);
   }
 
-  /**
-   * Checkout basket
-   */
   @Post(':userId/checkout')
   @ApiOperation({
     summary: 'Checkout basket',
@@ -615,35 +574,6 @@ export class BasketController {
     status: 201,
     description: 'Checkout completed successfully, order created',
     type: BasketCheckoutPostResponseDto,
-  })
-  @ApiBadRequestResponse({
-    description: 'Checkout validation failed or business logic error',
-    schema: {
-      type: 'object',
-      properties: {
-        statusCode: { type: 'number', example: 400 },
-        message: {
-          type: 'object',
-          properties: {
-            error: { type: 'string', example: 'Basket validation failed' },
-            validationErrors: {
-              type: 'array',
-              items: {
-                type: 'object',
-                properties: {
-                  checkName: { type: 'string', example: 'minimum_order_value' },
-                  message: {
-                    type: 'string',
-                    example: 'Order must be at least €10.00',
-                  },
-                },
-              },
-            },
-          },
-        },
-        error: { type: 'string', example: 'Bad Request' },
-      },
-    },
   })
   @ApiNotFoundResponse({
     description: 'User or basket not found',
@@ -667,17 +597,6 @@ export class BasketController {
       userId,
       businessPartnerId: body.businessPartnerId,
     });
-
-    if (!result.success) {
-      throw new HttpException(
-        {
-          error: result.error,
-          validationErrors: result.validationErrors,
-        },
-        HttpStatus.BAD_REQUEST,
-      );
-    } //TODO: stop throwing the error in here
-
     return result;
   }
 }

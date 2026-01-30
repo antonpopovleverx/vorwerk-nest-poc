@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IQuoteRepository } from '../domain/quote/quote.repository';
-import { QuoteEntity } from '../domain/quote/quote.entity';
+import { IQuoteRepository } from '../../domain/quote/quote.repository';
+import { QuoteEntity } from '../../domain/quote/quote.entity';
 import { Repository } from 'typeorm';
 
 /**

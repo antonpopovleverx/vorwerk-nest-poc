@@ -1,19 +1,15 @@
 import { Entity, Column, PrimaryColumn } from 'typeorm';
 import { TechnicalEntity } from '../../../_common/domain/base/base.entity';
-import { Region } from '../../../_common/domain/enums/region.enum';
+import { SupportedRegion } from '../../../_common/domain/enums/region.enum';
 import { HttpException, HttpStatus } from '@nestjs/common';
 
-/**
- * Item discount entity
- * Composite PK: itemId + validFrom + validTo
- */
 @Entity('item_discounts')
 export class ItemDiscountEntity extends TechnicalEntity {
   @PrimaryColumn({ name: 'item_id' })
   itemId: string;
 
   @Column({ type: 'varchar', length: 10 })
-  region: Region;
+  SupportedRegion: SupportedRegion;
 
   @PrimaryColumn({ name: 'valid_from', type: 'datetime' })
   validFrom: Date;
@@ -22,29 +18,20 @@ export class ItemDiscountEntity extends TechnicalEntity {
   validTo: Date;
 
   @Column({ type: 'decimal', precision: 5, scale: 4 })
-  amount: number; // 0 < amount < 1
+  amount: number;
 
-  /**
-   * Check if discount is currently valid
-   */
   isCurrentlyValid(): boolean {
     const now = new Date();
     return now >= this.validFrom && now <= this.validTo;
   }
 
-  /**
-   * Get the discount rate as a number
-   */
   getDiscountRate(): number {
     return Number(this.amount);
   }
 
-  /**
-   * Factory method
-   */
   static create(
     itemId: string,
-    region: Region,
+    SupportedRegion: SupportedRegion,
     validFrom: Date,
     validTo: Date,
     amount: number,
@@ -64,7 +51,7 @@ export class ItemDiscountEntity extends TechnicalEntity {
 
     const entity = new ItemDiscountEntity();
     entity.itemId = itemId;
-    entity.region = region;
+    entity.SupportedRegion = SupportedRegion;
     entity.validFrom = validFrom;
     entity.validTo = validTo;
     entity.amount = amount;

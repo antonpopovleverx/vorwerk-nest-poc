@@ -1,7 +1,7 @@
 import { CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
 /**
- * Base entity with common audit fields
+ * Base entity with mandatory technical fields
  */
 export abstract class TechnicalEntity {
   @CreateDateColumn({ name: 'created_at' })

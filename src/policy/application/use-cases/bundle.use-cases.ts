@@ -3,12 +3,9 @@ import { BundleEntity } from '../../domain/price-policy/bundle.entity';
 import { IBundleRepository } from '../../domain/price-policy/bundle.repository';
 import { ProductAmount } from '../../../_common/domain/value-objects/product-amount.value-object';
 import { Money } from '../../../_common/domain/value-objects/money.value-object';
-import { Currency } from '../../../_common/domain/enums/currency.enum';
+import { SupportedCurrency } from '../../../_common/domain/enums/currency.enum';
 import { isFound } from '../../../_common/domain/specifications/specification.interface';
 
-/**
- * Neutral bundle data structure returned by use cases
- */
 export class BundleData {
   bundleId: string;
   name: string;
@@ -25,9 +22,6 @@ export class BundleData {
   updatedAt: Date;
 }
 
-/**
- * Create bundle command
- */
 export class CreateBundleCommand {
   name!: string;
   description!: string;
@@ -36,9 +30,6 @@ export class CreateBundleCommand {
   items?: Array<{ itemId: string; quantity: number }>;
 }
 
-/**
- * Update bundle command
- */
 export class UpdateBundleCommand {
   name?: string;
   description?: string;
@@ -47,23 +38,16 @@ export class UpdateBundleCommand {
   isActive?: boolean;
 }
 
-/**
- * Bundle item command
- */
 export class BundleItemCommand {
   itemId!: string;
   quantity!: number;
 }
 
-// Internal command with ProductAmount
 class BundleItemWithAmountCommand {
   itemId!: string;
   quantity!: ProductAmount;
 }
 
-/**
- * Bundle use cases - manages bundle CRUD and content
- */
 @Injectable()
 export class BundleUseCases {
   constructor(
@@ -71,9 +55,6 @@ export class BundleUseCases {
     private readonly bundleRepository: IBundleRepository,
   ) {}
 
-  /**
-   * Convert BundleEntity to neutral BundleData
-   */
   private mapEntityToData(bundle: BundleEntity): BundleData {
     return {
       bundleId: bundle.bundleId,
@@ -93,11 +74,8 @@ export class BundleUseCases {
     };
   }
 
-  /**
-   * Create a new bundle
-   */
   async createBundle(command: CreateBundleCommand): Promise<BundleData> {
-    const basePrice: Money = new Money(command.basePrice, Currency.EUR);
+    const basePrice: Money = new Money(command.basePrice, SupportedCurrency.EUR);
     const bundle: BundleEntity = BundleEntity.create(
       command.name,
       command.description,
@@ -117,9 +95,6 @@ export class BundleUseCases {
     return this.mapEntityToData(savedBundle);
   }
 
-  /**
-   * Get bundle by ID
-   */
   async getBundle(bundleId: string): Promise<BundleData> {
     const bundle: BundleEntity | null =
       await this.bundleRepository.findById(bundleId);
@@ -133,27 +108,18 @@ export class BundleUseCases {
     return this.mapEntityToData(bundle);
   }
 
-  /**
-   * Get all bundles
-   */
   async getAllBundles(): Promise<BundleData[]> {
     const bundles: BundleEntity[] = await this.bundleRepository.findAll();
 
     return bundles.map((bundle) => this.mapEntityToData(bundle));
   }
 
-  /**
-   * Get active bundles only
-   */
   async getActiveBundles(): Promise<BundleData[]> {
     const bundles: BundleEntity[] = await this.bundleRepository.findActive();
 
     return bundles.map((bundle) => this.mapEntityToData(bundle));
   }
 
-  /**
-   * Update bundle
-   */
   async updateBundle(
     bundleId: string,
     command: UpdateBundleCommand,
@@ -167,12 +133,11 @@ export class BundleUseCases {
       );
     }
 
-    // Convert basePrice to Money if provided
     const bundlePatch = {
       ...command,
       basePrice:
         command.basePrice !== undefined
-          ? new Money(command.basePrice, bundle.basePrice.currency)
+          ? new Money(command.basePrice, bundle.basePrice.SupportedCurrency)
           : undefined,
     };
 
@@ -183,16 +148,10 @@ export class BundleUseCases {
     return this.mapEntityToData(savedBundle);
   }
 
-  /**
-   * Delete bundle
-   */
   async deleteBundle(bundleId: string): Promise<void> {
     await this.bundleRepository.delete(bundleId);
   }
 
-  /**
-   * Add item to bundle
-   */
   async addItemToBundle(
     bundleId: string,
     item: BundleItemCommand,
@@ -214,9 +173,6 @@ export class BundleUseCases {
     return this.mapEntityToData(savedBundle);
   }
 
-  /**
-   * Remove item from bundle
-   */
   async removeItemFromBundle(
     bundleId: string,
     itemId: string,
@@ -237,9 +193,6 @@ export class BundleUseCases {
     return this.mapEntityToData(savedBundle);
   }
 
-  /**
-   * Update item quantity in bundle
-   */
   async updateBundleItemQuantity(
     bundleId: string,
     itemId: string,

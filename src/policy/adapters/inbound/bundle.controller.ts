@@ -32,17 +32,11 @@ import {
   BundleSuccessResponseDto,
 } from './bundle.dto';
 
-/**
- * Bundle controller - handles HTTP requests for bundle management
- */
 @ApiTags('Bundles')
 @Controller('bundles')
 export class BundleController {
   constructor(private readonly bundleUseCases: BundleUseCases) {}
 
-  /**
-   * Create a new bundle
-   */
   @Post()
   @ApiOperation({
     summary: 'Create a new bundle',
@@ -80,9 +74,6 @@ export class BundleController {
     return this.mapBundleToResponse(bundle);
   }
 
-  /**
-   * Get all bundles
-   */
   @Get()
   @ApiOperation({
     summary: 'Get all bundles',
@@ -99,9 +90,6 @@ export class BundleController {
     return { bundles: bundles.map((b) => this.mapBundleToResponse(b)) };
   }
 
-  /**
-   * Get active bundles only
-   */
   @Get('active')
   @ApiOperation({
     summary: 'Get active bundles',
@@ -118,9 +106,6 @@ export class BundleController {
     return { bundles: bundles.map((b) => this.mapBundleToResponse(b)) };
   }
 
-  /**
-   * Get bundle by ID
-   */
   @Get(':bundleId')
   @ApiOperation({
     summary: 'Get bundle by ID',
@@ -155,9 +140,6 @@ export class BundleController {
     return this.mapBundleToResponse(bundle);
   }
 
-  /**
-   * Update bundle
-   */
   @Put(':bundleId')
   @ApiOperation({
     summary: 'Update bundle',
@@ -211,9 +193,6 @@ export class BundleController {
     return this.mapBundleToResponse(bundle);
   }
 
-  /**
-   * Delete bundle
-   */
   @Delete(':bundleId')
   @ApiOperation({
     summary: 'Delete bundle',
@@ -248,9 +227,6 @@ export class BundleController {
     return { success: true };
   }
 
-  /**
-   * Add item to bundle
-   */
   @Post(':bundleId/items')
   @ApiOperation({
     summary: 'Add item to bundle',
@@ -304,9 +280,6 @@ export class BundleController {
     return this.mapBundleToResponse(bundle);
   }
 
-  /**
-   * Update item quantity in bundle
-   */
   @Put(':bundleId/items/:itemId')
   @ApiOperation({
     summary: 'Update item quantity in bundle',
@@ -372,9 +345,6 @@ export class BundleController {
     return this.mapBundleToResponse(bundle);
   }
 
-  /**
-   * Remove item from bundle
-   */
   @Delete(':bundleId/items/:itemId')
   @ApiOperation({
     summary: 'Remove item from bundle',

@@ -1,10 +1,5 @@
-/**
- * Basket DTOs for HTTP communication
- */
-
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
-// Request DTOs
 export class BasketPostRequestDto {
   @ApiProperty({
     description: 'The unique identifier of the item to add to the basket',
@@ -68,7 +63,6 @@ export class BasketCheckoutPostRequestDto {
   businessPartnerId?: string;
 }
 
-// Response DTOs
 export class BasketGetResponseDto {
   @ApiProperty({
     description: 'The unique identifier of the basket',
@@ -140,11 +134,11 @@ export class BasketPricingGetResponseDto {
   total: number;
 
   @ApiProperty({
-    description: 'The currency code',
+    description: 'The SupportedCurrency code',
     example: 'EUR',
     type: 'string',
   })
-  currency: string;
+  SupportedCurrency: string;
 }
 
 export class BasketValidationGetResponseDto {
@@ -187,14 +181,14 @@ export class BasketCheckoutPreviewGetResponseDto {
       subtotal: { type: 'number', example: 150.0 },
       totalDiscount: { type: 'number', example: 15.0 },
       total: { type: 'number', example: 135.0 },
-      currency: { type: 'string', example: 'EUR' },
+      SupportedCurrency: { type: 'string', example: 'EUR' },
     },
   })
   pricing?: {
     subtotal: number;
     totalDiscount: number;
     total: number;
-    currency: string;
+    SupportedCurrency: string;
   };
 
   @ApiPropertyOptional({
@@ -223,7 +217,7 @@ export class BasketCheckoutPostResponseDto {
     description: 'The generated quote information',
     example: { quoteId: 'quote-123', price: 135.0 },
   })
-  quote?: any; // TODO: Define proper quote response type
+  quote?: any;
 
   @ApiPropertyOptional({
     description: 'Error message if checkout failed',
@@ -246,7 +240,6 @@ export class BasketCheckoutPostResponseDto {
   validationErrors?: Array<{ checkName: string; message: string }>;
 }
 
-// Generic success response
 export class BasketSuccessResponseDto {
   @ApiProperty({
     description: 'Whether the operation was successful',

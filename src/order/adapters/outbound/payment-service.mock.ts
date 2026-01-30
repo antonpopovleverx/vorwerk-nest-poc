@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { v4 as uuidv4 } from 'uuid';
+import { randomUUID } from 'crypto';
 import {
   PaymentServicePort,
   PaymentRequest,
@@ -18,7 +18,7 @@ export class PaymentServiceMock implements PaymentServicePort {
 
   async processPayment(request: PaymentRequest): Promise<PaymentResult> {
     this.logger.log(
-      `Processing payment for order ${request.orderId}: ${request.amount} ${request.currency}`,
+      `Processing payment for order ${request.orderId}: ${request.amount} ${request.SupportedCurrency}`,
     );
 
     // Simulate processing delay
@@ -33,7 +33,7 @@ export class PaymentServiceMock implements PaymentServicePort {
       };
     }
 
-    const paymentReference = `PAY-${uuidv4().substring(0, 8).toUpperCase()}`;
+    const paymentReference = `PAY-${randomUUID().substring(0, 8).toUpperCase()}`;
     this.logger.log(
       `Payment successful: ${paymentReference} for order ${request.orderId}`,
     );

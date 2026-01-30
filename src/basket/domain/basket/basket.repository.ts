@@ -1,8 +1,5 @@
 import { BasketEntity } from './basket.entity';
 
-/**
- * Basket repository port (abstract class for DI)
- */
 export abstract class IBasketRepository {
   abstract findById(basketId: string): Promise<BasketEntity | null>;
   abstract findByUserId(userId: string): Promise<BasketEntity | null>;

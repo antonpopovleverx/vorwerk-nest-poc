@@ -4,9 +4,6 @@ import { Repository } from 'typeorm';
 import { IBasketRepository } from '../domain/basket/basket.repository';
 import { BasketEntity } from '../domain/basket/basket.entity';
 
-/**
- * TypeORM implementation of basket repository
- */
 @Injectable()
 export class BasketRepositoryImplementation implements IBasketRepository {
   constructor(

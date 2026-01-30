@@ -10,14 +10,10 @@ import {
 import { TechnicalEntity } from '../../../_common/domain/base/base.entity';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { Money } from '../../../_common/domain/value-objects/money.value-object';
-import { Currency } from '../../../_common/domain/enums/currency.enum';
+import { SupportedCurrency } from '../../../_common/domain/enums/currency.enum';
 import { ProductAmount } from '../../../_common/domain/value-objects/product-amount.value-object';
-import { BundleContentEntity } from 'src/policy/domain/price-policy/bundle-content.entity';
+import { BundleContentEntity } from './bundle-content.entity';
 
-/**
- * Bundle aggregate root
- * Represents a bundle of items with a discount
- */
 @Entity('bundles')
 export class BundleEntity extends TechnicalEntity {
   @PrimaryGeneratedColumn('uuid', { name: 'bundle_id' })
@@ -38,23 +34,22 @@ export class BundleEntity extends TechnicalEntity {
   })
   _basePrice: number;
 
-  @Column({ type: 'varchar', length: 3, default: 'EUR', name: 'currency' })
-  _currency: Currency;
+  @Column({ type: 'varchar', length: 3, default: 'EUR', name: 'SupportedCurrency' })
+  _SupportedCurrency: SupportedCurrency;
 
   @Column({ type: 'decimal', precision: 5, scale: 4, default: 0 })
-  discountRate: number; // 0 < rate < 1
+  discountRate: number;
 
   @Column({ default: true })
   isActive: boolean;
 
-  // Value Object field
   basePrice: Money;
 
   @AfterLoad()
   private afterLoad() {
     this.basePrice = Money.fromJSON({
       amount: this._basePrice,
-      currency: this._currency,
+      SupportedCurrency: this._SupportedCurrency,
     });
   }
 
@@ -62,7 +57,7 @@ export class BundleEntity extends TechnicalEntity {
   @BeforeUpdate()
   private beforeSave() {
     this._basePrice = this.basePrice.amount;
-    this._currency = this.basePrice.currency;
+    this._SupportedCurrency = this.basePrice.SupportedCurrency;
   }
 
   @OneToMany(() => BundleContentEntity, (content) => content.bundle, {
@@ -70,25 +65,15 @@ export class BundleEntity extends TechnicalEntity {
     eager: true,
   })
   contents: BundleContentEntity[];
-  // Domain methods
 
-  /**
-   * Calculate the discounted price
-   */
   getDiscountedPrice(): Money {
     return this.basePrice.multiply(1 - this.discountRate);
   }
 
-  /**
-   * Calculate the discount amount
-   */
   getDiscountAmount(): Money {
     return this.basePrice.multiply(this.discountRate);
   }
 
-  /**
-   * Add an item to the bundle
-   */
   addItem(itemId: string, quantity: ProductAmount = ProductAmount.one()): void {
     if (quantity.isLessThanOrEqual(ProductAmount.zero())) {
       throw new HttpException(
@@ -113,9 +98,6 @@ export class BundleEntity extends TechnicalEntity {
     }
   }
 
-  /**
-   * Remove an item from the bundle
-   */
   removeItem(itemId: string): void {
     if (!this.contents) return;
     const index = this.contents.findIndex((c) => c.itemId === itemId);
@@ -124,9 +106,6 @@ export class BundleEntity extends TechnicalEntity {
     }
   }
 
-  /**
-   * Update item quantity in bundle
-   */
   updateItemQuantity(itemId: string, quantity: ProductAmount): void {
     if (quantity.isLessThanOrEqual(ProductAmount.zero())) {
       this.removeItem(itemId);
@@ -144,9 +123,6 @@ export class BundleEntity extends TechnicalEntity {
     }
   }
 
-  /**
-   * Set discount rate (must be between 0 and 1)
-   */
   setDiscountRate(rate: number): void {
     if (rate < 0 || rate >= 1) {
       throw new HttpException(
@@ -157,23 +133,14 @@ export class BundleEntity extends TechnicalEntity {
     this.discountRate = rate;
   }
 
-  /**
-   * Activate the bundle
-   */
   activate(): void {
     this.isActive = true;
   }
 
-  /**
-   * Deactivate the bundle
-   */
   deactivate(): void {
     this.isActive = false;
   }
 
-  /**
-   * Update bundle fields from DTO
-   */
   setNew(dto: {
     name?: string;
     description?: string;
@@ -194,16 +161,10 @@ export class BundleEntity extends TechnicalEntity {
     }
   }
 
-  /**
-   * Get all item IDs in the bundle
-   */
   getItemIds(): string[] {
     return this.contents?.map((c) => c.itemId) ?? [];
   }
 
-  /**
-   * Factory method to create a new bundle
-   */
   static create(
     name: string,
     description: string,

@@ -1,8 +1,5 @@
 import { BundleEntity } from './bundle.entity';
 
-/**
- * Bundle repository port
- */
 export abstract class IBundleRepository {
   abstract findById(bundleId: string): Promise<BundleEntity | null>;
   abstract findByIds(bundleIds: string[]): Promise<BundleEntity[]>;

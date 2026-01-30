@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IOrderRepository } from '../domain/order/order.repository';
-import { OrderEntity } from '../domain/order/order.entity';
-import { OrderStatus } from '../domain/order/order-status.enum';
+import { IOrderRepository } from '../../domain/order/order.repository';
+import { OrderEntity } from '../../domain/order/order.entity';
+import { OrderStatus } from '../../domain/order/order-status.enum';
 import { Repository } from 'typeorm';
 
 /**

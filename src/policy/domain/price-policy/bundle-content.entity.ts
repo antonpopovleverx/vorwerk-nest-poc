@@ -12,10 +12,6 @@ import { TechnicalEntity } from '../../../_common/domain/base/base.entity';
 import { BundleEntity } from './bundle.entity';
 import { ProductAmount } from '../../../_common/domain/value-objects/product-amount.value-object';
 
-/**
- * Bundle content - represents an item within a bundle
- * Composite PK: bundleId + itemId
- */
 @Entity('bundle_contents')
 export class BundleContentEntity extends TechnicalEntity {
   @PrimaryColumn({ name: 'bundle_id' })
@@ -33,7 +29,6 @@ export class BundleContentEntity extends TechnicalEntity {
   @JoinColumn({ name: 'bundle_id' })
   bundle: BundleEntity;
 
-  // Value Object field
   amount: ProductAmount;
 
   @AfterLoad()
@@ -47,9 +42,6 @@ export class BundleContentEntity extends TechnicalEntity {
     this._amount = this.amount.toJSON();
   }
 
-  /**
-   * Validate that amount is positive
-   */
   isValid(): boolean {
     return this.amount.value > 0;
   }

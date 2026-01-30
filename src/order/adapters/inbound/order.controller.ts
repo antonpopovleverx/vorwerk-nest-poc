@@ -17,9 +17,9 @@ import {
 import {
   OrderUseCases,
   OrderData,
-} from '../../application/use-cases/order.use-cases';
-import { OrderSagaUseCases } from '../../application/use-cases/order-saga.use-cases';
-import { QuoteUseCases } from '../../application/use-cases/quote.use-cases';
+} from '../../application/use-cases/order/order.use-cases';
+import { OrderSagaUseCases } from '../../application/use-cases/order/order-saga.use-cases';
+import { QuoteUseCases } from '../../application/use-cases/quote/quote.use-cases';
 import {
   OrderGetResponseDto,
   OrderGetQueryResponseDto,
@@ -29,9 +29,6 @@ import {
   OrderDeliveryResponseDto,
 } from './order.dto';
 
-/**
- * Order controller - handles HTTP requests for order operations
- */
 @ApiTags('Orders')
 @Controller('orders')
 export class OrderController {
@@ -41,9 +38,6 @@ export class OrderController {
     private readonly quoteUseCases: QuoteUseCases,
   ) {}
 
-  /**
-   * Get order by ID
-   */
   @Get(':orderId')
   @ApiOperation({
     summary: 'Get order by ID',
@@ -78,9 +72,6 @@ export class OrderController {
     return this.mapOrderToResponse(order);
   }
 
-  /**
-   * Get orders for user
-   */
   @Get('user/:userId')
   @ApiOperation({
     summary: 'Get orders for user',
@@ -114,9 +105,6 @@ export class OrderController {
     return { orders: orders.map((o) => this.mapOrderToResponse(o)) };
   }
 
-  /**
-   * Create order from quote and execute saga
-   */
   @Post('from-quote/:quoteId')
   @ApiOperation({
     summary: 'Create order from quote',
@@ -162,10 +150,8 @@ export class OrderController {
   async createOrderFromQuote(
     @Param('quoteId') quoteId: string,
   ): Promise<OrderSagaExecutionResponseDto> {
-    // Create order
     const order = await this.orderUseCases.createOrderFromQuote({ quoteId });
 
-    // Execute saga
     const sagaResult = await this.orderSagaUseCases.executeOrderSaga(
       order.orderId,
     );
@@ -179,9 +165,6 @@ export class OrderController {
     };
   }
 
-  /**
-   * Execute saga for existing order
-   */
   @Post(':orderId/execute-saga')
   @ApiOperation({
     summary: 'Execute order fulfillment saga',
@@ -236,9 +219,6 @@ export class OrderController {
     };
   }
 
-  /**
-   * Execute payment step only
-   */
   @Post(':orderId/payment')
   @ApiOperation({
     summary: 'Execute payment step',
@@ -296,9 +276,6 @@ export class OrderController {
     };
   }
 
-  /**
-   * Execute delivery step only
-   */
   @Post(':orderId/delivery')
   @ApiOperation({
     summary: 'Execute delivery step',
@@ -357,9 +334,6 @@ export class OrderController {
     };
   }
 
-  /**
-   * Get quote by ID
-   */
   @Get('quotes/:quoteId')
   @ApiOperation({
     summary: 'Get quote by ID',
@@ -396,7 +370,7 @@ export class OrderController {
       userId: quote.userId,
       businessPartnerId: quote.businessPartnerId || undefined,
       price: quote.price,
-      currency: quote.currency,
+      SupportedCurrency: quote.SupportedCurrency,
       basketSnapshot: quote.basketSnapshot,
       policySnapshot: quote.policySnapshot,
       createdAt: quote.createdAt,

@@ -1,85 +1,32 @@
-import { Injectable, Inject } from '@nestjs/common';
-import { IBasketRepository } from '../../domain/basket/basket.repository';
+import { Injectable, Inject, HttpException, HttpStatus } from '@nestjs/common';
+import { IBasketRepository } from '../../../domain/basket/basket.repository';
 import {
   BasketEntity,
   BasketSnapshot,
-} from '../../domain/basket/basket.entity';
+} from '../../../domain/basket/basket.entity';
 import {
   PolicyServicePort,
   BasketPolicyCheckName,
   BasketPricingResult,
-} from '../ports/policy-service.port';
+} from '../../ports/policy-service.port';
 import {
   BasketSpecificationRegistry,
   BasketSpecificationContext,
   getCheckFailureMessage,
-} from '../specifications/basket-policy.specification';
-import { ProductAmount } from '../../../_common/domain/value-objects/product-amount.value-object';
+} from '../../specifications/basket-policy.specification';
+import { ProductAmount } from '../../../../_common/domain/value-objects/product-amount.value-object';
+import {
+  BasketData,
+  AddItemCommand,
+  UpdateItemCommand,
+  RemoveItemCommand,
+  AddBundleCommand,
+  UpdateBundleCommand,
+  RemoveBundleCommand,
+  BasketValidationResult,
+} from './basket.command';
+import { isFound } from 'src/_common/domain/specifications/specification.interface';
 
-/**
- * Neutral basket data structure returned by use cases
- */
-export class BasketData {
-  basketId: string;
-  userId: string;
-  items: Array<{
-    itemId: string;
-    amount: number;
-  }>;
-  bundles: Array<{
-    bundleId: string;
-    amount: number;
-  }>;
-}
-
-/**
- * Commands for basket operations
- */
-export class AddItemCommand {
-  userId!: string;
-  itemId!: string;
-  amount?: number;
-}
-
-export class UpdateItemCommand {
-  userId!: string;
-  itemId!: string;
-  amount!: number;
-}
-
-export class RemoveItemCommand {
-  userId!: string;
-  itemId!: string;
-}
-
-export class AddBundleCommand {
-  userId!: string;
-  bundleId!: string;
-  amount?: number;
-}
-
-export class UpdateBundleCommand {
-  userId!: string;
-  bundleId!: string;
-  amount!: number;
-}
-
-export class RemoveBundleCommand {
-  userId!: string;
-  bundleId!: string;
-}
-
-export class BasketValidationResult {
-  valid!: boolean;
-  failedChecks!: Array<{
-    checkName: BasketPolicyCheckName;
-    message: string;
-  }>;
-}
-
-/**
- * Basket use cases - manages basket operations
- */
 @Injectable()
 export class BasketUseCases {
   constructor(
@@ -87,31 +34,8 @@ export class BasketUseCases {
     private readonly basketRepository: IBasketRepository,
     @Inject(PolicyServicePort.name)
     private readonly policyAdapter: PolicyServicePort,
-  ) {}
+  ) { }
 
-  /**
-   * Convert BasketEntity to neutral BasketData
-   */
-  private mapEntityToData(basket: BasketEntity): BasketData {
-    return {
-      basketId: basket.basketId,
-      userId: basket.userId,
-      items:
-        basket.items?.map((i) => ({
-          itemId: i.itemId,
-          amount: i.amount.value,
-        })) ?? [],
-      bundles:
-        basket.bundles?.map((b) => ({
-          bundleId: b.bundleId,
-          amount: b.amount.value,
-        })) ?? [],
-    };
-  }
-
-  /**
-   * Get basket for user (creates if not exists)
-   */
   async getBasketForUser(userId: string): Promise<BasketData> {
     const basket: BasketEntity =
       await this.basketRepository.getOrCreateForUser(userId);
@@ -119,9 +43,6 @@ export class BasketUseCases {
     return this.mapEntityToData(basket);
   }
 
-  /**
-   * Add item to basket
-   */
   async addItem(command: AddItemCommand): Promise<BasketData> {
     const basket: BasketEntity = await this.basketRepository.getOrCreateForUser(
       command.userId,
@@ -135,9 +56,6 @@ export class BasketUseCases {
     return this.mapEntityToData(savedBasket);
   }
 
-  /**
-   * Update item amount in basket
-   */
   async updateItem(command: UpdateItemCommand): Promise<BasketData> {
     const basket: BasketEntity = await this.basketRepository.getOrCreateForUser(
       command.userId,
@@ -151,9 +69,6 @@ export class BasketUseCases {
     return this.mapEntityToData(savedBasket);
   }
 
-  /**
-   * Remove item from basket
-   */
   async removeItem(command: RemoveItemCommand): Promise<BasketData> {
     const basket: BasketEntity = await this.basketRepository.getOrCreateForUser(
       command.userId,
@@ -166,9 +81,6 @@ export class BasketUseCases {
     return this.mapEntityToData(savedBasket);
   }
 
-  /**
-   * Add bundle to basket
-   */
   async addBundle(command: AddBundleCommand): Promise<BasketData> {
     const basket: BasketEntity = await this.basketRepository.getOrCreateForUser(
       command.userId,
@@ -182,9 +94,6 @@ export class BasketUseCases {
     return this.mapEntityToData(savedBasket);
   }
 
-  /**
-   * Update bundle amount in basket
-   */
   async updateBundle(command: UpdateBundleCommand): Promise<BasketData> {
     const basket: BasketEntity = await this.basketRepository.getOrCreateForUser(
       command.userId,
@@ -198,9 +107,6 @@ export class BasketUseCases {
     return this.mapEntityToData(savedBasket);
   }
 
-  /**
-   * Remove bundle from basket
-   */
   async removeBundle(command: RemoveBundleCommand): Promise<BasketData> {
     const basket: BasketEntity = await this.basketRepository.getOrCreateForUser(
       command.userId,
@@ -213,9 +119,6 @@ export class BasketUseCases {
     return this.mapEntityToData(savedBasket);
   }
 
-  /**
-   * Clear basket
-   */
   async clearBasket(userId: string): Promise<BasketData> {
     const basket: BasketEntity =
       await this.basketRepository.getOrCreateForUser(userId);
@@ -227,9 +130,6 @@ export class BasketUseCases {
     return this.mapEntityToData(savedBasket);
   }
 
-  /**
-   * Get basket pricing
-   */
   async getBasketPricing(userId: string): Promise<BasketPricingResult> {
     const basket: BasketEntity =
       await this.basketRepository.getOrCreateForUser(userId);
@@ -239,9 +139,6 @@ export class BasketUseCases {
     return this.policyAdapter.calculateBasketPricing(snapshot);
   }
 
-  /**
-   * Validate basket against policy checks
-   */
   async validateBasket(userId: string): Promise<BasketValidationResult> {
     const basket: BasketEntity =
       await this.basketRepository.getOrCreateForUser(userId);
@@ -267,14 +164,16 @@ export class BasketUseCases {
 
     for (const checkName of checkNames) {
       const specFactory = BasketSpecificationRegistry[checkName];
-      if (specFactory) {
-        const spec = specFactory();
-        if (!spec.isSatisfiedBy(context)) {
-          failedChecks.push({
-            checkName,
-            message: getCheckFailureMessage(checkName),
-          });
-        }
+      if (!isFound(specFactory)) {
+        throw new HttpException('Specification factory not found', HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+      const spec = specFactory();
+
+      if (!spec.isSatisfiedBy(context)) {
+        failedChecks.push({
+          checkName,
+          message: getCheckFailureMessage(checkName),
+        });
       }
     }
 
@@ -284,13 +183,27 @@ export class BasketUseCases {
     };
   }
 
-  /**
-   * Get basket snapshot for checkout
-   */
   async getBasketSnapshot(userId: string): Promise<BasketSnapshot> {
     const basket: BasketEntity =
       await this.basketRepository.getOrCreateForUser(userId);
 
     return basket.createSnapshot();
+  }
+
+  private mapEntityToData(basket: BasketEntity): BasketData {
+    return {
+      basketId: basket.basketId,
+      userId: basket.userId,
+      items:
+        basket.items?.map((i) => ({
+          itemId: i.itemId,
+          amount: i.amount.value,
+        })) ?? [],
+      bundles:
+        basket.bundles?.map((b) => ({
+          bundleId: b.bundleId,
+          amount: b.amount.value,
+        })) ?? [],
+    };
   }
 }

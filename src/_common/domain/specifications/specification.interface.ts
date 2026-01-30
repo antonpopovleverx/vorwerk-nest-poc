@@ -1,7 +1,4 @@
-/**
- * Specification pattern interface
- * Used for business rule validation
- */
+
 export interface ISpecification<T> {
   isSatisfiedBy(candidate: T): boolean;
 
@@ -12,9 +9,7 @@ export interface ISpecification<T> {
   not(): ISpecification<T>;
 }
 
-/**
- * Abstract base specification with composite operations
- */
+
 export abstract class Specification<T> implements ISpecification<T> {
   abstract isSatisfiedBy(candidate: T): boolean;
 

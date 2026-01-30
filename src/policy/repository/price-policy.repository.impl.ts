@@ -4,11 +4,8 @@ import { Repository, In, LessThanOrEqual, MoreThanOrEqual } from 'typeorm';
 import { ItemPriceEntity } from '../domain/price-policy/item-price.entity';
 import { ItemDiscountEntity } from '../domain/price-policy/item-discount.entity';
 import { IPricePolicyRepository } from '../domain/price-policy/price-policy.repository';
-import { Region } from 'src/_common/domain/enums/region.enum';
+import { SupportedRegion } from 'src/_common/domain/enums/region.enum';
 
-/**
- * TypeORM implementation of price policy repository
- */
 @Injectable()
 export class PricePolicyRepositoryImplementation implements IPricePolicyRepository {
   constructor(
@@ -20,20 +17,20 @@ export class PricePolicyRepositoryImplementation implements IPricePolicyReposito
 
   async getItemPrice(
     itemId: string,
-    region: Region,
+    SupportedRegion: SupportedRegion,
   ): Promise<ItemPriceEntity | null> {
     return this.priceRepository.findOne({
-      where: { itemId, region },
+      where: { itemId, SupportedRegion },
     });
   }
 
   async getItemPrices(
     itemIds: string[],
-    region: Region,
+    SupportedRegion: SupportedRegion,
   ): Promise<ItemPriceEntity[]> {
     if (itemIds.length === 0) return [];
     return this.priceRepository.find({
-      where: { itemId: In(itemIds), region },
+      where: { itemId: In(itemIds), SupportedRegion },
     });
   }
 
@@ -43,13 +40,13 @@ export class PricePolicyRepositoryImplementation implements IPricePolicyReposito
 
   async getActiveItemDiscount(
     itemId: string,
-    region: Region,
+    SupportedRegion: SupportedRegion,
   ): Promise<ItemDiscountEntity | null> {
     const now = new Date();
     return this.discountRepository.findOne({
       where: {
         itemId,
-        region,
+        SupportedRegion,
         validFrom: LessThanOrEqual(now),
         validTo: MoreThanOrEqual(now),
       },
@@ -58,14 +55,14 @@ export class PricePolicyRepositoryImplementation implements IPricePolicyReposito
 
   async getActiveItemDiscounts(
     itemIds: string[],
-    region: Region,
+    SupportedRegion: SupportedRegion,
   ): Promise<ItemDiscountEntity[]> {
     if (itemIds.length === 0) return [];
     const now = new Date();
     return this.discountRepository.find({
       where: {
         itemId: In(itemIds),
-        region,
+        SupportedRegion,
         validFrom: LessThanOrEqual(now),
         validTo: MoreThanOrEqual(now),
       },

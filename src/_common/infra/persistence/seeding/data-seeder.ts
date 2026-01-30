@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Currency } from 'src/_common/domain/enums/currency.enum';
-import { Region } from 'src/_common/domain/enums/region.enum';
+import { SupportedCurrency } from 'src/_common/domain/enums/currency.enum';
+import { SupportedRegion } from 'src/_common/domain/enums/region.enum';
 import { Money } from 'src/_common/domain/value-objects/money.value-object';
 import { ProductAmount } from 'src/_common/domain/value-objects/product-amount.value-object';
 import { BundleEntity } from 'src/policy/domain/price-policy/bundle.entity';
@@ -50,9 +50,9 @@ export class DataSeeder {
     for (const item of items) {
       const price = ItemPriceEntity.create(
         item.itemId,
-        Region.DE,
+        SupportedRegion.DE,
         item.price,
-        Currency.EUR,
+        SupportedCurrency.EUR,
       );
       await this.itemPriceRepository.save(price);
     }
@@ -73,7 +73,7 @@ export class DataSeeder {
     for (const discount of discounts) {
       const entity = ItemDiscountEntity.create(
         discount.itemId,
-        Region.DE,
+        SupportedRegion.DE,
         now,
         oneMonthFromNow,
         discount.amount,
@@ -89,7 +89,7 @@ export class DataSeeder {
     const starterPack = BundleEntity.create(
       'Starter Pack',
       'Perfect bundle for beginners - includes Basic Widget and accessories',
-      new Money(59.99, Currency.EUR),
+      new Money(59.99, SupportedCurrency.EUR),
       0.15, // 15% discount
     );
     starterPack.addItem('ITEM-001', new ProductAmount(1)); // Basic Widget
@@ -101,7 +101,7 @@ export class DataSeeder {
     const proPack = BundleEntity.create(
       'Pro Pack',
       'Professional bundle with Premium Widget and all accessories',
-      new Money(99.99, Currency.EUR),
+      new Money(99.99, SupportedCurrency.EUR),
       0.2, // 20% discount
     );
     proPack.addItem('ITEM-002', new ProductAmount(1)); // Premium Widget
@@ -114,7 +114,7 @@ export class DataSeeder {
     const ultimatePack = BundleEntity.create(
       'Ultimate Pack',
       'The complete package - includes Deluxe Widget and Ultra Widget',
-      new Money(349.99, Currency.EUR),
+      new Money(349.99, SupportedCurrency.EUR),
       0.25, // 25% discount
     );
     ultimatePack.addItem('ITEM-003', new ProductAmount(1)); // Deluxe Widget

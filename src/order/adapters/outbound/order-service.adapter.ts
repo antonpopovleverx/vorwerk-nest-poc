@@ -5,7 +5,7 @@ import {
 } from '../../../basket/application/ports/order-service.port';
 import { BasketSnapshot } from '../../../basket/domain/basket/basket.entity';
 import { PolicySnapshot } from '../../../basket/application/ports/policy-service.port';
-import { QuoteUseCases } from '../../application/use-cases/quote.use-cases';
+import { QuoteUseCases } from '../../application/use-cases/quote/quote.use-cases';
 
 /**
  * Adapter implementing IOrderServicePort for basket subdomain
@@ -41,7 +41,7 @@ export class OrderServiceAdapter implements OrderServicePort {
       quoteId: quote.quoteId,
       userId: quote.userId,
       totalPrice: quote.getTotalPrice(),
-      currency: quote.currency,
+      SupportedCurrency: quote.SupportedCurrency,
       createdAt: quote.createdAt,
     };
   }

@@ -10,9 +10,6 @@ import { OrderStatus, isValidTransition } from './order-status.enum';
 import { QuoteEntity } from '../quote/quote.entity';
 import { HttpException, HttpStatus } from '@nestjs/common';
 
-/**
- * Order entity - represents an order with state machine
- */
 @Entity('orders')
 export class OrderEntity extends TechnicalEntity {
   @PrimaryGeneratedColumn('uuid', { name: 'order_id' })
@@ -47,18 +44,11 @@ export class OrderEntity extends TechnicalEntity {
   @JoinColumn({ name: 'quote_id' })
   quote: QuoteEntity;
 
-  // Domain methods - State machine
-
-  /**
-   * Check if transition is valid
-   */
+  
   canTransitionTo(newStatus: OrderStatus): boolean {
     return isValidTransition(this.status, newStatus);
   }
 
-  /**
-   * Transition to new status (with validation)
-   */
   private transitionTo(newStatus: OrderStatus): void {
     if (!this.canTransitionTo(newStatus)) {
       throw new HttpException(
@@ -69,40 +59,25 @@ export class OrderEntity extends TechnicalEntity {
     this.status = newStatus;
   }
 
-  /**
-   * Initiate payment
-   */
   initiatePayment(paymentReference: string): void {
     this.transitionTo(OrderStatus.PAYMENT_INITIATED);
     this.paymentReference = paymentReference;
   }
 
-  /**
-   * Initiate delivery
-   */
   initiateDelivery(deliveryReference: string): void {
     this.transitionTo(OrderStatus.DELIVERY_INITIATED);
     this.deliveryReference = deliveryReference;
   }
 
-  /**
-   * Mark as delivered
-   */
   markDelivered(): void {
     this.transitionTo(OrderStatus.DELIVERED);
   }
 
-  /**
-   * Mark as failed with reason
-   */
   markFailed(reason: string): void {
     this.transitionTo(OrderStatus.FAILED);
     this.failureReason = reason;
   }
 
-  /**
-   * Check if order is in terminal state
-   */
   isTerminal(): boolean {
     return (
       this.status === OrderStatus.DELIVERED ||
@@ -110,23 +85,14 @@ export class OrderEntity extends TechnicalEntity {
     );
   }
 
-  /**
-   * Check if order is successfully completed
-   */
   isCompleted(): boolean {
     return this.status === OrderStatus.DELIVERED;
   }
 
-  /**
-   * Check if order failed
-   */
   isFailed(): boolean {
     return this.status === OrderStatus.FAILED;
   }
 
-  /**
-   * Factory method to create from quote
-   */
   static createFromQuote(
     quoteId: string,
     userId: string,

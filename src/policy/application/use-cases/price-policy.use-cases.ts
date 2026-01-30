@@ -1,9 +1,9 @@
 import { Injectable, Inject } from '@nestjs/common';
 import {
-  Currency,
-  DEFAULT_CURRENCY,
+  SupportedCurrency,
+  DEFAULT_SupportedCurrency,
 } from 'src/_common/domain/enums/currency.enum';
-import { Region, DEFAULT_REGION } from 'src/_common/domain/enums/region.enum';
+import { SupportedRegion, DEFAULT_SupportedRegion } from 'src/_common/domain/enums/region.enum';
 import { BasketSnapshotForPolicy } from 'src/policy/application/ports/basket-data.port';
 import { IBundleRepository } from 'src/policy/domain/price-policy/bundle.repository';
 import { IPricePolicyRepository } from 'src/policy/domain/price-policy/price-policy.repository';
@@ -12,9 +12,6 @@ import { ItemPriceEntity } from '../../domain/price-policy/item-price.entity';
 import { ItemDiscountEntity } from '../../domain/price-policy/item-discount.entity';
 import { isFound } from '../../../_common/domain/specifications/specification.interface';
 
-/**
- * Item pricing result
- */
 export class ItemPricingResult {
   itemId!: string;
   amount!: number;
@@ -23,9 +20,6 @@ export class ItemPricingResult {
   totalPrice!: number;
 }
 
-/**
- * Bundle pricing result
- */
 export class BundlePricingResult {
   bundleId!: string;
   amount!: number;
@@ -34,24 +28,18 @@ export class BundlePricingResult {
   totalPrice!: number;
 }
 
-/**
- * Full basket pricing result
- */
 export class BasketPricingResult {
   items!: ItemPricingResult[];
   bundles!: BundlePricingResult[];
   subtotal!: number;
   totalDiscount!: number;
   total!: number;
-  currency!: Currency;
+  SupportedCurrency!: SupportedCurrency;
 }
 
-/**
- * Price policy use cases
- */
 @Injectable()
 export class PricePolicyUseCases {
-  private readonly region: Region = DEFAULT_REGION; // Hardcoded to DE for POC
+  private readonly SupportedRegion: SupportedRegion = DEFAULT_SupportedRegion;
 
   constructor(
     @Inject(IPricePolicyRepository.name)
@@ -60,9 +48,6 @@ export class PricePolicyUseCases {
     private readonly bundleRepository: IBundleRepository,
   ) {}
 
-  /**
-   * Calculate pricing for a basket snapshot
-   */
   async calculateBasketPricing(
     basketSnapshot: BasketSnapshotForPolicy,
   ): Promise<BasketPricingResult> {
@@ -71,15 +56,14 @@ export class PricePolicyUseCases {
     let subtotal: number = 0;
     let totalDiscount: number = 0;
 
-    // Calculate item pricing
     if (basketSnapshot.items.length > 0) {
       const itemIds = basketSnapshot.items.map((i) => i.itemId);
       const prices: ItemPriceEntity[] =
-        await this.pricePolicyRepository.getItemPrices(itemIds, this.region);
+        await this.pricePolicyRepository.getItemPrices(itemIds, this.SupportedRegion);
       const discounts: ItemDiscountEntity[] =
         await this.pricePolicyRepository.getActiveItemDiscounts(
           itemIds,
-          this.region,
+          this.SupportedRegion,
         );
 
       const priceMap: Map<string, number> = new Map(
@@ -114,7 +98,6 @@ export class PricePolicyUseCases {
       }
     }
 
-    // Calculate bundle pricing
     if (basketSnapshot.bundles.length > 0) {
       const bundleIds = basketSnapshot.bundles.map((b) => b.bundleId);
       const bundles: BundleEntity[] =
@@ -160,29 +143,23 @@ export class PricePolicyUseCases {
       subtotal,
       totalDiscount,
       total,
-      currency: DEFAULT_CURRENCY,
+      SupportedCurrency: DEFAULT_SupportedCurrency,
     };
   }
 
-  /**
-   * Get price for a single item
-   */
   async getItemPrice(itemId: string): Promise<number | null> {
     const price = await this.pricePolicyRepository.getItemPrice(
       itemId,
-      this.region,
+      this.SupportedRegion,
     );
 
     return price?.getPrice() ?? null;
   }
 
-  /**
-   * Get active discount for a single item
-   */
   async getItemDiscount(itemId: string): Promise<number | null> {
     const discount = await this.pricePolicyRepository.getActiveItemDiscount(
       itemId,
-      this.region,
+      this.SupportedRegion,
     );
     if (discount?.isCurrentlyValid()) {
       return discount.getDiscountRate();
@@ -191,9 +168,6 @@ export class PricePolicyUseCases {
     return null;
   }
 
-  /**
-   * Get bundle pricing
-   */
   async getBundlePricing(bundleId: string): Promise<{
     basePrice: number;
     discountedPrice: number;

@@ -1,6 +1,4 @@
-/**
- * Order status enum - represents the states in the order saga
- */
+
 export enum OrderStatus {
   INITIALIZED = 'INITIALIZED',
   PAYMENT_INITIATED = 'PAYMENT_INITIATED',
@@ -26,9 +24,6 @@ export const OrderStatusTransitions: Record<OrderStatus, OrderStatus[]> = {
   [OrderStatus.FAILED]: [], // Terminal state
 };
 
-/**
- * Check if a transition is valid
- */
 export function isValidTransition(from: OrderStatus, to: OrderStatus): boolean {
   return OrderStatusTransitions[from].includes(to);
 }

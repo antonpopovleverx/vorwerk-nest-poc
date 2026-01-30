@@ -1,25 +1,22 @@
-import { Injectable, Inject, Logger } from '@nestjs/common';
-import { OrderEntity } from '../../domain/order/order.entity';
-import { IOrderRepository } from '../../domain/order/order.repository';
-import { IQuoteRepository } from '../../domain/quote/quote.repository';
+import { Injectable, Inject } from '@nestjs/common';
+import { OrderEntity } from '../../../domain/order/order.entity';
+import { IOrderRepository } from '../../../domain/order/order.repository';
+import { IQuoteRepository } from '../../../domain/quote/quote.repository';
 import {
   QuoteEntity,
   QuoteBasketSnapshot,
-} from '../../domain/quote/quote.entity';
+} from '../../../domain/quote/quote.entity';
 import {
   PaymentServicePort,
   PaymentResult,
-} from '../ports/payment-service.port';
+} from '../../ports/payment-service.port';
 import {
   DeliveryServicePort,
   DeliveryResult,
-} from '../ports/delivery-service.port';
+} from '../../ports/delivery-service.port';
 import { OrderUseCases, OrderData } from './order.use-cases';
-import { isFound } from '../../../_common/domain/specifications/specification.interface';
+import { isFound } from '../../../../_common/domain/specifications/specification.interface';
 
-/**
- * Order saga result
- */
 export class OrderSagaResult {
   success!: boolean;
   order?: OrderData;
@@ -27,14 +24,12 @@ export class OrderSagaResult {
 }
 
 /**
- * Order saga orchestrator - manages the order fulfillment process
+ * Example of an ad-hoc saga orchestrator (mock implementation - not for refernce)
  * States: Initialized -> PaymentInitiated -> DeliveryInitiated -> Delivered
  * With compensatory actions on failure
  */
 @Injectable()
 export class OrderSagaUseCases {
-  private readonly logger = new Logger(OrderSagaUseCases.name);
-
   constructor(
     @Inject(IOrderRepository.name)
     private readonly orderRepository: IOrderRepository,
@@ -44,30 +39,8 @@ export class OrderSagaUseCases {
     private readonly paymentAdapter: PaymentServicePort,
     @Inject(DeliveryServicePort.name)
     private readonly deliveryAdapter: DeliveryServicePort,
-    private readonly orderUseCases: OrderUseCases,
   ) {}
 
-  /**
-   * Convert OrderEntity to neutral OrderData
-   */
-  private mapEntityToData(order: OrderEntity): OrderData {
-    return {
-      orderId: order.orderId,
-      userId: order.userId,
-      quoteId: order.quoteId,
-      businessPartnerId: order.businessPartnerId || undefined,
-      status: order.status,
-      paymentReference: order.paymentReference ?? undefined,
-      deliveryReference: order.deliveryReference ?? undefined,
-      failureReason: order.failureReason ?? undefined,
-      createdAt: order.createdAt,
-      updatedAt: order.updatedAt,
-    };
-  }
-
-  /**
-   * Execute the full order saga
-   */
   async executeOrderSaga(orderId: string): Promise<OrderSagaResult> {
     let order: OrderEntity | null =
       await this.orderRepository.findById(orderId);
@@ -93,14 +66,12 @@ export class OrderSagaUseCases {
     }
 
     try {
-      // Step 1: Process payment
-      this.logger.log(`Processing payment for order ${orderId}`);
       const paymentResult: PaymentResult =
         await this.paymentAdapter.processPayment({
           orderId,
           userId: order.userId,
           amount: quote.getTotalPrice(),
-          currency: quote.currency,
+          SupportedCurrency: quote.SupportedCurrency,
         });
 
       if (!paymentResult.success || !paymentResult.paymentReference) {
@@ -115,10 +86,7 @@ export class OrderSagaUseCases {
 
       order.initiatePayment(paymentResult.paymentReference);
       order = await this.orderRepository.save(order);
-      this.logger.log(`Payment successful: ${paymentResult.paymentReference}`);
 
-      // Step 2: Initiate delivery
-      this.logger.log(`Initiating delivery for order ${orderId}`);
       const basketSnapshot: QuoteBasketSnapshot = quote.basketSnapshot;
       const deliveryResult: DeliveryResult =
         await this.deliveryAdapter.initiateDelivery({
@@ -129,8 +97,6 @@ export class OrderSagaUseCases {
         });
 
       if (!deliveryResult.success || !deliveryResult.deliveryReference) {
-        // Compensate: Refund payment
-        this.logger.warn(`Delivery failed, refunding payment`);
         await this.compensatePayment(order, 'Delivery initiation failed');
 
         order.markFailed(`Delivery failed: ${deliveryResult.error}`);
@@ -144,13 +110,7 @@ export class OrderSagaUseCases {
 
       order.initiateDelivery(deliveryResult.deliveryReference);
       order = await this.orderRepository.save(order);
-      this.logger.log(
-        `Delivery initiated: ${deliveryResult.deliveryReference}`,
-      );
 
-      // Step 3: Check delivery completion (in real system, this would be async/webhook)
-      // For POC, we'll simulate immediate delivery
-      this.logger.log(`Marking order as delivered`);
       order.markDelivered();
       order = await this.orderRepository.save(order);
 
@@ -159,9 +119,6 @@ export class OrderSagaUseCases {
         order: this.mapEntityToData(order),
       };
     } catch (error) {
-      this.logger.error(`Saga failed: ${error}`);
-
-      // Attempt compensation
       if (order.paymentReference) {
         await this.compensatePayment(order, 'Saga execution failed');
       }
@@ -182,9 +139,6 @@ export class OrderSagaUseCases {
     }
   }
 
-  /**
-   * Compensate payment (refund)
-   */
   private async compensatePayment(
     order: OrderEntity,
     reason: string,
@@ -201,17 +155,10 @@ export class OrderSagaUseCases {
           amount: quote.getTotalPrice(),
           reason,
         });
-        this.logger.log(`Payment refunded: ${order.paymentReference}`);
       }
-    } catch (error) {
-      this.logger.error(`Failed to refund payment: ${error}`);
-      // In production, this would need manual intervention or retry logic
-    }
+    } catch (error) {}
   }
 
-  /**
-   * Compensate delivery (cancel)
-   */
   private async compensateDelivery(
     order: OrderEntity,
     reason: string,
@@ -223,16 +170,9 @@ export class OrderSagaUseCases {
         deliveryReference: order.deliveryReference,
         reason,
       });
-      this.logger.log(`Delivery cancelled: ${order.deliveryReference}`);
-    } catch (error) {
-      this.logger.error(`Failed to cancel delivery: ${error}`);
-      // In production, this would need manual intervention or retry logic
-    }
+    } catch (error) {}
   }
 
-  /**
-   * Execute saga step by step (for manual control/debugging)
-   */
   async executePaymentStep(orderId: string): Promise<OrderSagaResult> {
     let order: OrderEntity | null =
       await this.orderRepository.findById(orderId);
@@ -255,7 +195,7 @@ export class OrderSagaUseCases {
       orderId,
       userId: order.userId,
       amount: quote.getTotalPrice(),
-      currency: quote.currency,
+      SupportedCurrency: quote.SupportedCurrency,
     });
 
     if (result.success && result.paymentReference) {
@@ -308,7 +248,6 @@ export class OrderSagaUseCases {
       return { success: true, order: this.mapEntityToData(order) };
     }
 
-    // Compensate payment
     await this.compensatePayment(order, 'Delivery failed');
     order.markFailed(`Delivery failed: ${result.error}`);
     order = await this.orderRepository.save(order);
@@ -317,6 +256,21 @@ export class OrderSagaUseCases {
       success: false,
       order: this.mapEntityToData(order),
       error: result.error,
+    };
+  }
+
+  private mapEntityToData(order: OrderEntity): OrderData {
+    return {
+      orderId: order.orderId,
+      userId: order.userId,
+      quoteId: order.quoteId,
+      businessPartnerId: order.businessPartnerId || undefined,
+      status: order.status,
+      paymentReference: order.paymentReference ?? undefined,
+      deliveryReference: order.deliveryReference ?? undefined,
+      failureReason: order.failureReason ?? undefined,
+      createdAt: order.createdAt,
+      updatedAt: order.updatedAt,
     };
   }
 }

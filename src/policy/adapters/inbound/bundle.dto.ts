@@ -1,10 +1,5 @@
-/**
- * Bundle DTOs for HTTP communication
- */
-
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
-// Request DTOs
 export class BundlePostRequestDto {
   @ApiProperty({
     description: 'The name of the bundle',
@@ -118,7 +113,6 @@ export class BundleItemPutRequestDto {
   quantity: number;
 }
 
-// Response DTOs
 export class BundleGetResponseDto {
   @ApiProperty({
     description: 'The unique identifier of the bundle',

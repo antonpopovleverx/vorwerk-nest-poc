@@ -1,10 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 import { TechnicalEntity } from '../../../_common/domain/base/base.entity';
-import { Currency } from '../../../_common/domain/enums/currency.enum';
+import { SupportedCurrency } from '../../../_common/domain/enums/currency.enum';
 
-/**
- * Basket snapshot stored in quote
- */
 export interface QuoteBasketSnapshot {
   basketId: string;
   userId: string;
@@ -13,9 +10,6 @@ export interface QuoteBasketSnapshot {
   snapshotAt: Date;
 }
 
-/**
- * Policy snapshot stored in quote
- */
 export interface QuotePolicySnapshot {
   pricing: {
     items: Array<{
@@ -35,15 +29,12 @@ export interface QuotePolicySnapshot {
     subtotal: number;
     totalDiscount: number;
     total: number;
-    currency: Currency;
+    SupportedCurrency: SupportedCurrency;
   };
   checksPerformed: string[];
   pricedAt: Date;
 }
 
-/**
- * Quote entity - captures basket and policy snapshots at checkout time
- */
 @Entity('quotes')
 export class QuoteEntity extends TechnicalEntity {
   @PrimaryGeneratedColumn('uuid', { name: 'quote_id' })
@@ -65,9 +56,7 @@ export class QuoteEntity extends TechnicalEntity {
   price: number;
 
   @Column({ type: 'varchar', length: 3 })
-  currency: Currency;
-
-  // Getters and setters for JSON columns
+  SupportedCurrency: SupportedCurrency;
 
   get basketSnapshot(): QuoteBasketSnapshot {
     return JSON.parse(this._basketSnapshot);
@@ -85,32 +74,18 @@ export class QuoteEntity extends TechnicalEntity {
     this._policySnapshot = JSON.stringify(value);
   }
 
-  // Domain methods
-
-  /**
-   * Get total price
-   */
   getTotalPrice(): number {
     return Number(this.price);
   }
 
-  /**
-   * Get all item IDs from snapshot
-   */
   getItemIds(): string[] {
     return this.basketSnapshot.items.map((i) => i.itemId);
   }
 
-  /**
-   * Get all bundle IDs from snapshot
-   */
   getBundleIds(): string[] {
     return this.basketSnapshot.bundles.map((b) => b.bundleId);
   }
 
-  /**
-   * Factory method
-   */
   static create(
     userId: string,
     basketSnapshot: QuoteBasketSnapshot,
@@ -123,7 +98,7 @@ export class QuoteEntity extends TechnicalEntity {
     quote.basketSnapshot = basketSnapshot;
     quote.policySnapshot = policySnapshot;
     quote.price = policySnapshot.pricing.total;
-    quote.currency = policySnapshot.pricing.currency;
+    quote.SupportedCurrency = policySnapshot.pricing.SupportedCurrency;
     return quote;
   }
 }

@@ -4,9 +4,6 @@ import { BundleEntity } from '../domain/price-policy/bundle.entity';
 import { IBundleRepository } from '../domain/price-policy/bundle.repository';
 import { Repository, In } from 'typeorm';
 
-/**
- * TypeORM implementation of bundle repository
- */
 @Injectable()
 export class BundleRepositoryImplementation implements IBundleRepository {
   constructor(
