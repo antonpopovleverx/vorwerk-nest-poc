@@ -11,11 +11,6 @@ import {
   OrderServicePort,
   CreateQuoteResult,
 } from '../../ports/order-service.port';
-import {
-  BasketSpecificationRegistry,
-  BasketSpecificationContext,
-  getCheckFailureMessage,
-} from '../../specifications/basket-policy.specification';
 import { CheckoutCommand } from './checkout.command';
 import { CheckoutResult } from './checkout.command';
 

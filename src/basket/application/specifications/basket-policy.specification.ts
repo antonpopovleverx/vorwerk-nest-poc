@@ -54,10 +54,14 @@ export class BundleAvailabilitySpecification extends Specification<BasketSpecifi
   }
 }
 
-export const BasketSpecificationRegistry: Record<
+export type BasketSpecificationRegistryType = Record<
   BasketPolicyCheckName,
   () => Specification<BasketSpecificationContext>
-> = {
+>;
+
+export const BASKET_SPECIFICATION_REGISTRY_TOKEN = 'BasketSpecificationRegistry';
+
+export const BasketSpecificationRegistry: BasketSpecificationRegistryType = {
   [BasketPolicyCheckName.MAX_ITEMS_PER_BASKET]: () =>
     new MaxItemsPerBasketSpecification(),
   [BasketPolicyCheckName.MAX_BUNDLES_PER_BASKET]: () =>

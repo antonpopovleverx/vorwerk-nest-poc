@@ -9,8 +9,9 @@ import {
   BasketPolicyCheckName,
   BasketPricingResult,
 } from '../../ports/policy-service.port';
+import type { BasketSpecificationRegistryType } from '../../specifications/basket-policy.specification';
 import {
-  BasketSpecificationRegistry,
+  BASKET_SPECIFICATION_REGISTRY_TOKEN,
   BasketSpecificationContext,
   getCheckFailureMessage,
 } from '../../specifications/basket-policy.specification';
@@ -34,6 +35,8 @@ export class BasketUseCases {
     private readonly basketRepository: IBasketRepository,
     @Inject(PolicyServicePort.name)
     private readonly policyAdapter: PolicyServicePort,
+    @Inject(BASKET_SPECIFICATION_REGISTRY_TOKEN)
+    private readonly specificationRegistry: BasketSpecificationRegistryType,
   ) { }
 
   async getBasketForUser(userId: string): Promise<BasketData> {
@@ -163,7 +166,7 @@ export class BasketUseCases {
     }> = [];
 
     for (const checkName of checkNames) {
-      const specFactory = BasketSpecificationRegistry[checkName];
+      const specFactory = this.specificationRegistry[checkName];
       if (!isFound(specFactory)) {
         throw new HttpException('Specification factory not found', HttpStatus.INTERNAL_SERVER_ERROR);
       }
